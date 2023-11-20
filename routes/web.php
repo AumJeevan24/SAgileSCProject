@@ -299,7 +299,12 @@ Route::post('/forum/{forum_id}/comments', 'CommentController@store')->name('comm
 // Define a single route for both favorite and unfavorite actions
 Route::match(['post', 'delete'], '/forum/favorite/{forumId}', 'ForumFavoriteController@toggleFavorite')->name('forum.favorite');
 
-
+//Cost Estimation Tool
+Route::get('/costestimation', 'App\Http\Controllers\QuotationController@costestimation')->name('costestimation');
+Route::post('/cost-estimation', [QuotationController::class, 'cost_estimation_save'])->name('cost-estimation-save');
+Route::post('/cost-estimation/update/{id}', [QuotationController::class, 'cost_estimation_update'])->name('cost-estimation-update');
+Route::get('/cost/{id}/edit', 'App\Http\Controllers\QuotationController@edit')->name('cost-estimation-edit');
+Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')->name('search_quotation');
 
 
 
