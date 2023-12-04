@@ -80,6 +80,9 @@ class SprintController extends Controller
         //Get the current project
         $project = Project::where('proj_name', $request->proj_name)->first();
 
+        // Get the current authenticated user's username
+        $username = \Auth::user()->username;
+
         //we need to validate the request
         $validation = $request->validate([
             //validate for existing sprint_names
@@ -109,6 +112,10 @@ class SprintController extends Controller
         $sprint->sprint_desc = $request->sprint_desc;
         $sprint->start_sprint = $request->start_sprint;
         $sprint->end_sprint = $request->end_sprint;
+
+        // Assign the username to the sprint
+        $sprint->users_name=$username;
+
         $sprint->save();
 
         $sprints = Sprint::where('proj_name', $request->proj_name)->get();
@@ -174,6 +181,4 @@ class SprintController extends Controller
     
 
 }
-
-       
         

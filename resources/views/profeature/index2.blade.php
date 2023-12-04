@@ -19,6 +19,7 @@
       <th>Description</th>
       <th>Start Date</th>
       <th>End Date</th>
+      <th>Kanban</th>
       <th>Edit</th>
       <th>Delete</th>
       <th>User Story</th>
@@ -42,6 +43,11 @@
 
       <th>
         {{ date('d F Y', strtotime($sprint->end_sprint)) }}
+      </th>
+
+      <th>
+        <button type="submit">View</button>
+
       </th>
 
       <th>
