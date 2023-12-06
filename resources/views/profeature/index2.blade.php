@@ -46,7 +46,7 @@
       </th>
 
       <th>
-        <button type="submit"><a href="{{ route('tasks.viewkanban', ['proj_id' => $projects->id]) }}" class="button">View</a></button>
+        <button type="submit"><a href="{{ route('test.testPage', ['proj_id' => $projects->id]) }}" class="button">View</a></button>
 
       </th>
 
