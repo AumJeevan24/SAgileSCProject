@@ -255,6 +255,12 @@ Route::get('backlog/{userstory}/destroy', 'UserStoryController@destroy')->name('
 Route::get('sprint/task', 'TaskController@indexKanbanBoard')->name('tasks.kanban'); 
 Route::get('kanban/{proj_id}', 'TaskController@viewKanbanBoard')->name('tasks.viewkanban');
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
+
+//Kanban Page
+Route::get('/testPage', 'testPageController@indexTestPage')->name('test.testPage');
+Route::get('/update-lane/{id}/{newName}', 'testPageController@updateLaneName');
+
+
 //Main Task Page 
 Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
