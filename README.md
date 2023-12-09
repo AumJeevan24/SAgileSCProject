@@ -1,42 +1,53 @@
 # SAgile Project Management Tool
 SAgile is a project management tool built with Laravel 7. It allows teams to manage projects, tasks, and deadlines in a collaborative environment. The tool is designed to improve team productivity and collaboration, enabling you to easily manage your project from start to finish.
 
-Features
-SAgile comes with the following features:
-
-User authentication and authorization
-
-Project management
-
-Task management
-
-Collaborative environment
-
-Dashboard for overview
+Features:
+- SAgile comes with the following features:
+- User authentication and authorization
+- Project management
+- Task management
+- Collaborative environment
+- Dashboard for overview
 
 
 # Installation
 
 To run SAgile on your local machine, you need to follow these steps:
 
-Prerequisites
+**Prerequisites**
 
 Before you start, make sure you have the following software installed on your system:
 
-XAMPP web server
+- XAMPP web server
+- MySQL database
+- Composer
+- Git
 
-MySQL database
+Ensure PHP version installed in XAMPP is **v8.0.28**
 
-Composer
+The project must be installed in `C:\path\to\xampp\htdocs\SAgilePMT_UTM`
 
-Git
 
 
 # Start the Server
 
-To start the server, navigate to the root directory of your Laravel project and run the following command:
+To start the server, navigate to the root directory of your Laravel project and run the following commands:
 
+```
+composer install
+```
+```
+composer update
+```
+```
+cp .env.example .env
+```
+```
+php artisan key:generate
+```
+```
 php artisan serve
+```
 
 This will start the server on http://localhost:8000.
 
