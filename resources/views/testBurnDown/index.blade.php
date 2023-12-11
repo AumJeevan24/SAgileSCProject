@@ -16,15 +16,22 @@
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
                 ['Day', 'Remaining Hours'],
-                @foreach($data as $key => $value)
+                @foreach($idealData as $key => $value)
                     [{{ $key + 1 }}, {{ $value }}],
                 @endforeach
             ]);
 
             var options = {
-                title: 'Burn Down Chart',
+                title: 'Burn Down Chart [Ideal Line]',
                 curveType: 'function',
-                legend: { position: 'bottom' }
+                legend: { position: 'bottom' },
+                hAxis: {
+                    title: 'Days'
+                },
+                vAxis: {
+                title: 'Hours',
+                minValue: 0 
+                }
             };
 
             var chart = new google.visualization.LineChart(document.getElementById('burnDownChart'));
