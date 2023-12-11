@@ -98,22 +98,8 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-    const todoform = document.getElementById("todo-form");
-    const doingform = document.getElementById("doing-form");
-    const doneform = document.getElementById("done-form");
-    const todoInput = document.getElementById("todo-input");
-    const doingInput = document.getElementById("doing-input");
-    const doneInput = document.getElementById("done-input");
-    const todoLane = document.getElementById("todo-lane");
-    const doingLane = document.getElementById("doing-lane");
-    const doneLane = document.getElementById("done-lane");
     const addLaneBtn = document.getElementById("add-lane-btn");
-    const renameTodoBtn = document.getElementById("rename-todo-btn");
-    const renameDoingBtn = document.getElementById("rename-doing-btn");
-    const renameDoneBtn = document.getElementById("rename-done-btn");
-    const deletetodoBtn = document.getElementById("delete-todo-btn");
-    const deletedoingBtn = document.getElementById("delete-doing-btn");
-    const deletedoneBtn = document.getElementById("delete-done-btn");
+
 
 
     const renameBtns = document.querySelectorAll(".rename-btn");
@@ -237,85 +223,7 @@ newSubmitBtns.forEach((btn) => {
             });
 
 
-    //create new Lane
     
-
-    // Add event listener for renaming existing lanes
-    renameTodoBtn.addEventListener("click", () => {
-        const newName = prompt("Enter new name for the lane:");
-
-        if (newName !== null) {
-        changeLaneName(todoLane, newName);
-        }
-    });
-
-    renameDoingBtn.addEventListener("click", () => {
-        const newName = prompt("Enter new name for the lane:");
-
-        if (newName !== null) {
-        changeLaneName(doingLane, newName);
-        }
-    });
-
-    renameDoneBtn.addEventListener("click", () => {
-        const newName = prompt("Enter new name for the lane:");
-
-        if (newName !== null) {
-        changeLaneName(doneLane, newName);
-        }
-    });
-
-    // Add event listener for submitting new tasks in the existing lanes
-    todoform.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const value = todoInput.value;
-
-        if (!value) return;
-
-        const newTask = createTaskElement(value);
-
-        todoLane.appendChild(newTask);
-
-        todoInput.value = "";
-    });
-
-    doingform.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const value = doingInput.value;
-
-        if (!value) return;
-
-        const newTask = createTaskElement(value);
-
-        doingLane.appendChild(newTask);
-
-        doingInput.value = "";
-    });
-
-    doneform.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const value = doneInput.value;
-
-        if (!value) return;
-
-        const newTask = createTaskElement(value);
-
-        doneLane.appendChild(newTask);
-
-        doneInput.value = "";
-    });
-
-    deletetodoBtn.addEventListener("click", () => {
-        todoLane.remove();
-    });
-
-    deletedoingBtn.addEventListener("click", () => {
-        doingLane.remove();
-    });
-
-    deletedoneBtn.addEventListener("click", () => {
-        doneLane.remove();
-    });
 
     // Call the function to handle drag and drop events for existing lanes
     handleDragDropEvents(todoLane, todoLane);
