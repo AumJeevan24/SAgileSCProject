@@ -52,6 +52,12 @@
     {{ $sprint->sprint_name }} End Date: {{ date('d F Y', strtotime($sprint->end_sprint)) }}
     <br><br><br>
 
+    Hours assigned :<input type="text" name="hours_assigned" style="margin-left:2.5em" value="{{$task->hours_assigned}}"> <br> <br>
+    <div class="error"><font color="red" size="2">{{ $errors->first('hours_assigned') }}</p></font></div>
+
+    Hours Completed :<input type="text" name="hours_completed" style="margin-left:2.5em" value="{{$task->hours_completed}}"> <br> <br>
+    <div class="error"><font color="red" size="2">{{ $errors->first('hours_completed') }}</p></font></div>
+
     <button type="submit" >Update</button> 
 
 </form>
