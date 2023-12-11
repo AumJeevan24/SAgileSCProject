@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use App\Status;
 use App\Task;
 
-class testPageController extends Controller
+class KanbanController extends Controller
 {
-    public function indexTestPage()
+    public function kanbanIndex($proj_id, $sprint_id)
     {
         $statuses = Status::where('project_id', "2")->get();
         $tasks = Task::where("proj_id", "2")->get();
@@ -19,7 +19,7 @@ class testPageController extends Controller
             $tasksByStatus[$task->status_id][] = $task;
         }
 
-        return view('testFolder.index', ['statuses' => $statuses, 'tasksByStatus' => $tasksByStatus]);
+        return view('kanban.index', ['statuses' => $statuses, 'tasksByStatus' => $tasksByStatus]);
     }
 
     
