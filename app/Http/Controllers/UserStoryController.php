@@ -127,6 +127,12 @@ class UserStoryController extends Controller
 
         $userstory->perfeature_id = $str_perfeatures;
         $userstory->secfeature_id = $str_secfeatures;
+
+        // Assign means value
+        $userstory->means = $request->means;
+
+        // Assign prio_story value 0: Temporary Fix
+        $userstory->prio_story = 0;
         
         $userstory->sprint_id = $request->sprint_id;
         $userstory->proj_id = $project->id;
