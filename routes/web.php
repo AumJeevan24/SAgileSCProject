@@ -313,7 +313,9 @@ Route::get('/cost/{id}/edit', 'App\Http\Controllers\QuotationController@edit')->
 Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')->name('search_quotation');
 
 
+//route for burn down chart
 
+Route::get('/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
 
 
 
