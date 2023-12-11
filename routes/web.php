@@ -257,7 +257,7 @@ Route::get('kanban/{proj_id}', 'TaskController@viewKanbanBoard')->name('tasks.vi
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
 
 //Kanban Page
-Route::get('/testPage', 'testPageController@indexTestPage')->name('test.testPage');
+Route::get('/{proj_id}/{sprint_id}/kanbanBoard', 'KanbanController@kanbanIndex')->name('sprint.kanbanPage');
 Route::get('/update-lane/{id}/{newName}', 'testPageController@updateLaneName');
 
 
