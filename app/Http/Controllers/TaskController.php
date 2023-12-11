@@ -71,6 +71,24 @@ class TaskController extends Controller
             ->with('statuses', $statuses);
     }
 
+    public function viewKanbanBoardAlt($proj_id) 
+    {
+        //the function will send the required data to the kanban board to display
+        //the kanban board will display all tasks that is related to specific project 
+
+        //get the task that is related to specific project
+        $tasks = Task::whereIn('proj_id', [$proj_id])->get();
+        $project = Project::where('id', $proj_id)->first();
+
+        //get the status that is related to the project
+        $statuses = Status::whereIn('project_id', [$proj_id])->get();
+
+        return view('kanban.kanban')
+            ->with('title', $project->proj_name)
+            ->with('tasks', $tasks)
+            ->with('statuses', $statuses);
+    }
+
 
     public function updateKanbanBoard(Request $request, $id) {
         $task = Task::find($id);
