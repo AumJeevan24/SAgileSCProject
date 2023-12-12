@@ -69,4 +69,21 @@ class KanbanController extends Controller
         // redirect to the appropriate page
         return back();
     }
+
+    public function updateStatus(Request $request)
+    {
+        $statusId = $request->input('statusId');
+        $newName = $request->input('newName');
+
+        try {
+            $status = Status::findOrFail($statusId);
+            $status->title = $newName;
+            $status->slug= $newName;
+            $status->save();
+
+            return response()->json(['message' => 'Lane name updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error updating lane name'], 500);
+        }
+    }
 }

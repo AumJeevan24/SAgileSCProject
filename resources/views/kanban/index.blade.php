@@ -21,7 +21,7 @@
             <?php
             $taskList = $tasksByStatus[$status->id] ?? [];
             ?>
-            <div class="swim-lane">
+            <div class="swim-lane" data-status-id="{{ $status->id }}">
                 <h3 class="heading">{{ $status->title }}</h3>
 
 
@@ -96,6 +96,33 @@
         function changeLaneName(lane, newName) {
             const heading = lane.querySelector(".heading");
             heading.innerText = newName;
+
+            // Get the status ID associated with the lane
+            const statusId = lane.dataset.statusId;
+
+            // Make an AJAX request to update the lane name in the database
+            fetch('{{ route("kanban.updateStatus") }}', {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        statusId: statusId,
+                        newName: newName,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the controller method
+                    console.log('After AJAX request to update lane name');
+                    console.log(data);
+                    alert(data.message); // Display a message received from the server
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
 
         document.addEventListener("DOMContentLoaded", () => {
