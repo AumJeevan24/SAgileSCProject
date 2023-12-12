@@ -11,7 +11,7 @@ class BurnDownChartController extends Controller
     public function index($sprint_id)
     {
         
-        $tasks = Task::orderBy('created_at')->get(['hours_assigned', 'hours_completed']);
+        $tasks = Task::where('sprint_id', $sprint_id)->get(['hours_assigned', 'hours_completed']);
         $sprint = Sprint::where("sprint_id", $sprint_id)->first();
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;

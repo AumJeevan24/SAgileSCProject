@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Burn Down Chart</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        #burnDownChart {
+            margin: 0 auto; /* Set margin to auto to center the chart horizontally */
+        }
+    </style>
 </head>
 <body>
     <div id="burnDownChart" style="width: 900px; height: 500px;"></div>
@@ -39,8 +44,8 @@
     </script>
 
     <div style="text-align: center;">
-        <p>Start Date: {{ $start_date }}</p>
-        <p>End Date: {{ $end_date }}</p>
+        <h2>Start Date: {{ $start_date }}</h2>
+        <h2>End Date: {{ $end_date }}</h2>
     </div>
 
 </body>
