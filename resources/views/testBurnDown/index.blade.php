@@ -8,7 +8,6 @@
 </head>
 <body>
     <div id="burnDownChart" style="width: 900px; height: 500px;"></div>
-
     <script>
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
@@ -38,5 +37,11 @@
             chart.draw(data, options);
         }
     </script>
+
+    <div style="text-align: center;">
+        <p>Start Date: {{ $start_date }}</p>
+        <p>End Date: {{ $end_date }}</p>
+    </div>
+
 </body>
 </html>

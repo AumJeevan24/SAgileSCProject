@@ -13,13 +13,11 @@ class BurnDownChartController extends Controller
         
         $tasks = Task::orderBy('created_at')->get(['hours_assigned', 'hours_completed']);
         $sprint = Sprint::where("sprint_id", $sprint_id)->first();
-
-        //$data = $this->calculateChartData($tasks);
+        $start_date = $sprint->start_sprint;
+        $end_date = $sprint->end_sprint;
         $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
 
-        // return view('testBurnDown.index', compact('data'));
-        //return response()->json(['idealData' => $idealData]);
-        return view('testBurnDown.index', compact('idealData'));
+        return view('testBurnDown.index', compact('idealData'),['start_date' => $start_date, 'end_date' => $end_date]);
     }
 
     private function calculateIdealDataForTasks($tasks,$sprint)
@@ -46,11 +44,23 @@ class BurnDownChartController extends Controller
 
         $currentDate = $start_date;
 
-        for ($day = 0; $day < $sprintDuration; $day++) {
+
+        // for ($day = 0; $day < $sprintDuration; $day++) {
+        //     $totalHoursAssigned -= $idealHoursPerDay;
+        //     $idealData[] = $totalHoursAssigned;
+        //     $currentDate += 24 * 60 * 60; // Move to the next day (in seconds)
+        // }
+
+        $idealData = [$totalHoursAssigned];
+
+        $currentDate = $start_date;
+
+        for ($day = 1; $day < $sprintDuration +1; $day++) {
             $totalHoursAssigned -= $idealHoursPerDay;
-            $idealData[] = $totalHoursAssigned;
+            $idealData[] = max(0, $totalHoursAssigned);
             $currentDate += 24 * 60 * 60; // Move to the next day (in seconds)
         }
+
 
         return $idealData;
     }
