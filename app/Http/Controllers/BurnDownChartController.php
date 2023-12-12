@@ -11,7 +11,7 @@ class BurnDownChartController extends Controller
     public function index($sprint_id)
     {
         
-        $tasks = Task::where('sprint_id', $sprint_id)->get(['hours_assigned', 'hours_completed']);
+        $tasks = Task::where('sprint_id', $sprint_id)->get(['hours_assigned', 'hours_completed','start_date','end_date']);
         $sprint = Sprint::where("sprint_id", $sprint_id)->first();
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
@@ -22,34 +22,30 @@ class BurnDownChartController extends Controller
 
     private function calculateIdealDataForTasks($tasks,$sprint)
     {
-        
+        // $sprintTasks = Task::where('sprint_id', $sprint_id)->get(['start_date', 'end_date']);
 
-    //     $actualHours = 0;
-    //     $data = [];
+        $totalHoursAssigned = 0;
 
-    //     foreach ($tasks as $task) {
-    //         $actualHours += $task['hours_completed'];
-    //         $remainingHours = $estimatedHours - $actualHours;
-    //         $data[] = $remainingHours;
-    //     }
+        foreach ($tasks as $task) {
+            $startDateTime = strtotime($task->start_date)/ 3600;
+            $endDateTime = strtotime($task->end_date)/ 3600;
 
-    //     return $data;
+            // Check if the task falls within the specified date range
+            if ($startDateTime <= $endDateTime && $endDateTime >= $startDateTime) {
+                // Calculate the total hours within the date range for the task
+                $totalHoursAssigned += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
+            }
+        }
+
 
         $idealData = [];
         $start_date = strtotime($sprint->start_sprint);
         $end_date = strtotime($sprint->end_sprint);
         $sprintDuration = max(1, ($end_date - $start_date) / (60 * 60 * 24)); // Avoid division by zero
-        $totalHoursAssigned = $tasks->sum('hours_assigned');
+        //$totalHoursAssigned = $tasks->sum('hours_assigned');
         $idealHoursPerDay =  $totalHoursAssigned / $sprintDuration;
 
         $currentDate = $start_date;
-
-
-        // for ($day = 0; $day < $sprintDuration; $day++) {
-        //     $totalHoursAssigned -= $idealHoursPerDay;
-        //     $idealData[] = $totalHoursAssigned;
-        //     $currentDate += 24 * 60 * 60; // Move to the next day (in seconds)
-        // }
 
         $idealData = [$totalHoursAssigned];
 
@@ -63,5 +59,13 @@ class BurnDownChartController extends Controller
 
 
         return $idealData;
+    }
+
+    public function calculateTotalHoursWithinRange($startDateTime, $endDateTime) {
+        // Calculate the difference in hours between start and end date
+        // $interval = $startDate->diff($endDate);
+        $hoursWithinRange = $endDateTime - $startDateTime;
+        
+        return $hoursWithinRange;
     }
 }
