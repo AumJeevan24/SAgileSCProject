@@ -70,6 +70,7 @@ class KanbanController extends Controller
         return back();
     }
 
+    // Update the lane name
     public function updateStatus(Request $request)
     {
         $statusId = $request->input('statusId');
@@ -81,12 +82,13 @@ class KanbanController extends Controller
             $status->slug = $newName;
             $status->save();
 
-            return response()->json(['message' => 'Lane name updated successfully']);
+            return response()->json(['message' => 'Lane name updated successfully', 'reload' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error updating lane name'], 500);
         }
     }
 
+    // Update task positions
     public function updateTaskStatus(Request $request)
     {
         $positions = $request->input('positions');
@@ -99,14 +101,13 @@ class KanbanController extends Controller
                 $task->save();
             }
 
-            return response()->json(['message' => 'Task positions saved successfully']);
+            return response()->json(['message' => 'Task positions saved successfully', 'reload' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error saving task positions'], 500);
         }
-
-        
     }
 
+    // Delete a lane
     public function deleteStatus(Request $request)
     {
         $laneId = $request->input('laneId');
@@ -132,7 +133,7 @@ class KanbanController extends Controller
                 Task::where('status_id', $laneOrder)->update(['status_id' => $nextLaneOrder]);
             }
 
-            return response()->json(['success' => true, 'message' => 'Lane deleted successfully']);
+            return response()->json(['success' => true, 'message' => 'Lane deleted successfully', 'reload' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => 'Error deleting lane'], 500);
         }

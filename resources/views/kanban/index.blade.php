@@ -16,6 +16,9 @@
     <div class="board">
         <button id="add-lane-btn">Add New Lane</button>
 
+        <!-- Add this inline style to your button in your HTML -->
+        <button id="save-btn" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Save</button>
+
         <div class="lanes">
             @foreach ($statuses as $status)
             <?php
@@ -42,8 +45,6 @@
             </div>
             @endforeach
 
-            <!-- Add this inline style to your button in your HTML -->
-            <button id="save-btn" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Save</button>
 
         </div>
     </div>
@@ -65,6 +66,14 @@
             });
 
             return newTask;
+        }
+
+        //function to reload page upon AJAX request completion
+        function handleAjaxResponse(response) {
+            console.log(response.message);
+            if (response.reload) {
+                location.reload();
+            }
         }
 
 
@@ -123,6 +132,7 @@
                     console.log('After AJAX request to update lane name');
                     console.log(data);
                     alert(data.message); // Display a message received from the server
+                    handleAjaxResponse(data);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -177,6 +187,8 @@
                             } else {
                                 alert(data.error);
                             }
+
+                            handleAjaxResponse(data);
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -244,6 +256,7 @@
                         console.log('After AJAX request to save task positions');
                         console.log(data);
                         alert(data.message); // Display a message received from the server
+                        handleAjaxResponse(data);
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -352,6 +365,7 @@
                             console.log('After AJAX request');
                             console.log(data);
                             alert(data.message); // Display a message received from the server
+                            handleAjaxResponse(data);
                         })
                         .catch(error => {
                             console.error('Error:', error);
