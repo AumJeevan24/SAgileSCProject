@@ -116,26 +116,15 @@ class KanbanController extends Controller
             // Find the order of the lane to be deleted
             $laneOrder = Status::where('id', $laneId)->value('order');
 
+            // Find and delete the tasks associated with the lane using the Task model
+            Task::where('status_id', $laneId)->delete();
+
             // Delete the lane
             Status::destroy($laneId);
 
-            // Find the next lane order
-            $nextLaneOrder = Status::where('order', '>', $laneOrder)->min('order');
-
-            // If there is no next lane, find the previous lane order
-            if ($nextLaneOrder === null) {
-                $prevLaneOrder = Status::where('order', '<', $laneOrder)->max('order');
-
-                // Move tasks' statuses into the previous lane
-                Task::where('status_id', $laneOrder)->update(['status_id' => $prevLaneOrder]);
-            } else {
-                // Move tasks' statuses into the next lane
-                Task::where('status_id', $laneOrder)->update(['status_id' => $nextLaneOrder]);
-            }
-
-            return response()->json(['success' => true, 'message' => 'Lane deleted successfully', 'reload' => true]);
+            return response()->json(['success' => true, 'message' => 'Lane and associated tasks deleted successfully', 'reload' => true]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => 'Error deleting lane'], 500);
+            return response()->json(['success' => false, 'error' => 'Error deleting lane and associated tasks'], 500);
         }
     }
 }
