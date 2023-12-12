@@ -67,6 +67,7 @@ class ProjectController extends Controller
         $project->proj_desc=$request->proj_desc;
         $project->start_date=$request->start_date;
         $project->end_date=$request->end_date; 
+        $project->team_name="a";
         
         $validation = $request->validate([
             'proj_name' => 'required|unique:projects',
@@ -87,7 +88,9 @@ class ProjectController extends Controller
         //     ->with('success', 'Project has successfully been created! Assign this project in Team to start working on the project!');
 
         // Retrieve the projects with team_name == null 
-        $projects = Project::whereNull('team_name')->get();
+        // $projects = Project::whereNull('team_name')->get();
+        $projects = Project::where('team_name', "a")->get();
+        //tukar a into null, kena tukar table team boleh accept null value utk team name
 
         return redirect()->route('teams.create')
             ->with('project', $projects->all())

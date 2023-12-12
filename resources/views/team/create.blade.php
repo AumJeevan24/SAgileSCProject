@@ -18,18 +18,15 @@
     <div class="error"><font color="red" size="2">{{ $errors->first('team_name') }}</p></font></div>
     <br><br>
 
+    <!-- Supposed to show all existing projects without a team assigned (null) -->
     <div class="row">
         <label for="title">Existing Project(s):</label>
-        {{-- @if ($current_project != "")
-            <input type="text" id="title" name="title" class="form-control" value="{{ $current_project }}">
-        @else --}}
-            <select name="proj_name" id="proj_name" class="form-control">
-                <option value="" selected="false">Select</option>
-                @foreach($project as $projects)
-                    <option value="{{ $projects->proj_name }}"> {{ $projects->proj_name }}</option>
-                @endforeach
-            </select>
-        {{-- @endif --}}
+        <select name="proj_name" id="proj_name" class="form-control">
+            <option value="" selected="false">Select</option>
+            @foreach($project as $projects)
+                <option value="{{ $projects->proj_name }}">{{ $projects->proj_name }}</option>
+            @endforeach
+        </select>
     </div>
 
     <br><br><br>
