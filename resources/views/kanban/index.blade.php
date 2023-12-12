@@ -37,10 +37,14 @@
                 </form>
 
                 @foreach ($taskList as $task)
-                <p class="task" draggable="true">{{ $task->title }}</p>
+                <p class="task" draggable="true" data-task-id="{{ $task->id }}">{{ $task->title }}</p>
                 @endforeach
             </div>
             @endforeach
+
+            <!-- Add this inline style to your button in your HTML -->
+            <button id="save-btn" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Save</button>
+
         </div>
     </div>
 
@@ -169,6 +173,54 @@
                 });
             });
 
+            const saveBtn = document.getElementById("save-btn");
+
+            saveBtn.addEventListener("click", () => {
+                console.log("Save button clicked");
+
+                // Iterate through all lanes and tasks to gather their positions
+                const positions = [];
+
+                document.querySelectorAll(".swim-lane").forEach((lane, laneIndex) => {
+                    const laneId = lane.dataset.statusId;
+
+                    lane.querySelectorAll(".task").forEach((task, taskIndex) => {
+                        const taskId = task.dataset.taskId;
+
+                        positions.push({
+                            taskId: taskId,
+                            statusId: laneId,
+                            position: taskIndex + 1, // Add 1 to make positions 1-based
+                        });
+                    });
+                });
+
+                console.log("Task positions to save:", positions);
+
+                // Make an AJAX request to save the task positions in the database
+                fetch('{{ route("kanban.updateTaskStatus") }}', {
+                        method: 'PUT',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            positions: positions,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the response from the controller method
+                        console.log('After AJAX request to save task positions');
+                        console.log(data);
+                        alert(data.message); // Display a message received from the server
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
             // Function to create a new lane
             function createNewLane(laneName) {
                 const newLane = document.createElement("div");
@@ -278,9 +330,6 @@
 
                 }
             });
-
-
-
 
             // Call the function to handle drag and drop events for existing lanes
             handleDragDropEvents(todoLane, todoLane);

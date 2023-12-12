@@ -260,6 +260,7 @@ Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
 Route::get('/{proj_id}/{sprint_id}/kanbanBoard', 'KanbanController@kanbanIndex')->name('sprint.kanbanPage');
 Route::post('/addStatus', 'KanbanController@createStatus')->name('kanban.createStatus');
 Route::put('/updateStatus', 'KanbanController@updateStatus')->name('kanban.updateStatus');
+Route::put('/updateTaskStatus', 'KanbanController@updateTaskStatus')->name('kanban.updateTaskStatus');
 
 
 

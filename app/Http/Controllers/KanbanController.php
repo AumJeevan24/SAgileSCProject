@@ -78,7 +78,7 @@ class KanbanController extends Controller
         try {
             $status = Status::findOrFail($statusId);
             $status->title = $newName;
-            $status->slug= $newName;
+            $status->slug = $newName;
             $status->save();
 
             return response()->json(['message' => 'Lane name updated successfully']);
@@ -86,4 +86,24 @@ class KanbanController extends Controller
             return response()->json(['error' => 'Error updating lane name'], 500);
         }
     }
+
+    public function updateTaskStatus(Request $request)
+    {
+        $positions = $request->input('positions');
+    
+        try {
+            foreach ($positions as $position) {
+                $task = Task::find($position['taskId']);
+                $task->status_id = $position['statusId'];
+                $task->order = $position['position'];
+                $task->save();
+            }
+    
+            return response()->json(['message' => 'Task positions saved successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error saving task positions'], 500);
+        }
+    }
+    
+
 }
