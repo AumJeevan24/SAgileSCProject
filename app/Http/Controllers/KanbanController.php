@@ -90,7 +90,7 @@ class KanbanController extends Controller
     public function updateTaskStatus(Request $request)
     {
         $positions = $request->input('positions');
-    
+
         try {
             foreach ($positions as $position) {
                 $task = Task::find($position['taskId']);
@@ -98,12 +98,43 @@ class KanbanController extends Controller
                 $task->order = $position['position'];
                 $task->save();
             }
-    
+
             return response()->json(['message' => 'Task positions saved successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error saving task positions'], 500);
         }
-    }
-    
 
+        
+    }
+
+    public function deleteStatus(Request $request)
+    {
+        $laneId = $request->input('laneId');
+
+        try {
+            // Find the order of the lane to be deleted
+            $laneOrder = Status::where('id', $laneId)->value('order');
+
+            // Delete the lane
+            Status::destroy($laneId);
+
+            // Find the next lane order
+            $nextLaneOrder = Status::where('order', '>', $laneOrder)->min('order');
+
+            // If there is no next lane, find the previous lane order
+            if ($nextLaneOrder === null) {
+                $prevLaneOrder = Status::where('order', '<', $laneOrder)->max('order');
+
+                // Move tasks' statuses into the previous lane
+                Task::where('status_id', $laneOrder)->update(['status_id' => $prevLaneOrder]);
+            } else {
+                // Move tasks' statuses into the next lane
+                Task::where('status_id', $laneOrder)->update(['status_id' => $nextLaneOrder]);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Lane deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => 'Error deleting lane'], 500);
+        }
+    }
 }

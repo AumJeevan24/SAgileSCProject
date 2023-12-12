@@ -261,6 +261,7 @@ Route::get('/{proj_id}/{sprint_id}/kanbanBoard', 'KanbanController@kanbanIndex')
 Route::post('/addStatus', 'KanbanController@createStatus')->name('kanban.createStatus');
 Route::put('/updateStatus', 'KanbanController@updateStatus')->name('kanban.updateStatus');
 Route::put('/updateTaskStatus', 'KanbanController@updateTaskStatus')->name('kanban.updateTaskStatus');
+Route::delete('/deleteStatus', 'KanbanController@deleteStatus')->name('kanban.deleteStatus');
 
 
 

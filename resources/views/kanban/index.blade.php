@@ -151,7 +151,36 @@
             deleteBtns.forEach((btn) => {
                 btn.addEventListener("click", () => {
                     const lane = btn.closest(".swim-lane");
-                    lane.remove();
+                    const laneId = lane.dataset.statusId;
+
+                    // Make an AJAX request to delete the lane and update task statuses
+                    fetch('{{ route("kanban.deleteStatus") }}', {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                laneId: laneId,
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('After AJAX request to delete lane');
+                            console.log(data);
+
+                            // Check if the deletion was successful before removing the lane from the UI
+                            if (data.success) {
+                                lane.remove();
+                                alert(data.message); // Display a message received from the server
+                            } else {
+                                alert(data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 });
             });
 
