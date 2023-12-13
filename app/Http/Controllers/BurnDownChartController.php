@@ -11,13 +11,29 @@ class BurnDownChartController extends Controller
     public function index($sprint_id)
     {
         
-        $tasks = Task::where('sprint_id', $sprint_id)->get(['hours_assigned', 'hours_completed','start_date','end_date']);
+        $tasks = Task::where('sprint_id', $sprint_id)->get(['start_date','end_date']);
         $sprint = Sprint::where("sprint_id", $sprint_id)->first();
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
-        $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
 
-        return view('testBurnDown.index', compact('idealData'),['start_date' => $start_date, 'end_date' => $end_date]);
+        if ($this->isBeforeStartDate($start_date)) {
+            $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
+            // Update Sprint model with the calculated idealData
+            $sprint->idealHoursPerDay = $idealData;
+            $sprint->save();
+        
+            return view('testBurnDown.index', compact('idealData'),['start_date' => $start_date, 'end_date' => $end_date]);
+        } else {
+            $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
+            return view('testBurnDown.index', compact('idealData'),['start_date' => $start_date, 'end_date' => $end_date]);
+        }
+
+    }
+
+    private function isBeforeStartDate($startDate)
+    {
+        $currentDate = now(); // Laravel's now() function gets the current date and time
+        return strtotime($currentDate) < strtotime($startDate);
     }
 
     private function calculateIdealDataForTasks($tasks,$sprint)
@@ -42,7 +58,7 @@ class BurnDownChartController extends Controller
         $start_date = strtotime($sprint->start_sprint);
         $end_date = strtotime($sprint->end_sprint);
         $sprintDuration = max(1, ($end_date - $start_date) / (60 * 60 * 24)); // Avoid division by zero
-        //$totalHoursAssigned = $tasks->sum('hours_assigned');
+
         $idealHoursPerDay =  $totalHoursAssigned / $sprintDuration;
 
         $currentDate = $start_date;

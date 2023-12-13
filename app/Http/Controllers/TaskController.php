@@ -163,8 +163,6 @@ class TaskController extends Controller
             //validate that end of task should be before or equal the sprint's end date
             'end_date' => 'required|date|before_or_equal:'.$sprint->end_sprint.'|after_or_equal:start_date',
 
-            'hours_assigned' => 'required|numeric', 
-            'hours_completed' => 'required|numeric',
         ], [
             'title.required' => '*The Task Name is required',
             'title.unique' => '*There is already an existing task in the userstory with the same name',
@@ -174,10 +172,6 @@ class TaskController extends Controller
             'end_date.required' => '*The End Date is required',
             'end_date.before_or_equal' => '*The End Date must be equal to or before the sprint end date',
             'end_date.after_or_equal' => '*The End Date must be equal to or after the Start Date',
-            'hours_assigned.required' => '*The Hours Assigned field is required',
-            'hours_assigned.numeric' => '*The Hours Assigned must be a numeric value',
-            'hours_completed.required' => '*The Hours Completed field is required',
-            'hours_completed.numeric' => '*The Hours Completed must be a numeric value',
         ]);
 
         //assign request values to new task 
@@ -189,8 +183,6 @@ class TaskController extends Controller
         $task->status_id = $request->status_id;
         $task->start_date = $request->start_date;
         $task->end_date = $request->end_date;
-        $task->hours_assigned = $request->hours_assigned;
-        $task->hours_completed = $request->hours_completed;
         $task->proj_id = $project->id;
         $task->sprint_id = $sprint->sprint_id;
         $task->save();
@@ -282,8 +274,6 @@ class TaskController extends Controller
             //validate that end of task should be before or equal the sprint's end date
             'end_date' => 'required|date|before_or_equal:'.$sprint->end_sprint.'|after_or_equal:start_date',
 
-            'hours_assigned' => 'required|numeric', 
-            'hours_completed' => 'required|numeric', 
         
         ], [
             'title.required' => '*The Task Name is required',
@@ -294,10 +284,6 @@ class TaskController extends Controller
             'end_date.required' => '*The End Date is required',
             'end_date.before_or_equal' => '*The End Date must be equal to or before the sprint end date',
             'end_date.after_or_equal' => '*The End Date must be equal to or after the Start Date',
-            'hours_assigned.required' => '*The Hours Assigned field is required',
-            'hours_assigned.numeric' => '*The Hours Assigned must be a numeric value',
-            'hours_completed.required' => '*The Hours Completed field is required',
-            'hours_completed.numeric' => '*The Hours Completed must be a numeric value',
         ]);
 
         $task->title = $request->title;
