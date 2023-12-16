@@ -18,6 +18,8 @@ class BurnDownChartController extends Controller
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
         $currentDate = now();
+        //buat error page kalau tak isi task lagi
+
         //$actualData = array(144,144,144,); //panggil func cal actual line
         //$actualData = [];
 
@@ -166,7 +168,7 @@ class BurnDownChartController extends Controller
 
             $status = $statuses->firstWhere('id', $task->status_id);
 
-            if($status->title == "done"){
+            if(strtolower($status->title) == "done"){
                 $taskDone->add($task); // Add the task to the collection
             }
 
