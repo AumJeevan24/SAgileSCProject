@@ -318,7 +318,7 @@ Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')
 
 
 //route for burn down chart
-Route::get('/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
+Route::get('/{proj_id}/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
 // Route::get('/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
 
 

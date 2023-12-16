@@ -19,14 +19,21 @@
 
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
-                ['Day', 'Remaining Hours'],
+                ['Day', 'Remaining Hours', 'Actual Hours'], // Add a third column for actual data
+
                 @foreach($idealData as $key => $value)
-                    [{{ $key + 1 }}, {{ $value }}],
+                @if (!isset($actualData[$key]))
+                    [{{ $key + 1 }}, {{ $value }}, null],
+                @else
+                    [{{ $key + 1 }}, {{ $value }}, {{ $actualData[$key] }}],
+                @endif
                 @endforeach
+
+
             ]);
 
             var options = {
-                title: 'Burn Down Chart [Ideal Line]',
+                title: 'Burn Down Chart',
                 curveType: 'function',
                 legend: { position: 'bottom' },
                 hAxis: {
