@@ -167,8 +167,9 @@ class BurnDownChartController extends Controller
         foreach($tasks as $task){
 
             $status = $statuses->firstWhere('id', $task->status_id);
-
-            if(strtolower($status->title) == "done"){
+            $statusTitle = strtolower($status->title);
+            
+            if($statusTitle == "done"){
                 $taskDone->add($task); // Add the task to the collection
             }
 
