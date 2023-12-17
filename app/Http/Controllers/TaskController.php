@@ -292,8 +292,6 @@ class TaskController extends Controller
         $task->status_id = $request->status_id;
         $task->start_date = $request->start_date;
         $task->end_date = $request->end_date;
-        $task->hours_assigned = $request->hours_assigned;
-        $task->hours_completed = $request->hours_completed;
         $task->save();
 
         $tasks = Task::where('userstory_id', $task->userstory_id)->get();

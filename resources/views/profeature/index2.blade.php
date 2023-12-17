@@ -52,7 +52,7 @@
       </th>
 
       <th>
-      <button type="submit"><a href="{{ route('burnDown.index', ['sprint_id' => $sprint->sprint_id]) }}" class="button">View</a></button>
+      <button type="submit"><a href="{{ route('burnDown.index', ['proj_id' => $projects->id, 'sprint_id' => $sprint->sprint_id]) }}" class="button">View</a></button>
 
       </th>
 
