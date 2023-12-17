@@ -65,6 +65,13 @@ class BurnDownChartController extends Controller
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
             $actualData = $sprint->actualHoursPerDay ? json_decode($sprint->actualHoursPerDay, true) : [];
 
+            if(empty($idealData)){
+                $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
+                // Update Sprint model with the calculated idealData
+                $sprint->idealHoursPerDay = $idealData;
+                $sprint->save();
+            }
+
             if(empty($actualData)){
                 $actualData = array($this->calcTotalHoursAssigned($tasks));
             }
