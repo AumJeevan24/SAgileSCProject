@@ -196,7 +196,7 @@ class BurnDownChartController extends Controller
         } else {
             $doneTaskHours = 0;
             foreach ($taskDone as $task) {
-                $doneTaskHours += $this->calculateTotalHoursWithinRange(strtotime($task->start_date), strtotime($task->end_date));
+                $doneTaskHours += $this->calculateTotalHoursWithinRange(strtotime($taskDone->start_date), strtotime($taskDone->end_date));
             }
         }
 
