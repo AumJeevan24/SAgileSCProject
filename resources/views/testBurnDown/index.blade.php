@@ -51,8 +51,9 @@
     </script>
 
     <div style="text-align: center;">
-        <h2>Start Date: {{ $start_date }}</h2>
-        <h2>End Date: {{ $end_date }}</h2>
+        <p style="font-size: larger;">
+            Start Date: <span style="color: blue;">{{ $start_date }}</span> || End Date: <span style="color: red;">{{ $end_date }}</span>
+        </p>
     </div>
 
 </body>
