@@ -17,7 +17,7 @@ class BurnDownChartController extends Controller
         $statuses = Status::where('project_id', $proj_id)->get();
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
-        $currentDate = now();
+        //$currentDate = now();
         //buat error page kalau tak isi task lagi
 
         //$actualData = array(144,144,144,); //panggil func cal actual line
@@ -43,7 +43,7 @@ class BurnDownChartController extends Controller
             return view('testBurnDown.index', compact('idealData','actualData'),['start_date' => $start_date, 'end_date' => $end_date]);
 
         }else if ($this->isBeforeEndDate($end_date)){
-            //$idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
+            $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
             if(empty($idealData)){
                 $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
                 // Update Sprint model with the calculated idealData
@@ -116,7 +116,6 @@ class BurnDownChartController extends Controller
 
         $idealData = [$totalHoursAssigned];
 
-        $currentDate = $start_date;
 
         for ($day = 1; $day < $sprintDuration +1; $day++) {
             $totalHoursAssigned -= $idealHoursPerDay;
@@ -196,7 +195,9 @@ class BurnDownChartController extends Controller
         } else {
             $doneTaskHours = 0;
             foreach ($taskDone as $task) {
-                $doneTaskHours += $this->calculateTotalHoursWithinRange(strtotime($taskDone->start_date), strtotime($taskDone->end_date));
+                $startDateTime = strtotime($task->start_date)/ 3600;
+                $endDateTime = strtotime($task->end_date)/ 3600;
+                $doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
             }
         }
 

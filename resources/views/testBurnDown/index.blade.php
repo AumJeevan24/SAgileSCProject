@@ -40,8 +40,8 @@
                     title: 'Days'
                 },
                 vAxis: {
-                title: 'Hours',
-                minValue: 0 
+                    title: 'Hours',
+                    minValue: 0 
                 }
             };
 
