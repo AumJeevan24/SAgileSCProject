@@ -19,7 +19,7 @@
 
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
-                ['Day', 'Remaining Hours', 'Actual Hours'], // Add a third column for actual data
+                ['Day', 'Ideal Hours', 'Actual Hours'], // Add a third column for actual data
 
                 @foreach($idealData as $key => $value)
                 @if (!isset($actualData[$key]))
@@ -34,6 +34,7 @@
 
             var options = {
                 title: 'Burn Down Chart',
+                titleTextStyle: { fontSize: 18 },
                 curveType: 'function',
                 legend: { position: 'bottom' },
                 hAxis: {

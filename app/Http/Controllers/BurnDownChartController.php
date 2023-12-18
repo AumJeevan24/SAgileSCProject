@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Task;
 use App\Sprint;
 use App\Status;
-
 use Illuminate\Http\Request;
 
 class BurnDownChartController extends Controller
@@ -89,13 +88,15 @@ class BurnDownChartController extends Controller
 
     public function isBeforeStartDate($startDate)
     {
-        $currentDate = now(); // Laravel's now() function gets the current date and time
+        $currentDate = now()->timezone('Asia/Kuala_Lumpur');
+        // Laravel's now() function gets the current date and time
         return strtotime($currentDate) < strtotime($startDate);
     }
 
     public function isBeforeEndDate($end_date)
     {
-        $currentDate = now(); // Laravel's now() function gets the current date and time
+        $currentDate = now()->timezone('Asia/Kuala_Lumpur');
+        // Laravel's now() function gets the current date and time
         return strtotime($currentDate) < strtotime($end_date);
     }
 
@@ -158,7 +159,7 @@ class BurnDownChartController extends Controller
     {
         $startDateTime = strtotime($startDate);
         $endDateTime = strtotime($endDate);
-        $currentDate = now();
+        $currentDate = now()->timezone('Asia/Kuala_Lumpur');
 
         $daysDifferenceStartCurrent = floor((strtotime($currentDate) - $startDateTime) / (60 * 60 * 24));
 
@@ -181,14 +182,6 @@ class BurnDownChartController extends Controller
 
         }
 
-        // Loop through the tasks to find the one with status title "done"
-        // $tasks = Task::where('start_date', '>=', $startDate)
-        //             ->where('end_date', '<=', $endDate)
-        //             ->whereHas('status', function ($query) {
-        //                 $query->where('title', 'Done');
-        //             })
-        //             ->get(['start_date', 'end_date']);
-
         // Check if there are no done tasks
         if ($taskDone->isEmpty()) {
             $doneTaskHours = 0;
@@ -203,17 +196,17 @@ class BurnDownChartController extends Controller
 
         $totalHoursLeft = $totalHoursAssigned - $doneTaskHours;
 
-        $curDay = count($actualData);
+        $countArray = count($actualData);
         $lastArray = count($actualData) - 1;
         $lastDay = end($actualData);
 
-        if( $daysDifferenceStartCurrent > 0 && $curDay < $daysDifferenceStartCurrent){
+        //betulkan ni
+        if($countArray <= $daysDifferenceStartCurrent){
 
             for ($i = 0; $i < $daysDifferenceStartCurrent; $i++) {
                 $actualData[] = $lastDay;
             }            
-        }
-        else{
+        }else{
             $actualData[$lastArray] = $totalHoursLeft;
         }
 
