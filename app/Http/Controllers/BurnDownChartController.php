@@ -167,6 +167,7 @@ class BurnDownChartController extends Controller
 
         if(empty($actualData)){
             $actualData = [$totalHoursAssigned];
+            $daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
         }
 
         $taskDone = collect(); // Initialize an empty collection
@@ -199,16 +200,17 @@ class BurnDownChartController extends Controller
         $countArray = count($actualData);
         $lastArray = count($actualData) - 1;
         $lastDay = end($actualData);
+        $fillArray =  $daysDifferenceStartCurrent - $countArray;
 
         //betulkan ni
-        if($countArray <= $daysDifferenceStartCurrent){
-
-            for ($i = 0; $i < $daysDifferenceStartCurrent; $i++) {
+        if ($countArray <= $daysDifferenceStartCurrent) {
+            for ($i = 0; $i < $fillArray; $i++) {
                 $actualData[] = $lastDay;
-            }            
-        }else{
+            }
+        } else {
             $actualData[$lastArray] = $totalHoursLeft;
         }
+        
 
         return $actualData;
     }
