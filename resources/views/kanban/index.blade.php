@@ -17,7 +17,7 @@
         <button id="add-lane-btn">Add New Lane</button>
 
         <!-- Add this inline style to your button in your HTML -->
-        <button id="save-btn" style="padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Save</button>
+        <button id="save-btn" style="display: none">Save</button>
 
         <div class="lanes">
             @foreach ($statuses as $status)
@@ -255,13 +255,44 @@
                         // Handle the response from the controller method
                         console.log('After AJAX request to save task positions');
                         console.log(data);
-                        alert(data.message); // Display a message received from the server
+                        // alert(data.message); // Display a message received from the server
                         handleAjaxResponse(data);
                     })
                     .catch(error => {
                         console.error('Error:', error);
                     });
             });
+
+            const draggables = document.querySelectorAll(".task");
+    const droppables = document.querySelectorAll(".swim-lane");
+
+    draggables.forEach((task) => {
+        task.addEventListener("dragstart", () => {
+            task.classList.add("is-dragging");
+        });
+
+        task.addEventListener("dragend", () => {
+            task.classList.remove("is-dragging");
+
+            // Trigger the click event on the save button after the task is dropped
+            saveBtn.click();
+        });
+    });
+
+    droppables.forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+
+            const bottomTask = insertAboveTask(zone, e.clientY);
+            const curTask = document.querySelector(".is-dragging");
+
+            if (!bottomTask) {
+                zone.appendChild(curTask);
+            } else {
+                zone.insertBefore(curTask, bottomTask);
+            }
+        });
+    });
 
             // Function to create a new lane
             function createNewLane(laneName) {

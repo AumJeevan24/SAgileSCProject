@@ -67,7 +67,8 @@ class KanbanController extends Controller
         $statuses->save();
 
         // redirect to the appropriate page
-        return back();
+        // return back();
+        return response()->json(['message' => 'Status created successfully', 'reload' => true]);
     }
 
     // Update the lane name
@@ -101,10 +102,10 @@ class KanbanController extends Controller
                 $task->save();
             }
 
-            return response()->json(['message' => 'Task positions saved successfully', 'reload' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error saving task positions'], 500);
-        }
+            return response()->json(['message' => 'Task positions saved successfully']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error saving task positions'], 500);
+    }
     }
 
     // Delete a lane
