@@ -105,7 +105,6 @@ class TaskController extends Controller
         return response()->json(['message' => 'Task updated successfully']);
       }
 
-      
     public function getTaskDescription($task_id)
     {
         $task = Task::find($task_id);
