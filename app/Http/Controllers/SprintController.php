@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Validator;
 use App\Sprint;
 use App\Project;
 use App\UserStory;
@@ -77,33 +78,47 @@ class SprintController extends Controller
     
     public function store(Request $request)
     {
-        //Get the current project
+        // Get the current project
         $project = Project::where('proj_name', $request->proj_name)->first();
 
-        // Get the current authenticated user's username
-        $username = \Auth::user()->username;
+        // Custom validation rule for checking the difference between dates
+        Validator::extend('valid_sprint_duration', function ($attribute, $value, $parameters, $validator) use ($request) {
+            $startDate = strtotime($request->start_sprint);
+            $endDate = strtotime($request->end_sprint);
 
-        //we need to validate the request
-        $validation = $request->validate([
-            //validate for existing sprint_names
-            'sprint_name' => 'required|unique:sprint,sprint_name,NULL,sprint_id,proj_name,'.$request->proj_name, 
-            'sprint_desc' => 'required',
+            // Calculate the difference in days
+            $difference = ($endDate - $startDate) / (60 * 60 * 24);
 
-            //validate that start of sprint should be after or equal the project's start date
-            'start_sprint' => 'required|date|after_or_equal:'.$project->start_date,
+            // Check if the difference is between 14 and 28 days (2 weeks and 4 weeks)
+            return $difference >= 14 && $difference <= 28;
+        });
 
-            //validate that end of sprint should be before or equal the project's end date
-            'end_sprint' => 'required|date|before_or_equal:'.$project->end_date.'|after_or_equal:start_sprint'
-        ], [
-            'sprint_name.required' => '*The Sprint Name is required',
-            'sprint_name.unique' => '*There is already an existing sprint in the project with the same name',
-            'sprint_desc.required' => '*The Description is required',
-            'start_sprint.required' => '*The Start Date is required',
-            'start_sprint.after_or_equal' => '*The Start Date must be equal to or after the project start date',
-            'end_sprint.required' => '*The End Date is required',
-            'end_sprint.before_or_equal' => '*The End Date must be equal to or before the project end date',
-            'end_sprint.after_or_equal' => '*The End Date must be equal to or after the Start Date'
-        ]);
+            // Define custom error messages for validation
+            $messages = [
+                'sprint_name.required' => 'The Sprint Name is required',
+                'sprint_name.unique' => 'There is already an existing sprint in the project with the same name',
+                'sprint_desc.required' => 'The Description is required',
+                'start_sprint.required' => 'The Start Date is required',
+                'start_sprint.after_or_equal' => 'The Start Date must be equal to or after the project start date',
+                'end_sprint.required' => 'The End Date is required',
+                'end_sprint.before_or_equal' => 'The End Date must be equal to or before the project end date',
+                'end_sprint.after_or_equal' => 'The End Date must be equal to or after the Start Date',
+                'valid_sprint_duration' => 'The sprint duration must be between 2 to 4 weeks', // Custom message for valid_sprint_duration rule
+            ];
+
+            // Validate the request with custom error messages
+            $validation = $request->validate([
+                'sprint_name' => 'required|unique:sprint,sprint_name,NULL,sprint_id,proj_name,'.$request->proj_name, 
+                'sprint_desc' => 'required',
+                'start_sprint' => 'required|date|after_or_equal:'.$project->start_date,
+                'end_sprint' => [
+                    'required',
+                    'date',
+                    'before_or_equal:'.$project->end_date,
+                    'after_or_equal:start_sprint',
+                    'valid_sprint_duration', // Apply the custom validation rule here
+                ],
+            ], $messages);
 
         //assign request values to new sprint 
         $sprint = new Sprint();
@@ -151,22 +166,45 @@ class SprintController extends Controller
         //Get the current project
         $project = Project::where('proj_name', $sprint->proj_name)->first();
 
-        $validation = $request->validate([
-            'sprint_desc' => 'required',
 
-            //validate that start of sprint should be after or equal the project's start date
-            'start_sprint' => 'required|date|after_or_equal:'.$project->start_date,
+        // Custom validation rule for checking the difference between dates
+        Validator::extend('valid_sprint_duration', function ($attribute, $value, $parameters, $validator) use ($request) {
+            $startDate = strtotime($request->start_sprint);
+            $endDate = strtotime($request->end_sprint);
 
-            //validate that end of sprint should be before or equal the project's end date
-            'end_sprint' => 'required|date|before_or_equal:'.$project->end_date.'|after_or_equal:start_sprint'
-        ], [
-            'sprint_desc.required' => '*The Description is required',
-            'start_sprint.required' => '*The Start Date is required',
-            'start_sprint.after_or_equal' => '*The Start Date must be equal to or after the project start date',
-            'end_sprint.required' => '*The End Date is required',
-            'end_sprint.before_or_equal' => '*The End Date must be equal to or before the project end date',
-            'end_sprint.after_or_equal' => '*The End Date must be equal to or after the Start Date'
-        ]);
+            // Calculate the difference in days
+            $difference = ($endDate - $startDate) / (60 * 60 * 24);
+
+            // Check if the difference is between 14 and 28 days (2 weeks and 4 weeks)
+            return $difference >= 14 && $difference <= 28;
+        });
+
+            // Define custom error messages for validation
+            $messages = [
+                'sprint_name.required' => 'The Sprint Name is required',
+                'sprint_name.unique' => 'There is already an existing sprint in the project with the same name',
+                'sprint_desc.required' => 'The Description is required',
+                'start_sprint.required' => 'The Start Date is required',
+                'start_sprint.after_or_equal' => 'The Start Date must be equal to or after the project start date',
+                'end_sprint.required' => 'The End Date is required',
+                'end_sprint.before_or_equal' => 'The End Date must be equal to or before the project end date',
+                'end_sprint.after_or_equal' => 'The End Date must be equal to or after the Start Date',
+                'valid_sprint_duration' => 'The sprint duration must be between 2 to 4 weeks', // Custom message for valid_sprint_duration rule
+            ];
+
+            // Validate the request with custom error messages
+            $validation = $request->validate([
+                'sprint_name' => 'required|unique:sprint,sprint_name,NULL,sprint_id,proj_name,'.$request->proj_name, 
+                'sprint_desc' => 'required',
+                'start_sprint' => 'required|date|after_or_equal:'.$project->start_date,
+                'end_sprint' => [
+                    'required',
+                    'date',
+                    'before_or_equal:'.$project->end_date,
+                    'after_or_equal:start_sprint',
+                    'valid_sprint_duration', // Apply the custom validation rule here
+                ],
+            ], $messages);
 
         $sprint->save();
         $sprints = Sprint::where('proj_name', $sprint->proj_name)->get();
