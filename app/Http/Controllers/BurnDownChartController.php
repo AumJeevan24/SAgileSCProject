@@ -167,7 +167,6 @@ class BurnDownChartController extends Controller
 
         if(empty($actualData)){
             $actualData = [$totalHoursAssigned];
-            $daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
         }
 
         $taskDone = collect(); // Initialize an empty collection
@@ -184,33 +183,52 @@ class BurnDownChartController extends Controller
         }
 
         // Check if there are no done tasks
-        if ($taskDone->isEmpty()) {
-            $doneTaskHours = 0;
-        } else {
-            $doneTaskHours = 0;
+        $doneTaskHours = 0;
+
+        if (!$taskDone->isEmpty()) {
+            //$doneTaskHours = 0;
             foreach ($taskDone as $task) {
                 $startDateTime = strtotime($task->start_date)/ 3600;
                 $endDateTime = strtotime($task->end_date)/ 3600;
+                var_dump("Start: " . $startDateTime . ", End: " . $endDateTime);
                 $doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
             }
-        }
+            
+            $daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
+        } 
+
+        var_dump("Calculated doneTaskHours: " . $doneTaskHours);
 
         $totalHoursLeft = $totalHoursAssigned - $doneTaskHours;
+        var_dump("Calculated totalHoursLeft: " . $totalHoursLeft);
+
 
         $countArray = count($actualData);
         $lastArray = count($actualData) - 1;
         $lastDay = end($actualData);
-        $fillArray =  $daysDifferenceStartCurrent - $countArray;
+        $fillArray =  abs($daysDifferenceStartCurrent - $countArray);
+        var_dump("countArray: " . $countArray);
+        var_dump("daysDifferenceStartCurrent: " . $daysDifferenceStartCurrent);
+        var_dump("fillArray: " . $fillArray);
 
         //betulkan ni
         if ($countArray <= $daysDifferenceStartCurrent) {
-            for ($i = 0; $i < $fillArray; $i++) {
-                $actualData[] = $lastDay;
+
+            if($countArray == 1){
+                for ($i = 0; $i < $daysDifferenceStartCurrent; $i++) {
+                    $actualData[] = $lastDay;
+                }
             }
-        } else {
-            $actualData[$lastArray] = $totalHoursLeft;
+            else{
+                for ($i = 0; $i < $fillArray; $i++) {
+                    $actualData[] = $lastDay;
+                }
+            }
+
         }
-        
+
+        $actualData[$lastArray] = $totalHoursLeft;
+        var_dump("lastArray: " . $actualData[$lastArray]);
 
         return $actualData;
     }
