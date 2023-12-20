@@ -23,9 +23,9 @@
 
                 @foreach($idealData as $key => $value)
                 @if (!isset($actualData[$key]))
-                    [{{ $key + 1 }}, {{ $value }}, null],
+                    [{{ $key }}, {{ $value }}, null],
                 @else
-                    [{{ $key + 1 }}, {{ $value }}, {{ $actualData[$key] }}],
+                    [{{ $key }}, {{ $value }}, {{ $actualData[$key] }}],
                 @endif
                 @endforeach
 
@@ -35,10 +35,13 @@
             var options = {
                 title: 'Burn Down Chart',
                 titleTextStyle: { fontSize: 18 },
-                curveType: 'function',
+                curveType: 'none',
                 legend: { position: 'bottom' },
                 hAxis: {
-                    title: 'Days'
+                    title: 'Days',
+                    viewWindow: {
+                        min: 0 // Set the minimum value for the x-axis to 0
+                    }
                 },
                 vAxis: {
                     title: 'Hours',
