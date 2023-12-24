@@ -129,7 +129,9 @@ class SprintController extends Controller
         $sprint->end_sprint = $request->end_sprint;
 
         // Assign the username to the sprint
-        $sprint->users_name=$username;
+        // $sprint->users_name=$username;
+        $id = \Auth::user()->getUsername();
+        $sprint->users_name=$id;
 
         $sprint->save();
 

@@ -29,6 +29,11 @@ class User extends Authenticatable
         return $this->id;
     }
 
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
     public function pros()
     {
         return $this->hasMany(Project::class);
