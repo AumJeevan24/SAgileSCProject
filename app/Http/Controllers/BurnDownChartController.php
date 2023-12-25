@@ -17,14 +17,17 @@ class BurnDownChartController extends Controller
         $statuses = Status::where('project_id', $proj_id)->get();
         $user = \Auth::user();
         $countryName = $user->country;
-        var_dump($countryName);
+        //var_dump($countryName);
 
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
+        $timezone = $this->getTimeZone($countryName);
+        $currentDate = now()->timezone($timezone);
+        var_dump($timezone);
 
-        if ($this->isBeforeStartDate($start_date)) {
+        if ($this->isBeforeStartDate($start_date, $currentDate)) {
+
             $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
-            // Update Sprint model with the calculated idealData
             $sprint->idealHoursPerDay = $idealData;
             $sprint->save();
             //$actualData = array(144,144,144,); 
@@ -36,18 +39,20 @@ class BurnDownChartController extends Controller
         
             return view('testBurnDown.index', compact('idealData','actualData'),['start_date' => $start_date, 'end_date' => $end_date]);
 
-        }else if ($this->isBeforeEndDate($end_date)){
+        }else if ($this->isBeforeEndDate($end_date, $currentDate)){
+
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
+
             if(empty($idealData)){
+
                 $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
-                // Update Sprint model with the calculated idealData
                 $sprint->idealHoursPerDay = $idealData;
                 $sprint->save();
             }
             $dayZero = reset($idealData);
 
             $actualData =  $sprint->actualHoursPerDay ? json_decode($sprint->actualHoursPerDay, true) : [];
-            $actualData =  $this->calculateActualLine($start_date,$end_date,$actualData,$tasks,$statuses,$dayZero);
+            $actualData =  $this->calculateActualLine($start_date,$end_date,$actualData,$tasks,$statuses,$dayZero,$currentDate);
             $sprint->actualHoursPerDay = $actualData;
             $sprint->save();
     
@@ -57,12 +62,12 @@ class BurnDownChartController extends Controller
 
             return view('testBurnDown.index', compact('idealData','actualData'),['start_date' => $start_date, 'end_date' => $end_date]);
         }else{
+
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
             $actualData = $sprint->actualHoursPerDay ? json_decode($sprint->actualHoursPerDay, true) : [];
 
             if(empty($idealData)){
                 $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
-                // Update Sprint model with the calculated idealData
                 $sprint->idealHoursPerDay = $idealData;
                 $sprint->save();
             }
@@ -72,38 +77,26 @@ class BurnDownChartController extends Controller
             }
 
             //$actualData = array(146,146,146,); 
-
             var_dump($idealData);
             var_dump($actualData);
 
             return view('testBurnDown.index', compact('idealData','actualData'),['start_date' => $start_date, 'end_date' => $end_date]);
-
         }
 
     }
 
-    public function isBeforeStartDate($startDate)
+    public function isBeforeStartDate($startDate, $currentDate)
     {
-        $user = \Auth::user();
-        $countryName = $user->country;
-        $timezone = $this->getTimeZone($countryName);
-
-        $currentDate = now()->timezone($timezone);
-        var_dump($timezone);
-        // Laravel's now() function gets the current date and time
         return strtotime($currentDate) < strtotime($startDate);
     }
 
-    public function isBeforeEndDate($end_date)
+    public function isBeforeEndDate($end_date, $currentDate)
     {
-        $currentDate = now()->timezone('Asia/Kuala_Lumpur');
-        // Laravel's now() function gets the current date and time
         return strtotime($currentDate) < strtotime($end_date);
     }
 
     public function calculateIdealDataForTasks($tasks,$sprint)
     {
-        // $sprintTasks = Task::where('sprint_id', $sprint_id)->get(['start_date', 'end_date']);
 
         $totalHoursAssigned = $this ->calcTotalHoursAssigned($tasks);
 
@@ -138,7 +131,6 @@ class BurnDownChartController extends Controller
             $startDateTime = strtotime($task->start_date)/ 3600;
             $endDateTime = strtotime($task->end_date)/ 3600;
 
-            // Check if the task falls within the specified date range
             if ($startDateTime <= $endDateTime && $endDateTime >= $startDateTime) {
                 // Calculate the total hours within the date range for the task
                 $totalHoursAssigned += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
@@ -152,18 +144,15 @@ class BurnDownChartController extends Controller
     public function calculateTotalHoursWithinRange($startDateTime, $endDateTime) {
         // Calculate the difference in hours between start and end date
         $hoursWithinRange = $endDateTime - $startDateTime;
-        
         return $hoursWithinRange;
     }
 
-    public function calculateActualLine($startDate, $endDate, $actualData, $tasks, $statuses,$dayZero)
+    public function calculateActualLine($startDate, $endDate, $actualData, $tasks, $statuses,$dayZero,$currentDate)
     {
         $startDateTime = strtotime($startDate);
         $endDateTime = strtotime($endDate);
-        $currentDate = now()->timezone('Asia/Kuala_Lumpur');
 
         $daysDifferenceStartCurrent = floor((strtotime($currentDate) - $startDateTime) / (60 * 60 * 24));
-
         $totalHoursAssigned = $this ->calcTotalHoursAssigned($tasks);
 
         if(empty($actualData)){
@@ -196,12 +185,10 @@ class BurnDownChartController extends Controller
         if (!$taskDone->isEmpty()) {
             //$doneTaskHours = 0;
             foreach ($taskDone as $task) {
+
                 $startDateTimeHours = strtotime($task->start_date)/ 3600; //hours
                 $endDateTimeHours = strtotime($task->end_date)/ 3600;
                 $startDateTime = $task->start_date;
-               
-                //$doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
-                
                 $currentDateHours = $currentDate->timestamp / 3600;
 
                 var_dump("Start: " . $startDateTimeHours . ", End: " . $endDateTimeHours . ", Current: " . $currentDateHours );
@@ -241,7 +228,6 @@ class BurnDownChartController extends Controller
             $dayDifTemp = $dayDifTemp + 1;
         }
 
-        //betulkan ni
         if ($countArray <= $dayDifTemp) {
 
             if($countArray == 2){
@@ -265,7 +251,7 @@ class BurnDownChartController extends Controller
         return $actualData;
     }
 
-    function getTimeZone($countryName) {
+    public function getTimeZone($countryName) {
         $countryTimezones = [
             'Afghanistan' => 'Asia/Kabul',
             'Albania' => 'Europe/Tirane',
