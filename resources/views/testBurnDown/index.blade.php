@@ -12,8 +12,10 @@
     </style>
 </head>
 <body>
+
     <div id="burnDownChart" style="width: 900px; height: 500px;"></div>
     <script>
+
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 

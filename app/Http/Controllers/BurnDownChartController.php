@@ -5,6 +5,7 @@ use App\Task;
 use App\Sprint;
 use App\Status;
 use Illuminate\Http\Request;
+use App\User;
 
 class BurnDownChartController extends Controller
 {
@@ -14,18 +15,12 @@ class BurnDownChartController extends Controller
         $tasks = Task::where('sprint_id', $sprint_id)->get(['start_date','end_date','status_id']);
         $sprint = Sprint::where("sprint_id", $sprint_id)->first();
         $statuses = Status::where('project_id', $proj_id)->get();
+        $user = \Auth::user();
+        $countryName = $user->country;
+        var_dump($countryName);
+
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
-        //$currentDate = now();
-        //buat error page kalau tak isi task lagi
-
-        //$actualData = array(144,144,144,); //panggil func cal actual line
-        //$actualData = [];
-
-        // $actualData =  $sprint->actualHoursPerDay ? json_decode($sprint->actualHoursPerDay, true) : [];
-        // $actualData =  $this->calculateIdealLine($start_date,$end_date,$actualData);
-        // $sprint->actualHoursPerDay = $actualData;
-        // $sprint->save();
 
         if ($this->isBeforeStartDate($start_date)) {
             $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
@@ -151,7 +146,6 @@ class BurnDownChartController extends Controller
 
     public function calculateTotalHoursWithinRange($startDateTime, $endDateTime) {
         // Calculate the difference in hours between start and end date
-        // $interval = $startDate->diff($endDate);
         $hoursWithinRange = $endDateTime - $startDateTime;
         
         return $hoursWithinRange;
@@ -169,13 +163,13 @@ class BurnDownChartController extends Controller
 
         if(empty($actualData)){
             //$actualData = [$totalHoursAssigned];
-            //
             $actualData[] = $dayZero;
             $actualData[] = $totalHoursAssigned;
             //$daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
         }
 
         $taskDone = collect(); // Initialize an empty collection
+        $taskNotDone = collect();
         
         foreach($tasks as $task){
 
@@ -184,6 +178,9 @@ class BurnDownChartController extends Controller
             
             if($statusTitle == "done"){
                 $taskDone->add($task); // Add the task to the collection
+            }
+            else{
+                $taskNotDone->add($task);;
             }
 
         }
@@ -194,20 +191,36 @@ class BurnDownChartController extends Controller
         if (!$taskDone->isEmpty()) {
             //$doneTaskHours = 0;
             foreach ($taskDone as $task) {
-                $startDateTime = strtotime($task->start_date)/ 3600;
-                $endDateTime = strtotime($task->end_date)/ 3600;
-                var_dump("Start: " . $startDateTime . ", End: " . $endDateTime);
-                $doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
+                $startDateTimeHours = strtotime($task->start_date)/ 3600; //hours
+                $endDateTimeHours = strtotime($task->end_date)/ 3600;
+                $startDateTime = $task->start_date;
+               
+                //$doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
+                
+                $currentDateHours = $currentDate->timestamp / 3600;
+
+                var_dump("Start: " . $startDateTimeHours . ", End: " . $endDateTimeHours . ", Current: " . $currentDateHours );
+
+                if($this->isBeforeStartDate($startDateTime)){
+                    $doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTimeHours, $endDateTimeHours);
+                    var_dump("Inside b4");
+                }else{
+                    $doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTimeHours, $currentDateHours);
+                    var_dump("Inside after");
+                }
             }
             
             // $daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
         } 
 
         var_dump("Calculated doneTaskHours: " . $doneTaskHours);
-
+        var_dump("Calculated totalHoursAssigned: " . $totalHoursAssigned);
         $totalHoursLeft = $totalHoursAssigned - $doneTaskHours;
         var_dump("Calculated totalHoursLeft: " . $totalHoursLeft);
 
+        if($taskNotDone->isEmpty()){
+            $totalHoursLeft = 0;
+        }
 
         $countArray = count($actualData);
         $lastArray = count($actualData) - 1;
@@ -246,5 +259,6 @@ class BurnDownChartController extends Controller
 
         return $actualData;
     }
+    
 
- }
+}

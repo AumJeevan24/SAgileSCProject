@@ -39,6 +39,11 @@ class User extends Authenticatable
         return $this->hasMany(Project::class);
     }
 
+    public function getCountryname()
+    {
+        return $this->country;
+    }
+
     // protected static function booted()
     // {
     //     static::created(function ($user) {
