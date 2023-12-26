@@ -124,3 +124,39 @@
     background: white;
     outline: none;
 }
+
+
+/* Add new styles for the updated task container */
+
+.task-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    color: black;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.task-title {
+    flex-grow: 1;
+    /* Allow the title to grow and take available space */
+}
+
+.task-container .delete-task-btn {
+    margin-left: 10px;
+    padding: 6px 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.task-container .delete-task-btn:hover {
+    background-color: #c0392b;
+}

@@ -42,7 +42,12 @@
                 </form>
 
                 @foreach ($taskList as $task)
-                <p class="task" draggable="true" data-task-id="{{ $task->id }}">{{ $task->title }}</p>
+                    <div class="task-container" draggable="true" data-task-id="{{ $task->id }}">
+                        <p class="task-title">
+                            {{ $task->title }}
+                        </p>
+                        <button type="button" class="delete-task-btn">X</button>
+                    </div>
                 @endforeach
             </div>
             @endforeach
@@ -143,9 +148,6 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             const addLaneBtn = document.getElementById("add-lane-btn");
-
-
-
             const renameBtns = document.querySelectorAll(".rename-btn");
             const deleteBtns = document.querySelectorAll(".delete-btn");
 
@@ -197,6 +199,47 @@
                         });
                 });
             });
+
+            document.querySelectorAll(".delete-task-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                const taskContainer = btn.closest(".task-container");
+                const taskId = taskContainer.dataset.taskId;
+
+                // Make an AJAX request to delete the task
+                fetch('{{ route("kanban.deleteTask") }}', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        taskId: taskId,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('After AJAX request to delete task');
+                    console.log(data);
+
+                    // Check if the deletion was successful before removing the task from the UI
+                    if (data.success) {
+                        taskContainer.remove();
+                        // Optionally, you can add a visual indication that the task has been deleted
+                        // For example, you can fade out the task element: taskContainer.style.opacity = 0;
+                    } else {
+                        console.error(data.error);
+                    }
+
+                    handleAjaxResponse(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+                e.stopPropagation(); // Prevent the drag and drop event from triggering
+            });
+        });
 
             const saveBtn = document.getElementById("save-btn");
 
@@ -421,7 +464,7 @@
     </script>
 
         <!-- Script for handling task click and fetching description -->
-        <script>
+        <!-- <script>
             document.querySelectorAll('.task').forEach(function (task) {
                 task.addEventListener('click', function () {
                     var taskId = task.getAttribute('data-task-id');
@@ -441,7 +484,7 @@
                         });
                 });
             });
-        </script>
+        </script> -->
 </body>
 
 </html>

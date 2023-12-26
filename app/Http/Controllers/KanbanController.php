@@ -153,34 +153,49 @@ class KanbanController extends Controller
     }
 
     public function storeTask(Request $request)
-{
-    $task = new Task();
-    $task->userstory_id = $request->userstory_id;
-    $task->title = $request->title;
-    $task->description = $request->description;
-    $task->user_name = $request->user_name;
-    $task->status_id = $request->status_id;
-    $task->start_date = $request->start_date;
-    $task->end_date = $request->end_date;
-    $task->proj_id = $request->sprintProjId;
-    $task->sprint_id = $request->sprint_id;
-    
-    // Save the task to the database
-    $task->save();
+    {
+        $task = new Task();
+        $task->userstory_id = $request->userstory_id;
+        $task->title = $request->title;
+        $task->description = $request->description;
+        $task->user_name = $request->user_name;
+        $task->status_id = $request->status_id;
+        $task->start_date = $request->start_date;
+        $task->end_date = $request->end_date;
+        $task->proj_id = $request->sprintProjId;
+        $task->sprint_id = $request->sprint_id;
+        
+        // Save the task to the database
+        $task->save();
 
-    // Redirect to kanban board
-    $sprint = Sprint::where('sprint_id', $request->sprint_id)->first();
-    $project = Project::where('id', $request->sprintProjId)->first();
-    $statuses = Status::where('project_id', $request->sprintProjId)->get();
-    $tasks = Task::where("proj_id", $request->sprintProjId)->where("sprint_id", $request->sprint_id)->get();
+        // Redirect to kanban board
+        $sprint = Sprint::where('sprint_id', $request->sprint_id)->first();
+        $project = Project::where('id', $request->sprintProjId)->first();
+        $statuses = Status::where('project_id', $request->sprintProjId)->get();
+        $tasks = Task::where("proj_id", $request->sprintProjId)->where("sprint_id", $request->sprint_id)->get();
 
-    // Group tasks by status id
-    $tasksByStatus = [];
-    foreach ($tasks as $task) {
-        $tasksByStatus[$task->status_id][] = $task;
+        // Group tasks by status id
+        $tasksByStatus = [];
+        foreach ($tasks as $task) {
+            $tasksByStatus[$task->status_id][] = $task;
+        }
+
+        return redirect()->route('sprint.kanbanPage', ['proj_id' => $request->sprintProjId, 'sprint_id' => $request->sprint_id]);
     }
 
-    return redirect()->route('sprint.kanbanPage', ['proj_id' => $request->sprintProjId, 'sprint_id' => $request->sprint_id]);
-}
+    // Delete a task
+    public function deleteTask(Request $request)
+    {
+        $taskId = $request->input('taskId');
+
+        try {
+            // Find and delete the task
+            Task::destroy($taskId);
+
+            return response()->json(['success' => true, 'message' => 'Task deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => 'Error deleting task'], 500);
+        }
+    }
 
 }
