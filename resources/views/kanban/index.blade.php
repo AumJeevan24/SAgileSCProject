@@ -34,8 +34,10 @@
                 <button type="button" class="delete-btn">Delete</button>
 
 
-                <form class="form">
-                    <input type="text" placeholder="New Task..." class="new-input" />
+                <form class="taskForm" action="{{ route('kanban.createTask') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="sprintId" value="{{ $sprint->sprint_id }}">
+                    <input type="hidden" name="statusId" class="status-id-input" value="{{ $status->id }}">
                     <button type="submit" class="new-submit-btn">Add +</button>
                 </form>
 
@@ -193,24 +195,6 @@
                         .catch(error => {
                             console.error('Error:', error);
                         });
-                });
-            });
-
-
-            const newSubmitBtns = document.querySelectorAll(".new-submit-btn");
-
-            newSubmitBtns.forEach((btn) => {
-                btn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    const lane = btn.closest(".swim-lane");
-                    const newInput = lane.querySelector(".new-input");
-                    const value = newInput.value;
-
-                    if (value.trim() !== "") {
-                        const newTask = createTaskElement(value);
-                        lane.appendChild(newTask);
-                        newInput.value = "";
-                    }
                 });
             });
 
