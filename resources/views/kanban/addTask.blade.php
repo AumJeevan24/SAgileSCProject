@@ -12,6 +12,9 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-image: url(images/kanbanAgile.jpg);
+            background-position: center;
+            background-size: cover;
         }
 
         form {
