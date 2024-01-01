@@ -186,19 +186,23 @@ class BurnDownChartController extends Controller
             //$doneTaskHours = 0;
             foreach ($taskDone as $task) {
 
-                $startDateTimeHours = strtotime($task->start_date)/ 3600; //hours
-                $endDateTimeHours = strtotime($task->end_date)/ 3600;
-                $startDateTime = $task->start_date;
+                $taskStartDateTimeHours = strtotime($task->start_date)/ 3600; //hours
+                $taskEndDateTimeHours = strtotime($task->end_date)/ 3600;
+                $taskStartDateTime = $task->start_date;
+                $taskEndDatetime = $task->end_date;
                 $currentDateHours = $currentDate->timestamp / 3600;
 
-                var_dump("Start: " . $startDateTimeHours . ", End: " . $endDateTimeHours . ", Current: " . $currentDateHours );
+                var_dump("Start: " . $taskStartDateTimeHours . ", End: " . $taskStartDateTimeHours . ", Current: " . $currentDateHours );
 
-                if($this->isBeforeStartDate($startDateTime)){
-                    $doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTimeHours, $endDateTimeHours);
-                    var_dump("Inside b4");
+                if($this->isBeforeStartDate($taskStartDateTime,$currentDate)){
+                    $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
+                    var_dump("Inside b4 start date");
+                }else if($this->isBeforeEndDate($taskEndDatetime,$currentDate)){
+                    $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $currentDateHours);
+                    var_dump("Inside b4 end date");
                 }else{
-                    $doneTaskHours += $this->calculateTotalHoursWithinRange($startDateTimeHours, $currentDateHours);
-                    var_dump("Inside after");
+                    $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
+                    var_dump("Inside after end date");
                 }
             }
             
