@@ -21,13 +21,13 @@
 
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
-                ['Day', 'Ideal Hours', 'Actual Hours'], // Add a third column for actual data
+                ['Day', 'Ideal Hours', 'Actual Hours', 'Hours Spent'], 
 
                 @foreach($idealData as $key => $value)
                 @if (!isset($actualData[$key]))
-                    [{{ $key }}, {{ $value }}, null],
+                    [{{ $key }}, {{ $value }}, null, null],
                 @else
-                    [{{ $key }}, {{ $value }}, {{ $actualData[$key] }}],
+                    [{{ $key }}, {{ $value }}, {{ $actualData[$key] }}, {{ $hoursSpent[$key] }}],
                 @endif
                 @endforeach
 
