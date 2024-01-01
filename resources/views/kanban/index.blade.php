@@ -34,13 +34,20 @@
                 <button type="button" class="delete-btn">Delete</button>
 
 
-                <form class="form">
-                    <input type="text" placeholder="New Task..." class="new-input" />
+                <form class="taskForm" action="{{ route('kanban.createTask') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="sprintId" value="{{ $sprint->sprint_id }}">
+                    <input type="hidden" name="statusId" class="status-id-input" value="{{ $status->id }}">
                     <button type="submit" class="new-submit-btn">Add +</button>
                 </form>
 
                 @foreach ($taskList as $task)
-                <p class="task" draggable="true" data-task-id="{{ $task->id }}">{{ $task->title }}</p>
+                    <div class="task-container" draggable="true" data-task-id="{{ $task->id }}">
+                        <p class="task-title">
+                            {{ $task->title }}
+                        </p>
+                        <button type="button" class="delete-task-btn">X</button>
+                    </div>
                 @endforeach
             </div>
             @endforeach
@@ -141,9 +148,6 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             const addLaneBtn = document.getElementById("add-lane-btn");
-
-
-
             const renameBtns = document.querySelectorAll(".rename-btn");
             const deleteBtns = document.querySelectorAll(".delete-btn");
 
@@ -196,23 +200,46 @@
                 });
             });
 
+            document.querySelectorAll(".delete-task-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                const taskContainer = btn.closest(".task-container");
+                const taskId = taskContainer.dataset.taskId;
 
-            const newSubmitBtns = document.querySelectorAll(".new-submit-btn");
+                // Make an AJAX request to delete the task
+                fetch('{{ route("kanban.deleteTask") }}', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        taskId: taskId,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('After AJAX request to delete task');
+                    console.log(data);
 
-            newSubmitBtns.forEach((btn) => {
-                btn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    const lane = btn.closest(".swim-lane");
-                    const newInput = lane.querySelector(".new-input");
-                    const value = newInput.value;
-
-                    if (value.trim() !== "") {
-                        const newTask = createTaskElement(value);
-                        lane.appendChild(newTask);
-                        newInput.value = "";
+                    // Check if the deletion was successful before removing the task from the UI
+                    if (data.success) {
+                        taskContainer.remove();
+                        // Optionally, you can add a visual indication that the task has been deleted
+                        // For example, you can fade out the task element: taskContainer.style.opacity = 0;
+                    } else {
+                        console.error(data.error);
                     }
+
+                    handleAjaxResponse(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                 });
+
+                e.stopPropagation(); // Prevent the drag and drop event from triggering
             });
+        });
 
             const saveBtn = document.getElementById("save-btn");
 
@@ -413,33 +440,6 @@
 
         //////////////////////////////////////////////////////////////////////
 
-        const draggables = document.querySelectorAll(".task");
-        const droppables = document.querySelectorAll(".swim-lane");
-
-        draggables.forEach((task) => {
-            task.addEventListener("dragstart", () => {
-                task.classList.add("is-dragging");
-            });
-            task.addEventListener("dragend", () => {
-                task.classList.remove("is-dragging");
-            });
-        });
-
-        droppables.forEach((zone) => {
-            zone.addEventListener("dragover", (e) => {
-                e.preventDefault();
-
-                const bottomTask = insertAboveTask(zone, e.clientY);
-                const curTask = document.querySelector(".is-dragging");
-
-                if (!bottomTask) {
-                    zone.appendChild(curTask);
-                } else {
-                    zone.insertBefore(curTask, bottomTask);
-                }
-            });
-        });
-
         const insertAboveTask = (zone, mouseY) => {
             const els = zone.querySelectorAll(".task:not(.is-dragging)");
 
@@ -464,7 +464,7 @@
     </script>
 
         <!-- Script for handling task click and fetching description -->
-        <script>
+        <!-- <script>
             document.querySelectorAll('.task').forEach(function (task) {
                 task.addEventListener('click', function () {
                     var taskId = task.getAttribute('data-task-id');
@@ -484,7 +484,7 @@
                         });
                 });
             });
-        </script>
+        </script> -->
 </body>
 
 </html>

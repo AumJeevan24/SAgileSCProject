@@ -20,7 +20,7 @@
     height: 100vh;
     overflow: scroll;
     /* background-image: url(https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80); */
-    background-image: url(images/Agile.jpg);
+    background-image: url(images/kanbanAgile.jpg);
     background-position: center;
     background-size: cover;
 }
@@ -123,4 +123,40 @@
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
     background: white;
     outline: none;
+}
+
+
+/* Add new styles for the updated task container */
+
+.task-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    color: black;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.task-title {
+    flex-grow: 1;
+    /* Allow the title to grow and take available space */
+}
+
+.task-container .delete-task-btn {
+    margin-left: 10px;
+    padding: 6px 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.task-container .delete-task-btn:hover {
+    background-color: #c0392b;
 }
