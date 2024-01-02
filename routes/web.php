@@ -266,6 +266,9 @@ Route::delete('/deleteStatus', 'KanbanController@deleteStatus')->name('kanban.de
 Route::post('/storeTask', 'KanbanController@storeTask')->name('kanban.storeTask');
 Route::post('/createTask', 'KanbanController@createTask')->name('kanban.createTask');
 Route::delete('/deleteTask', 'KanbanController@deleteTask')->name('kanban.deleteTask');
+Route::get('/updateTask/{taskId}', 'KanbanController@updateTaskPage')->name('kanban.updateTaskPage');
+Route::post('/updateTaskStore/{taskId}', 'KanbanController@updateTask')->name('kanban.updateTask');
+
 
 
 

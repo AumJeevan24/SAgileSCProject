@@ -199,4 +199,58 @@ class KanbanController extends Controller
         }
     }
 
+    // Update a task
+    public function updateTaskPage($taskId)
+    {
+        $task = Task::findOrFail($taskId);
+        $userList = User::all();
+        $status_id = $task->status_id;
+        $sprint_id = $task->sprint_id;
+        $sprintProjId = $task->proj_id;  // Add this line
+        $userStories = UserStory::where('sprint_id', $task->sprint_id)->get();
+
+        return view('kanban.updateTask', [
+            'task' => $task,
+            'userStories' => $userStories,
+            'userList' => $userList,
+            'status_id' => $status_id,
+            'sprint_id' => $sprint_id,
+            'sprintProjId' => $sprintProjId,  // Pass the $sprintProjId variable to the view
+        ]);
+    }
+
+    public function updateTask(Request $request, $taskId)
+{
+    $task = Task::findOrFail($taskId);
+
+    // Validate the request
+    $request->validate([
+        'title' => 'required',
+        'description' => 'nullable',
+        'order' => 'required|numeric',
+        'user_name' => 'required',
+        'userstory' => 'required',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+    ]);
+
+    // Update task details
+    $task->title = $request->input('title');
+    $task->description = $request->input('description');
+    $task->order = $request->input('order');
+    $task->user_name = $request->input('user_name');
+    $task->userstory_id = UserStory::where('user_story', $request->input('userstory'))->value('u_id');
+    $task->start_date = $request->input('start_date');
+    $task->end_date = $request->input('end_date');
+
+    // Save the updated task to the database
+    $task->save();
+
+    // Redirect to kanban board or any other desired page
+    return redirect()->route('sprint.kanbanPage', [
+        'proj_id' => $task->proj_id,
+        'sprint_id' => $task->sprint_id,
+    ])->with('success', 'Task updated successfully');
+}
+
 }

@@ -42,7 +42,7 @@
                 </form>
 
                 @foreach ($taskList as $task)
-                    <div class="task-container" draggable="true" data-task-id="{{ $task->id }}">
+                    <div class="task" draggable="true" data-task-id="{{ $task->id }}">
                         <p class="task-title">
                             {{ $task->title }}
                         </p>
@@ -202,7 +202,7 @@
 
             document.querySelectorAll(".delete-task-btn").forEach((btn) => {
             btn.addEventListener("click", (e) => {
-                const taskContainer = btn.closest(".task-container");
+                const taskContainer = btn.closest(".task");
                 const taskId = taskContainer.dataset.taskId;
 
                 // Make an AJAX request to delete the task
@@ -461,6 +461,14 @@
 
             return closestTask;
         };
+
+        document.querySelectorAll('.task').forEach(function (task) {
+            task.addEventListener('click', function () {
+                var taskId = task.getAttribute('data-task-id');
+                // Redirect to the updateTask page with the task ID
+                window.location.href = '{{ route("kanban.updateTaskPage", ["taskId" => ":taskId"]) }}'.replace(':taskId', taskId);
+            });
+        });
     </script>
 
         <!-- Script for handling task click and fetching description -->

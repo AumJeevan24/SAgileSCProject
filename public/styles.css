@@ -128,7 +128,7 @@
 
 /* Add new styles for the updated task container */
 
-.task-container {
+.task {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -146,7 +146,7 @@
     /* Allow the title to grow and take available space */
 }
 
-.task-container .delete-task-btn {
+.task .delete-task-btn {
     margin-left: 10px;
     padding: 6px 10px;
     background-color: #e74c3c;
@@ -157,6 +157,6 @@
     font-size: 12px;
 }
 
-.task-container .delete-task-btn:hover {
+.task .delete-task-btn:hover {
     background-color: #c0392b;
 }
