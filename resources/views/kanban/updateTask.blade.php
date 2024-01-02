@@ -98,7 +98,9 @@
                 <label for="userstory">User Story:</label>
                 <select name="userstory" required>
                     @foreach ($userStories as $userStory)
-                    <option value="{{ $userStory->user_story }}">{{ $userStory->user_story }}</option>
+                    <option value="{{ $userStory->user_story }}" {{ $userStory->u_id == $task->userstory_id ? 'selected' : '' }}>
+                        {{ $userStory->user_story }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -112,13 +114,18 @@
             <div style="width: 48%;">
                 <label for="start_date">Start Date:</label>
                 <input type="date" name="start_date" value="{{ $task->start_date }}" required>
+                <div class="error"><font color="red" size="2">{{ $errors->first('start_date') }}</p></font></div>
+                {{ $sprint->sprint_name }} Start Date: {{ date('d F Y', strtotime($sprint->start_sprint)) }}
             </div>
 
             <div style="width: 48%;">
                 <label for="end_date">End Date:</label>
                 <input type="date" name="end_date" value="{{ $task->end_date }}" required>
+                <div class="error"><font color="red" size="2">{{ $errors->first('end_date') }}</p></font></div>
+                {{ $sprint->sprint_name }} End Date: {{ date('d F Y', strtotime($sprint->end_sprint)) }}
             </div>
         </div>
+        <br>
 
         <button type="submit">Update Task</button>
     </form>

@@ -208,6 +208,7 @@ class KanbanController extends Controller
         $sprint_id = $task->sprint_id;
         $sprintProjId = $task->proj_id;  // Add this line
         $userStories = UserStory::where('sprint_id', $task->sprint_id)->get();
+        $sprint = Sprint::where('sprint_id', $sprint_id)->first();
 
         return view('kanban.updateTask', [
             'task' => $task,
@@ -215,7 +216,8 @@ class KanbanController extends Controller
             'userList' => $userList,
             'status_id' => $status_id,
             'sprint_id' => $sprint_id,
-            'sprintProjId' => $sprintProjId,  // Pass the $sprintProjId variable to the view
+            'sprintProjId' => $sprintProjId,  
+            'sprint' => $sprint
         ]);
     }
 
