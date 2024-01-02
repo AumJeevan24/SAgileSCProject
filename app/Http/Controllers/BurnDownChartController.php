@@ -19,6 +19,7 @@ class BurnDownChartController extends Controller
         $countryName = $user->country;
         //var_dump($countryName);
 
+        $sprintName = $sprint->sprint_name;
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
         $timezone = $this->getTimeZone($countryName);
@@ -39,7 +40,7 @@ class BurnDownChartController extends Controller
             var_dump($idealData);
             var_dump($actualData);
         
-            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent'),['start_date' => $start_date, 'end_date' => $end_date]);
+            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName'),['start_date' => $start_date, 'end_date' => $end_date]);
 
         }else if ($this->isBeforeEndDate($end_date, $currentDate)){
 
@@ -68,7 +69,7 @@ class BurnDownChartController extends Controller
             var_dump($actualData);
             var_dump($hoursSpent);
 
-            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent'),['start_date' => $start_date, 'end_date' => $end_date]);
+            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName'),['start_date' => $start_date, 'end_date' => $end_date]);
         }else{
 
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
@@ -91,7 +92,7 @@ class BurnDownChartController extends Controller
             var_dump($actualData);
             var_dump($hoursSpent);
 
-            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent'),['start_date' => $start_date, 'end_date' => $end_date]);
+            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName'),['start_date' => $start_date, 'end_date' => $end_date]);
         }
 
     }

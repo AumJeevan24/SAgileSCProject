@@ -35,7 +35,7 @@
             ]);
 
             var options = {
-                title: 'Burn Down Chart',
+                title: 'Burn Down Chart - {{ $sprintName }}',
                 titleTextStyle: { fontSize: 18 },
                 curveType: 'none',
                 legend: { position: 'bottom' },
