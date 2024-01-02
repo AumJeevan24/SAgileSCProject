@@ -17,12 +17,12 @@
     <div class="error"><font color="red" size="2">{{ $errors->first('sprint_desc') }}</p></font></div>
     <br>
 
-    Start Date :<input type="date" name="start_sprint" style="margin-left:2.6em" value="{{$sprint->start_sprint}}">
+    Start Date :<input type="date" name="start_sprint" style="margin-left:2.6em" value="{{$sprint->start_sprint}}"@if ($sprintStarted) disabled @endif>
     <div class="error"><font color="red" size="2">{{ $errors->first('start_sprint') }}</p></font></div>
     {{ $project->proj_name }} Start Date: {{ date('d F Y', strtotime($project->start_date)) }}
     <br><br><br>
 
-    Completion Date :<input type="date" name="end_sprint" style="margin-left:2.6em" value="{{$sprint->end_sprint}}">
+    Completion Date :<input type="date" name="end_sprint" style="margin-left:2.6em" value="{{$sprint->end_sprint}}"@if ($sprintStarted) disabled @endif>
     <div class="error"><font color="red" size="2">{{ $errors->first('end_sprint') }}</p></font></div>
     {{ $project->proj_name }} End Date: {{ date('d F Y', strtotime($project->end_date)) }}
     <br><br><br>

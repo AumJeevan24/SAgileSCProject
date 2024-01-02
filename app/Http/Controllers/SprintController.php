@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 use App\Sprint;
 use App\Project;
 use App\UserStory;
@@ -152,10 +153,16 @@ class SprintController extends Controller
         $sprint = Sprint::where('sprint_id', $sprint_id)->first();
         $project =Project::where('proj_name', $sprint->proj_name)->first();
 
+        // Check if the sprint has started
+        $currentDate = Carbon::now();
+        $startSprintDate = Carbon::parse($sprint->start_sprint);
+        $sprintStarted = $currentDate >= $startSprintDate;
+
         return view('sprint.edit')
             ->with('title', 'Edit '. $sprint->sprint_name . ' in '. $sprint->proj_name)
             ->with('project', $project)
-            ->with('sprint', $sprint);
+            ->with('sprint', $sprint)
+            ->with('sprintStarted', $sprintStarted);
     }
 
     public function update(Request $request, Sprint $sprint)
