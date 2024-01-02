@@ -56,7 +56,7 @@ class BurnDownChartController extends Controller
 
             $actualData =  $sprint->actualHoursPerDay ? json_decode($sprint->actualHoursPerDay, true) : [];
             $hoursSpent =  $sprint->hoursSpent ? json_decode($sprint->hoursSpent, true) : [];
-            $actualDataHoursSpent =  $this->calculateActualLine($start_date,$end_date,$actualData,$hoursSpent,$tasks,$statuses,$dayZero,$currentDate);
+            $actualDataHoursSpent =  $this->calculateActualLineHoursLine($start_date,$end_date,$actualData,$hoursSpent,$tasks,$statuses,$dayZero,$currentDate);
             $actualData =  $actualDataHoursSpent['actualData'];
             $hoursSpent = $actualDataHoursSpent['hoursSpent'];
             //$actualData =  $this->calculateActualLine($start_date,$end_date,$actualData,$tasks,$statuses,$dayZero,$currentDate);
@@ -159,7 +159,7 @@ class BurnDownChartController extends Controller
         return $hoursWithinRange;
     }
 
-    public function calculateActualLine($startDate, $endDate, $actualData, $hoursSpent, $tasks, $statuses,$dayZero,$currentDate)
+    public function calculateActualLineHoursLine($startDate, $endDate, $actualData, $hoursSpent, $tasks, $statuses,$dayZero,$currentDate)
     {
         $startDateTime = strtotime($startDate);
         $endDateTime = strtotime($endDate);
