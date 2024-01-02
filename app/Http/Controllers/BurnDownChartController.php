@@ -46,7 +46,7 @@ class BurnDownChartController extends Controller
 
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
 
-            if(empty($idealData)){
+            if(empty($idealData) || array_sum($idealData) == 0){
 
                 $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
                 $sprint->idealHoursPerDay = $idealData;
@@ -167,12 +167,12 @@ class BurnDownChartController extends Controller
         $daysDifferenceStartCurrent = floor((strtotime($currentDate) - $startDateTime) / (60 * 60 * 24));
         $totalHoursAssigned = $this ->calcTotalHoursAssigned($tasks);
 
-        if(empty($actualData) || empty($hoursSpent)){
+        if(empty($actualData) ||array_sum($actualData) == 0){
             //$actualData = [$totalHoursAssigned];
-            $actualData[] = $dayZero;
-            $actualData[] = $totalHoursAssigned;
-            $hoursSpent[] = 0;
-            $hoursSpent[] = 0;
+            $actualData[0] = $dayZero;
+            $actualData[1] = $totalHoursAssigned;
+            $hoursSpent[0] = 0;
+            $hoursSpent[1] = 0;
             //$daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
         }
 
