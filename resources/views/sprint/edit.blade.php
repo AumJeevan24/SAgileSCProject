@@ -17,6 +17,10 @@
     <div class="error"><font color="red" size="2">{{ $errors->first('sprint_desc') }}</p></font></div>
     <br>
 
+    @if ($sprintStarted)
+        <span style="color: red;">(Start date and end date cannot be changed once the sprint has started)</span><br><br>
+    @endif
+
     Start Date :<input type="date" name="start_sprint" style="margin-left:2.6em" value="{{$sprint->start_sprint}}"@if ($sprintStarted) readonly @endif>
     <div class="error"><font color="red" size="2">{{ $errors->first('start_sprint') }}</p></font></div>
     {{ $project->proj_name }} Start Date: {{ date('d F Y', strtotime($project->start_date)) }}
