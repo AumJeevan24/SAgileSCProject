@@ -58,8 +58,15 @@
 
     <div style="text-align: center;">
         <p style="font-size: larger;">
-            Start Date: <span style="color: blue;">{{ $start_date }}</span> || End Date: <span style="color: red;">{{ $end_date }}</span>
+            @if (array_sum($idealData) == 0)
+            <span style="color: red;">No tasks added !</span><br><br>
+            @else
+            @endif
+            
+            Start Date: <span style="color: blue;">{{ $start_date }}</span> || End Date: <span style="color: red;">{{ $end_date }}</span> 
+            
         </p>
+        
     </div>
 
 </body>
