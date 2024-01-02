@@ -155,7 +155,8 @@ class KanbanController extends Controller
     public function storeTask(Request $request)
     {
         $task = new Task();
-        $task->userstory_id = $request->userstory_id;
+        $tempUserStoryObj = UserStory::where('user_story', $request->userstory)->first();
+        $task->userstory_id = $tempUserStoryObj->u_id;
         $task->title = $request->title;
         $task->description = $request->description;
         $task->user_name = $request->user_name;

@@ -89,10 +89,10 @@
 
     <div style="display: flex; justify-content: space-between;">
         <div style="width: 48%;">
-            <label for="userstory_id">User Story ID:</label>
-            <select name="userstory_id" required>
+            <label for="userstory">User Story:</label>
+            <select name="userstory" required>
                 @foreach ($userStories as $userStory)
-                    <option value="{{ $userStory->u_id }}">{{ $userStory->u_id }}</option>
+                    <option value="{{ $userStory->user_story }}">{{ $userStory->user_story }}</option>
                 @endforeach
             </select>
         </div>
