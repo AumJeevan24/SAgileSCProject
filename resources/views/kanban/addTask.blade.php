@@ -111,13 +111,25 @@
             <div style="width: 48%;">
                 <label for="start_date">Start Date:</label>
                 <input type="date" name="start_date" required>
+                <div class="error">
+                    <font color="red" size="2">{{ $errors->first('start_date') }}</p>
+                    </font>
+                </div>
+                {{ $sprint->sprint_name }} Start Date: {{ date('d F Y', strtotime($sprint->start_sprint)) }}
             </div>
 
             <div style="width: 48%;">
                 <label for="end_date">End Date:</label>
                 <input type="date" name="end_date" required>
+                <div class="error">
+                    <font color="red" size="2">{{ $errors->first('end_date') }}</p>
+                    </font>
+                </div>
+                {{ $sprint->sprint_name }} End Date: {{ date('d F Y', strtotime($sprint->end_sprint)) }}
             </div>
         </div>
+
+        <br>
 
         <button type="submit">Submit</button>
 

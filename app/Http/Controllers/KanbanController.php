@@ -148,7 +148,8 @@ class KanbanController extends Controller
             'userList' => $userList,
             'sprint_id' => $sprintId,
             'status_id' => $statusId,
-            'sprintProjId' => $sprintProjId
+            'sprintProjId' => $sprintProjId,
+            'sprint' => $sprint
         ]);    
     }
 
