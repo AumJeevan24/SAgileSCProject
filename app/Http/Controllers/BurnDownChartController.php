@@ -115,15 +115,13 @@ class BurnDownChartController extends Controller
         $idealData = [];
         $start_date = strtotime($sprint->start_sprint);
         $end_date = strtotime($sprint->end_sprint);
-        $sprintDuration = max(1, ($end_date - $start_date) / (60 * 60 * 24)); // Avoid division by zero
+        $sprintDuration = max(1, ($end_date - $start_date) / (60 * 60 * 24)) + 1; // Avoid division by zero
 
         $idealHoursPerDay =  $totalHoursAssigned / $sprintDuration;
 
         $currentDate = $start_date;
 
         $idealData[] = $totalHoursAssigned;
-        $idealData[] = $totalHoursAssigned;
-
 
         for ($day = 1; $day < $sprintDuration +1; $day++) {
             $totalHoursAssigned -= $idealHoursPerDay;
@@ -211,24 +209,13 @@ class BurnDownChartController extends Controller
                 $taskEndDatetime = $task->end_date;
                 $currentDateHours = $currentDate->timestamp / 3600;
 
-                var_dump("Start: " . $taskStartDateTimeHours . ", End: " . $taskStartDateTimeHours . ", Current: " . $currentDateHours );
+                //var_dump("Start: " . $taskStartDateTimeHours . ", End: " . $taskStartDateTimeHours . ", Current: " . $currentDateHours );
+                
+                $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
+                $doneHoursSpent += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
 
-                if($this->isBeforeStartDate($taskStartDateTime,$currentDate)){
-                    $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
-                    $doneHoursSpent += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
-                    var_dump("Inside b4 start date");
-                }else if($this->isBeforeEndDate($taskEndDatetime,$currentDate)){
-                    $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $currentDateHours);
-                    $doneHoursSpent += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $currentDateHours);
-                    var_dump("Inside b4 end date");
-                }else{
-                    $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
-                    $doneHoursSpent += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $currentDateHours);
-                    var_dump("Inside after end date");
-                }
             }
             
-            // $daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
         } 
 
         // var_dump("Calculated doneTaskHours: " . $doneTaskHours);
@@ -247,9 +234,9 @@ class BurnDownChartController extends Controller
         $lastHours =  end($hoursSpent);
         //$daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 2;
         $fillArray =  abs($daysDifferenceStartCurrent - $countArray);
-        var_dump("countArray: " . $countArray);
-        var_dump("daysDifferenceStartCurrent: " . $daysDifferenceStartCurrent);
-        var_dump("fillArray: " . $fillArray);
+        // var_dump("countArray: " . $countArray);
+        // var_dump("daysDifferenceStartCurrent: " . $daysDifferenceStartCurrent);
+        // var_dump("fillArray: " . $fillArray);
 
         $dayDifTemp = $daysDifferenceStartCurrent;
 
@@ -263,17 +250,17 @@ class BurnDownChartController extends Controller
                 for ($i = 0; $i < $daysDifferenceStartCurrent -2; $i++) {
                     $actualData[] = $lastDay;
                     $hoursSpent[] = $lastHours;
-                    var_dump("inside countArray loop");
+                    // var_dump("inside countArray loop");
                 }
-                var_dump("inside countArray ");
+                // var_dump("inside countArray ");
             }
             else{
                 for ($i = 0; $i < $fillArray; $i++) {
                     $actualData[] = $lastDay;
                     $hoursSpent[] = $lastHours;
-                    var_dump("inside fillArray loop");
+                    // var_dump("inside fillArray loop");
                 }
-                var_dump("inside fillArray ");
+                // var_dump("inside fillArray ");
             }
 
         }
