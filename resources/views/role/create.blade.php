@@ -4,7 +4,7 @@
 
 @section('content')
 @include('inc.title')
-<br><br>
+<br><br> 
 
    <form action="{{route('roles.store')}}" method="post" enctype="multipart/form-data">
       @csrf
@@ -18,3 +18,5 @@
 
  <br><br>
 @endsection
+
+

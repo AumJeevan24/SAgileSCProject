@@ -1,93 +1,72 @@
-<!--Project Main Page-->
 @extends('layouts.app2')
+
 @include('inc.style')
-
 @include('inc.success')
-
 @include('inc.dashboard')
-
 @include('inc.navbar')
 
 @section('content')
+    @include('inc.title')
+    <br>
 
-@include('inc.title')
-<br>
+    <table>
+        <!-- Table Header -->
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Team</th>
+            <th>Delete</th>
+            <th>Backlog</th>
+            <th>Sprint</th>
+            <th>Forum</th>
+            <th>Defect Tracking</th>
+        </tr>
 
-<table>
+        <!-- Check if projects exist -->
+        @if ($pro->isEmpty())
+            <tr>
+                <td colspan="10">
+                    <h3>There are no projects yet:</h3>
 
-<tr>
-    <th>Title</th>
-    <th>Description</th>
-    <th>Start Date</th>
-    <th>End Date</th>
-    <th>Edit</th>
-    <th>Delete</th>
-    <th>Backlog</th>
-    <th>Sprint</th>
-    <th>Forum</th>
-    <th>Defect Tracking</th>
-</tr>
+                </td>
+            </tr>
+        @else
+            <!-- Loop through existing projects -->
+            @foreach($pro as $project)
+    <tr> 
+        <!-- Display project details -->
+        <td>{{ $project->proj_name }}</td>
+        <td>{{ $project->proj_desc }}</td>
+        <td>{{ date('d F Y', strtotime($project->start_date)) }}</td>
+        <td>{{ date('d F Y', strtotime($project->end_date)) }}</td>
+       <!-- Display team name -->
+<td><a href="{{ route('team.index') }}">{{ $project->team_name }}</a></td>
+<!-- Rest of the code remains the same -->
 
-@if ($pros->isEmpty())
-    <h3>There are no projects yet:</h3>
-    <p>Add a new team or assign yourself to a team in <b>Team</b></p>
-    
-@else
-
-@foreach($pros as $pro)
-
-      <tr> 
-          <th>
-                  {{ $pro->proj_name }}
-          </th>
-
-          <th>
-                  {{ $pro->proj_desc }}
-          </th>
-
-          <th>
-            {{ date('d F Y', strtotime($pro->start_date)) }}
-          </th>
-
-          <th>
-            {{ date('d F Y', strtotime($pro->end_date)) }}
-          </th>
-
-          <th>
-            <button type="submit"><a href="{{route('projects.edit', $pro)}}">Edit</a></button>
-          </th>
-
-          <th>
-            <button type="submit"><a href="{{route('projects.destroy', $pro)}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>
-          </th>
-
-          <th>
-            <button type="submit"><a href="{{route('backlog.index', $pro->id)}}">View</a></button>
-          </th>
-
-          <th>
-            <button type="submit"><a href="{{action('ProductFeatureController@index2', $pro['proj_name'])}}">View</button>
-        </th>
-
-        <th>
-          <button type="submit"><a href="{{action('ForumController@index')}}">View</button>
-      </th>
-      
-
-      <th>
-        <button type="submit"><a href="">View</a></button>
-    </th>
-    
-      </tr>
-
-
+        <!-- Edit link -->
+        <td><a href="{{ route('projects.edit', $project->id) }}">Edit</a></td>
+        <!-- Delete form -->
+        <td>
+            <form action="{{ route('projects.destroy', $project->id) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>
+            </form>
+        </td>
+        <!-- Links related to the project -->
+        <td><a href="{{ route('backlog.index', $project->id) }}">View</a></td>
+        <td><a href="{{ action('ProductFeatureController@index2', $project->proj_name) }}">View</a></td>
+        <td><a href="{{ action('ForumController@index') }}">View</a></td>
+        <td><a href="">View</a></td>
+    </tr>
 @endforeach
 
-@endif
+        @endif
+    </table>
+    <br><br><br>
 
-  </table>
-  <br><br><br>
-
-  {{-- <button type="submit"><a href="{{route('projects.create')}}">Add Project</a></button> --}}
-
+    <!-- Button to create a new project -->
+    <button type="submit"><a href="{{ route('projects.create') }}">Add Project</a></button>
 @endsection

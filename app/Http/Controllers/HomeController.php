@@ -30,6 +30,6 @@ class HomeController extends Controller
         $pro = \App\Project::whereIn('team_name', $teammapping)->get(); // use whereIn() to retrieve the projects that have a team_name value in the array
 
         return view('home')
-            ->with('pros', $pro);
+            ->with('pro', $pro);
     }
 }
