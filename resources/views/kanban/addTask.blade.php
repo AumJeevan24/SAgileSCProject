@@ -57,7 +57,6 @@
         background-color: #0056b3;
     }
     </style>
-    <title>Your Form</title>
 </head>
 
 <body>
