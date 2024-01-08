@@ -57,7 +57,7 @@ class ProductFeatureController extends Controller
         return view('profeature.index2')
             ->with('title', 'Sprints for ' . $proj_name)
             ->with('sprints', $sprint)
-            ->with('pros', $pro)
+            ->with('pro', $pro)
             ->with('projects', $project);
     }
 
