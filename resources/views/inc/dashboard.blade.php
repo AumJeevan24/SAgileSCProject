@@ -1,8 +1,8 @@
 @section('dashboard')
-    @foreach($pro as $pros)
+    @foreach($pros as $pro)
         <li>
-            <a href="{{ action('ProductFeatureController@index2', $pros['proj_name']) }}">
-                {{ $pros['proj_name'] }} 
+            <a href="{{ action('ProductFeatureController@index2', $pro['proj_name']) }}">
+                {{ $pro['proj_name'] }} 
             </a>
         </li>
     @endforeach    

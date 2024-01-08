@@ -29,7 +29,7 @@ class ProductFeatureController extends Controller
         $projects = Project::whereIn('team_name', $teammapping)->get();
         
         return view('profeature.index')
-            ->with('pro', $projects)
+            ->with('pros', $projects)
             ->with('title', 'Project');
     } else {
         $allProjects = $project->all(); // Fetch all projects if user not authenticated
@@ -57,7 +57,7 @@ class ProductFeatureController extends Controller
         return view('profeature.index2')
             ->with('title', 'Sprints for ' . $proj_name)
             ->with('sprints', $sprint)
-            ->with('pro', $pro)
+            ->with('pros', $pro)
             ->with('projects', $project);
     }
 

@@ -17,6 +17,7 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Team</th>
+            <th>Edit</th>
             <th>Delete</th>
             <th>Backlog</th>
             <th>Sprint</th>
@@ -25,7 +26,7 @@
         </tr>
 
         <!-- Check if projects exist -->
-        @if ($pro->isEmpty())
+        @if ($pros->isEmpty())
             <tr>
                 <td colspan="10">
                     <h3>There are no projects yet:</h3>
@@ -34,7 +35,7 @@
             </tr>
         @else
             <!-- Loop through existing projects -->
-            @foreach($pro as $project)
+            @foreach($pros as $project)
     <tr> 
         <!-- Display project details -->
         <td>{{ $project->proj_name }}</td>
