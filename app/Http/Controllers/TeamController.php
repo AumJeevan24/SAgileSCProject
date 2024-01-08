@@ -18,32 +18,19 @@ class TeamController extends Controller
 {
     public function index()
 {
-    $pro = []; // Initialize $pro
+    //Get the project where user's team name(s) is the same with project's team name
+    $user = \Auth::user();
+    $teammapping = \App\TeamMapping::where('username', '=', $user->username)->pluck('team_name')->toArray(); // use pluck() to retrieve an array of team names
+    $pro = \App\Project::whereIn('team_name', $teammapping)->get(); // use whereIn() to retrieve the projects that have a team_name value in the array
 
-    // Check if the user is authenticated
-    if (\Auth::check()) {
-        $user = \Auth::user();
 
-        // Get the team mappings where the user is a project manager
-        $teamMappings = TeamMapping::where('username', '=', $user->username)
-            ->where('role_name', '=', 'Project Manager')
-            ->pluck('team_name')
-            ->toArray();
+    $projects = \App\Project::where('team_name', '=', $user->team_name)->get();
 
-        // Fetch teams that the user is a project manager for
-        if (!empty($teamMappings)) {
-            $teams = Team::whereIn('team_name', $teamMappings)->get();
-        } else {
-            // No teams found for the user
-            $teams = collect(); // Empty collection to avoid 'Undefined variable' error
-        }
-    } else {
-        // User is not authenticated
-        $teams = collect(); // Empty collection to avoid 'Undefined variable' error
-    }
+    $team = new Team;
 
-    // Pass the fetched teams to the view
-    return view('team.index', compact('teams', 'pro'))->with('title', 'Team');
+    return view ('team.index', ['teams'=>$team->all(), 'projects'=>$projects->all()])
+        ->with('title', 'Team')
+        ->with('pros', $pro);
 }
 
     
