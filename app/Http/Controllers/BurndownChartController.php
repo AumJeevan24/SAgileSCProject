@@ -1,56 +1,35 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Task;
 
 use Illuminate\Http\Request;
-use App\Project;
-use App\Sprint;
-use App\Task;
-use App\Status;
 
-class BurndownChartController extends Controller
+class BurnDownChartController extends Controller
 {
-    public function indexBurnDownchart() 
+    public function index()
     {
-        $user = auth()->user();
-        $teammapping = \App\TeamMapping::where('username', $user->username)->pluck('team_name')->toArray();
-        $projects = \App\Project::whereIn('team_name', $teammapping)->get();
-        
-        return view('Burndownchart.Burndown')->with('pro', $projects);
+        // Dummy data for demonstration
+        $tasks = Task::orderBy('created_at')->get(['hours_assigned', 'hours_completed']);
+
+        $data = $this->calculateChartData($tasks);
+
+        return view('testBurnDown.index', compact('data'));
     }
 
-    public function viewBurndownchart($proj_id) 
+    private function calculateChartData($tasks)
     {
-        $tasks = Task::where('proj_id', $proj_id)->get();
-        $statuses = Status::where('project_id', $proj_id)->get();
+        $estimatedHours = $tasks->sum('hours_assigned');
 
-        $burndownData = $this->calculateBurndownData($tasks);
+        $actualHours = 0;
+        $data = [];
 
-        $project = Project::find($proj_id);
-
-        return view('Burndownchart.view')
-            ->with('tasks', $tasks)
-            ->with('project', $project)
-            ->with('statuses', $statuses)
-            ->with('burndownData', $burndownData);
-    }
-
-    private function calculateBurndownData($tasks)
-    {
-        $startDate = $tasks->min('start_date');
-        $endDate = $tasks->max('end_date');
-
-        $datesWithData = [];
-
-        for ($date = $startDate; $date <= $endDate; $date->addDay()) {
-            $tasksOnDate = $tasks->where('start_date', '<=', $date)
-                                ->where('end_date', '>=', $date);
-            $workload = $tasksOnDate->count();
-            $datesWithData[$date->format('Y-m-d')] = $workload;
+        foreach ($tasks as $task) {
+            $actualHours += $task['hours_completed'];
+            $remainingHours = $estimatedHours - $actualHours;
+            $data[] = $remainingHours;
         }
 
-        return $datesWithData;
+        return $data;
     }
-
-
 }
