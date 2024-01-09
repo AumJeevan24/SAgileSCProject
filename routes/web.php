@@ -62,6 +62,8 @@ Route::post('teams', 'TeamController@store')->name('teams.store');
 Route::post('teams/{team}', 'TeamController@update')->name('teams.update');
 Route::get('teams/{team}/destroy', 'TeamController@destroy')->name('teams.destroy');
 Route::get('teams','TeamController@search');
+Route::post('/send-invitation-email', 'TeamController@sendInvitationEmail')->name('send.invitation.email');
+
 
 //Route for Defect Feature
 Route::get('deffeature', 'DefectFeatureController@index')->name('deffeature.index');
@@ -99,7 +101,7 @@ Route::group(['middleware' => 'auth'], function () {
 // Route::get('statuses/{status}/destroy', 'StatusController@destroy')->name('statuses.destroy');
 
 //Route for role
-Route::get('role', 'RoleController@index')->name('role.index');
+Route::get('role', 'RoleController@index')->name('roles.index');
 Route::get('roles/create', 'RoleController@create')->name('roles.create');
 Route::get('roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
 Route::post('roles', 'RoleController@store')->name('roles.store');
@@ -194,8 +196,10 @@ Route::get('role', 'RoleController@index')->name('role.index');
 Route::get('roles/create', 'RoleController@create')->name('roles.create');
 Route::get('roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
 Route::post('roles', 'RoleController@store')->name('roles.store');
-Route::post('roles/{role}', 'RoleController@update')->name('roles.update');
+Route::patch('roles/{role}', 'RoleController@update')->name('roles.update');
 Route::get('roles/{role}/destroy', 'RoleController@destroy')->name('roles.destroy');
+Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
+
 
 //Route for Coding Standard
 Route::get('codestand', 'CodingStandardController@index')->name('codestand.index');

@@ -121,6 +121,7 @@ class SprintController extends Controller
                 ],
             ], $messages);
 
+
         //assign request values to new sprint 
         $sprint = new Sprint();
         $sprint->sprint_name = $request->sprint_name;
@@ -130,6 +131,7 @@ class SprintController extends Controller
         $sprint->end_sprint = $request->end_sprint;
 
         // Assign the username to the sprint
+
         // $sprint->users_name=$username;
         $id = \Auth::user()->getUsername();
         $sprint->users_name=$id;

@@ -20,22 +20,24 @@ class ProjectController extends Controller
 
     //not real index
     public function index()
-    {
-        $project = new Project;
-        if (\Auth::check())
-        {
-            $id = \Auth::user()->getId();
-            
+{
+    $projects = Project::all(); // Fetch all projects
+
+    $pro = []; // Define $pro as an empty array by default
+
+    if (\Auth::check()) {
+        $id = \Auth::user()->getId();
+        if ($id) {
+            $pro = Project::where('user_id', '=', $id)->get();
         }
-        if($id)
-        {
-            $pro = \App\Project::where('user_id', '=', $id)->get();
-            // $pro = \App\Project::where('id', '=', $id)->get();
-            return view('profeature.index',['projects'=>$project->all(), 'pros'=>$pro->all()]);
-        }
-      
-        return view('project.index')->with ('projects',$project->all());
     }
+
+    dd($projects, $pro);
+
+    return view('profeature.index', ['projects' => $projects, 'pro' => $pro]);
+}
+
+
 
 
     /**
@@ -44,14 +46,21 @@ class ProjectController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        $user = \Auth::user();
-        $project = new Project;
-        // $pro = new Project;
-        return view('project.create')
-            ->with ('projects',$project->all())
-            ->with('title', 'Create Project');
-    }
+{
+    $user = \Auth::user();
+    $project = new Project;
+    $teams = Team::all(); // Fetch all teams
+
+    // return view('project.create')
+    //     ->with('projects', $project->all())
+    //     ->with('title', 'Create Project')
+    //     ->with('teams', $teams); // Pass the teams to the view
+    //dd($teams); // or var_dump($teams); or Log::info($teams);
+
+
+    return view('project.create', ['teams' => $teams -> all() , 'projects' => $project->all(), 'title' => 'Create Project']);
+
+}
 
     /**
      * Store a newly created resource in storage.
@@ -60,46 +69,44 @@ class ProjectController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-       
-        $project =new Project();
-        $project->proj_name=$request->proj_name;
-        $project->proj_desc=$request->proj_desc;
-        $project->start_date=$request->start_date;
-        $project->end_date=$request->end_date; 
-        $project->team_name="a";
-        
-        $validation = $request->validate([
-            'proj_name' => 'required|unique:projects',
-            'proj_desc' => 'required',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after_or_equal:start_date'
-        ], [
-            'proj_name.required' => '*The Project Title is required',
-            'proj_name.unique' => '*There is already an existing project with the same name',
-            'proj_desc.required' => '*The Description is required',
-            'start_date.required' => '*The Start Date is required',
-            'end_date.required' => '*The Completion Date is required'
-        ]);
-        
+{
+    $validation = $request->validate([
+        'proj_name' => 'required|unique:projects',
+        'proj_desc' => 'required',
+        'start_date' => 'required|date|after_or_equal:today',
+        'end_date' => 'required|date|after_or_equal:start_date'
+    ], [
+        'proj_name.required' => '*The Project Title is required',
+        'proj_name.unique' => '*There is already an existing project with the same name',
+        'proj_desc.required' => '*The Description is required',
+        'start_date.required' => '*The Start Date is required',
+        'end_date.required' => '*The Completion Date is required'
+    ]);
 
-        $project->save();
-        // return redirect()->route('profeature.index')
-        //     ->with('success', 'Project has successfully been created! Assign this project in Team to start working on the project!');
+    //dd($request->team);
+     
+    $project = new Project();
+    $project->proj_name = $request->proj_name;
+    $project->proj_desc = $request->proj_desc;
+    $project->start_date = $request->start_date;
+    $project->end_date = $request->end_date; 
+    $project->team_name = $request-> team; 
 
-        // Retrieve the projects with team_name == null 
-        // $projects = Project::whereNull('team_name')->get();
-        $projects = Project::where('team_name', "a")->get();
-        //tukar a into null, kena tukar table team boleh accept null value utk team name
+    // if ($request->filled('team')) {
+    //     $project->team_name = $request->team;
+    //  } else //{
+    //     // Handle the case where team is not selected or set a default value
+    //     // For example:
+    //       $project->team_name = 'De fault Team';
+    // }
+    $project->save();
 
-        return redirect()->route('teams.create')
-            ->with('project', $projects->all())
-            ->with('current_project', $project->proj_name)
-            ->with('title', 'Create Team')
-            ->with('success', 'Project has successfully been created and listed in existing project(s)! Select this project for your team!');
-    
-    }
-    
+
+    return redirect()->route('profeature.index', ['Project' => $project])
+    ->with('success', 'Project has successfully been created!');
+}
+
+
 
     /**
      * Display the specified resource.
