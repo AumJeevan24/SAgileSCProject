@@ -1,10 +1,11 @@
-<!--Create User Story Page-->
+
 @extends('layouts.app2')
 @include('inc.style')
 @include('inc.navbar')
 
 @section('content')
 @include('inc.title')
+
 <br><br>
 <form action="{{route('userstory.store')}}" method="post" enctype="multipart/form-data">
     @csrf
