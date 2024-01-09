@@ -21,11 +21,6 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-<<<<<<< Updated upstream
-    .form-group {
-        margin-bottom: 20px;
-    }
-=======
     Assigned to :
     <select name="user_names[]" multiple>
         @foreach($teamlist as $teammember)
@@ -35,7 +30,6 @@
         @endforeach
     </select>
     <br><br>
->>>>>>> Stashed changes
 
     label {
         font-weight: bold;
