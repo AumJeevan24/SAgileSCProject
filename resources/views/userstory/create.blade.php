@@ -66,8 +66,8 @@
     Assigned to :
     <select name="user_names[]" multiple>
         @foreach($teamlist as $teammember)
-            <option value="{{ $teammember->username }}" {{ (old('user_names') && in_array($teammember->username, old('user_names')) ? "selected" : "") }}>
-                {{ $teammember->username }} (Team: {{ $team_name }})
+            <option value="{{ $teammember['username'] }}" {{ (old('user_names') && in_array($teammember['username'], old('user_names')) ? 'selected' : '') }}>
+                {{ $teammember['username'] }} (Team: {{ $teammember['team_name'] }})
             </option>
         @endforeach
     </select>

@@ -21,15 +21,9 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    Assigned to :
-    <select name="user_names[]" multiple>
-        @foreach($teamlist as $teammember)
-            <option value="{{ $teammember->username }}" {{ (old('user_names') && in_array($teammember->username, old('user_names')) ? "selected" : "") }}>
-                {{ $teammember->username }} (Team: {{ $team_name }})
-            </option>
-        @endforeach
-    </select>
-    <br><br>
+    .form-group {
+        margin-bottom: 20px;
+    }
 
     label {
         font-weight: bold;
@@ -90,13 +84,15 @@
         <div class="form-group" style="display: flex; justify-content: space-between;">
             <div style="width: 48%;">
                 <label for="user_name">Assigned to:</label>
-                <select name="user_name" id="user_name" class="form-control">
-                    <option value="" selected disabled>Select</option>
-                    @foreach($teamlist as $teammember)
-                    <option value="{{ $teammember->username }}" @if($task->user_name == $teammember->username) selected @endif>
-                        {{ $teammember->username }}</option>;
-                    @endforeach
-                </select>
+                Assigned to :
+                    <select name="user_names[]" multiple>
+                      @foreach($teamlist as $teammember)
+                          <option value="{{ $teammember['username'] }}" {{ (old('user_names') && in_array($teammember['username'], old('user_names')) ? 'selected' : '') }}>
+                              {{ $teammember['username'] }} (Team: {{ $teammember['team_name'] }})
+                          </option>
+                      @endforeach
+                    </select>
+                <br><br>
             </div>
 
             <div style="width: 48%;">

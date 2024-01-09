@@ -21,21 +21,13 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    Assigned to :
-    <select name="user_names[]" multiple>
-        @foreach($teamlist as $teammember)
-            <option value="{{ $teammember->username }}" {{ (old('user_names') && in_array($teammember->username, old('user_names')) ? "selected" : "") }}>
-                {{ $teammember->username }} (Team: {{ $team_name }})
-            </option>
-        @endforeach
-    </select>
-    <div class="error"><font color="red" size="2">{{ $errors->first('user_names') }}</font></div>
-    <br>
+    .form-group {
+        margin-bottom: 20px;
+    }
 
-    <div class="error"><font color="red" size="2">{{ $errors->first('user_names') }}</font></div>
-    <br>
-
-
+    label {
+        font-weight: bold;
+    }
 
     input[type="text"],
     input[type="date"],
@@ -107,14 +99,20 @@
 
                 <div style="width: 48%;">
                     <label for="user_name">Assigned to:</label>
-                    <select name="user_name" class="form-control">
-                        @foreach($teamlist as $teammember)
-                            <option value="{{ $teammember->username }}"
-                                    {{ ((isset($teammember->username) && $teammember->username == $teammember->username) ? "selected" : "") }}>
-                                {{ $teammember->username }}
-                            </option>
-                        @endforeach
+                    Assigned to :
+                    <select name="user_names[]" multiple>
+                      @foreach($teamlist as $teammember)
+                          <option value="{{ $teammember['username'] }}" {{ (old('user_names') && in_array($teammember['username'], old('user_names')) ? 'selected' : '') }}>
+                              {{ $teammember['username'] }} (Team: {{ $teammember['team_name'] }})
+                          </option>
+                      @endforeach
                     </select>
+
+                    <div class="error"><font color="red" size="2">{{ $errors->first('user_names') }}</font></div>
+                    <br>
+
+                    <div class="error"><font color="red" size="2">{{ $errors->first('user_names') }}</font></div>
+                    <br>
                     <div class="error">
                         <font color="red" size="2">{{ $errors->first('user_id') }}</p>
                         </font>
