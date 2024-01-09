@@ -21,9 +21,21 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
+<<<<<<< Updated upstream
     .form-group {
         margin-bottom: 20px;
     }
+=======
+    Assigned to :
+    <select name="user_names[]" multiple>
+        @foreach($teamlist as $teammember)
+            <option value="{{ $teammember->username }}" {{ (old('user_names') && in_array($teammember->username, old('user_names')) ? "selected" : "") }}>
+                {{ $teammember->username }} (Team: {{ $team_name }})
+            </option>
+        @endforeach
+    </select>
+    <br><br>
+>>>>>>> Stashed changes
 
     label {
         font-weight: bold;

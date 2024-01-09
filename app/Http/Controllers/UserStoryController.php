@@ -72,6 +72,8 @@ class UserStoryController extends Controller
         $project = Project::where('proj_name', $sprint->proj_name)->first();
         $team = Team::where('proj_name', $sprint->proj_name)->first();
         $roles = TeamMapping::where('team_name', $team->team_name)->distinct('role_name')->pluck('role_name');
+        // Get the proj_name from the project
+        $team_name = $project->team_name;
 
         //send the existing statuses for the project related   
         $status = Status::where('project_id', $project->id)->get();
@@ -79,6 +81,9 @@ class UserStoryController extends Controller
         $perfeature = new PerformanceFeature;
         $secfeatures = $secfeature->select('secfeature_name')->get();
         $perfeatures = $perfeature->select('perfeature_name')->get();
+
+        //get the list of team members for the team
+        $teamlist = TeamMapping::where('team_name', $team->team_name)->get();
         
         //get related sprint with the user story
         $sprint = Sprint::where('sprint_id', $sprint_id)->first();
@@ -87,6 +92,8 @@ class UserStoryController extends Controller
             ->with('title', 'Create User Story for '. $sprint->sprint_name)
             ->with('sprint_id', $sprint_id)
             ->with('statuses', $status)
+            ->with('teamlist', $teamlist)
+            ->with('team_name', $team_name)
             ->with('roles', $roles);
 
     }
@@ -130,6 +137,9 @@ class UserStoryController extends Controller
 
         // Assign means value
         $userstory->means = $request->means;
+
+        $userstory->user_names = json_encode($request->user_names);
+
 
         // Assign prio_story value 0: Temporary Fix
         $userstory->prio_story = 0;
@@ -180,6 +190,15 @@ class UserStoryController extends Controller
 
         //send the existing statuses for the project related   
         $status = Status::where('project_id', $project->id)->get();
+
+        //get the team for the project
+        $team = Team::where('proj_name', $project->proj_name)->first();
+
+        //get the list of team members for the team
+        $teamlist = TeamMapping::where('team_name', $team->team_name)->get();
+
+        // Get the proj_name from the project
+        $team_name = $project->team_name;
         
         $secfeature = new SecurityFeature;
         $perfeature = new PerformanceFeature;
@@ -191,6 +210,8 @@ class UserStoryController extends Controller
         return view('userstory.edit',['secfeatures'=>$secfeature->all(), 'perfeatures'=>$perfeature->all()])
             ->with('title', 'Edit Userstory - "' . $userstory->user_story . '" in '. $sprint->sprint_name)    
             ->with('userstory', $userstory)
+            ->with('teamlist', $teamlist)
+            ->with('team_name', $team_name)
             ->with('statuses', $status);
     }
 
@@ -223,6 +244,8 @@ class UserStoryController extends Controller
 
         $userstory->perfeature_id = $str_perfeatures;
         $userstory->secfeature_id = $str_secfeatures;
+
+        $userstory->user_names = json_encode($request->user_names);
         
 
         //redirect to index3 page

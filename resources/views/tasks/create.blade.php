@@ -21,6 +21,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
+<<<<<<< Updated upstream
     .form-group {
         margin-bottom: 20px;
     }
@@ -28,6 +29,23 @@
     label {
         font-weight: bold;
     }
+=======
+    Assigned to :
+    <select name="user_names[]" multiple>
+        @foreach($teamlist as $teammember)
+            <option value="{{ $teammember->username }}" {{ (old('user_names') && in_array($teammember->username, old('user_names')) ? "selected" : "") }}>
+                {{ $teammember->username }} (Team: {{ $team_name }})
+            </option>
+        @endforeach
+    </select>
+    <div class="error"><font color="red" size="2">{{ $errors->first('user_names') }}</font></div>
+    <br>
+
+    <div class="error"><font color="red" size="2">{{ $errors->first('user_names') }}</font></div>
+    <br>
+
+
+>>>>>>> Stashed changes
 
     input[type="text"],
     input[type="date"],

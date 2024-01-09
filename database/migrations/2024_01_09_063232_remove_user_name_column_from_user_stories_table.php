@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RemoveProjNameFromTeamsTable extends Migration
+class RemoveUserNameColumnFromUserStoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,11 @@ class RemoveProjNameFromTeamsTable extends Migration
      * @return void
      */
     public function up()
-{
-    Schema::table('teams', function (Blueprint $table) {
-        $table->dropColumn('proj_name');
-    });
-}
+    {
+        Schema::table('user_stories', function (Blueprint $table) {
+            $table->dropColumn('user_name');
+        });
+    }
 
 
     /**
@@ -26,8 +26,9 @@ class RemoveProjNameFromTeamsTable extends Migration
      */
     public function down()
     {
-        Schema::table('teams', function (Blueprint $table) {
-            //
+        Schema::table('user_stories', function (Blueprint $table) {
+            $table->string('user_name');
         });
     }
+
 }

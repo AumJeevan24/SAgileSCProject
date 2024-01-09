@@ -131,11 +131,14 @@ class TaskController extends Controller
         $sprint = Sprint::where('sprint_id', $userstory->sprint_id)->first();
         $project = Project::where('proj_name', $sprint->proj_name)->first();
 
-        //get the team for the project
+        //get the team for the project //tukar get kalau nak ambik semua
         $team = Team::where('proj_name', $project->proj_name)->first();
 
-        //get the list of team members for the team
+        //get the list of team members for the team //for each team
         $teamlist = TeamMapping::where('team_name', $team->team_name)->get();
+
+        // Get the proj_name from the project
+        $team_name = $project->team_name;
         
         //send the existing statuses for the project related   
         $status = Status::where('project_id', $project->id)->get();
@@ -145,6 +148,7 @@ class TaskController extends Controller
         ->with('statuses', $status)
         ->with('teamlist', $teamlist)
         ->with('sprint', $sprint)
+        ->with('team_name', $team_name)
         ->with('userstory_id', $userstory_id);
     }
 
@@ -191,7 +195,7 @@ class TaskController extends Controller
         $task->userstory_id = $request->userstory_id;
         $task->title = $request->title;
         $task->description = $request->description;
-        $task->user_name = $request->user_name;
+        $task->user_names = json_encode($request->user_names);
         $task->status_id = $request->status_id;
         $task->start_date = $request->start_date;
         $task->end_date = $request->end_date;
@@ -254,6 +258,9 @@ class TaskController extends Controller
 
         //get the list of team members for the team
         $teamlist = TeamMapping::where('team_name', $team->team_name)->get();
+
+        // Get the proj_name from the project
+        $team_name = $project->team_name;
         
         //send the existing statuses for the project related   
         $status = Status::where('project_id', $project->id)->get();
@@ -264,6 +271,7 @@ class TaskController extends Controller
             ->with('sprint', $sprint)
             ->with('statuses', $status)
             ->with('teamlist', $teamlist)
+            ->with('team_name', $team_name)
             ->with('task', $task);
     }
 
@@ -300,7 +308,7 @@ class TaskController extends Controller
 
         $task->title = $request->title;
         $task->description = $request->description;
-        $task->user_name = $request->user_name;
+        $task->user_names = json_encode($request->user_names);
         $task->status_id = $request->status_id;
         $task->start_date = $request->start_date;
         $task->end_date = $request->end_date;
