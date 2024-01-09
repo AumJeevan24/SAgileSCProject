@@ -79,7 +79,7 @@
 
             <div style="width: 48%;">
                 <label for="user_name">User Name:</label>
-                <select name="user_name" required>
+                <select name="user_name[]" multiple required>
                     @foreach ($userList as $user)
                     <option value="{{ $user->name }}" {{ $user->name == $task->user_name ? 'selected' : '' }}>
                         {{ $user->name }}

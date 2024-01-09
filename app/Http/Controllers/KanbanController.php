@@ -155,12 +155,24 @@ class KanbanController extends Controller
 
     public function storeTask(Request $request)
     {
+
+        $request->validate([
+            //validate for existing task names
+            'title' => 'required|unique:tasks,title,NULL,id,userstory_id,'.$request->userstory_id,
+            'description' => 'required',
+
+        ], [
+            'title.required' => '*The Task Name is required',
+            'title.unique' => '*There is already an existing task in the userstory with the same name',
+            'description.required' => '*The Description is required',
+        ]);
+
         $task = new Task();
         $tempUserStoryObj = UserStory::where('user_story', $request->userstory)->first();
         $task->userstory_id = $tempUserStoryObj->u_id;
         $task->title = $request->title;
         $task->description = $request->description;
-        $task->user_name = $request->user_name;
+        $task->user_names = json_encode($request->user_name);
         $task->status_id = $request->status_id;
         $task->start_date = $request->start_date;
         $task->end_date = $request->end_date;
@@ -241,7 +253,7 @@ class KanbanController extends Controller
     $task->title = $request->input('title');
     $task->description = $request->input('description');
     $task->order = $request->input('order');
-    $task->user_name = $request->input('user_name');
+    $task->user_names = json_encode($request->user_name);
     $task->userstory_id = UserStory::where('user_story', $request->input('userstory'))->value('u_id');
     $task->start_date = $request->input('start_date');
     $task->end_date = $request->input('end_date');
