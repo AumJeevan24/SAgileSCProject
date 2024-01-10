@@ -74,7 +74,7 @@ class UserStoryController extends Controller
         // $roles = TeamMapping::where('team_name', $team->team_name)->distinct('role_name')->pluck('role_name');
         // Get the proj_name from the project
         // $team_name = $project->team_name;
-        $teams = Team::where('proj_name', $sprint->proj_name)->get(); // Get the collection of teams
+        $teams = Project::where('proj_name', $sprint->proj_name)->get(); // Get the collection of teams
 
         $userTeams = [];
         $roles = [];
@@ -100,6 +100,8 @@ class UserStoryController extends Controller
         }
 
         $roles = array_unique($roles);
+        // var_dump($userTeams);
+        // var_dump($roles);
 
         
 
@@ -220,7 +222,7 @@ class UserStoryController extends Controller
         $status = Status::where('project_id', $project->id)->get();
 
         //get the team for the project
-        $team = Team::where('proj_name', $project->proj_name)->get();
+        $team = Project::where('proj_name', $project->proj_name)->get();
 
         //get the list of team members for the team
         //$teamlist = TeamMapping::where('team_name', $team->team_name)->get();

@@ -84,7 +84,7 @@ class ProjectController extends Controller
     ]);
 
     //dd($request->team);
-     
+    
     $project = new Project();
     $project->proj_name = $request->proj_name;
     $project->proj_desc = $request->proj_desc;

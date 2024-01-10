@@ -132,7 +132,7 @@ class TaskController extends Controller
         $project = Project::where('proj_name', $sprint->proj_name)->first();
 
         //get the team for the project //tukar get kalau nak ambik semua
-        $team = Team::where('proj_name', $project->proj_name)->get();
+        $team = Project::where('proj_name', $project->proj_name)->get();
 
         //get the list of team members for the team //for each team
         //$teamlist = TeamMapping::where('team_name', $team->team_name)->get();
@@ -273,13 +273,34 @@ class TaskController extends Controller
         $project = Project::where('id', $task->proj_id)->first();
 
         //get the team for the project
-        $team = Team::where('proj_name', $project->proj_name)->first();
+        $team = Project::where('proj_name', $project->proj_name)->get();
 
         //get the list of team members for the team
-        $teamlist = TeamMapping::where('team_name', $team->team_name)->get();
+        //$teamlist = TeamMapping::where('team_name', $team->team_name)->get();
 
         // Get the proj_name from the project
-        $team_name = $project->team_name;
+        //$team_name = $project->team_name;
+
+        $userTeams = [];
+
+        // Iterate through each team
+        foreach ($team as $teamItem) {
+            // Get the list of team members for the current team
+            $teamlist = TeamMapping::where('team_name', $teamItem->team_name)->get();
+
+            // Now $teamlist contains the team members for the current team
+            foreach ($teamlist as $teammember) {
+                // Access individual team member properties like $teammember->username
+                // Do something with each team member
+
+                // Save username and team_name in a 2D array
+                $userTeams[] = [
+                    'username' => $teammember->username,
+                    'team_name' => $teamItem->team_name,
+                ];
+            }
+        }
+
         
         //send the existing statuses for the project related   
         $status = Status::where('project_id', $project->id)->get();
@@ -289,8 +310,7 @@ class TaskController extends Controller
             ->with('project', $project)
             ->with('sprint', $sprint)
             ->with('statuses', $status)
-            ->with('teamlist', $teamlist)
-            ->with('team_name', $team_name)
+            ->with('teamlist', $userTeams)
             ->with('task', $task);
     }
 
