@@ -111,7 +111,7 @@ class UserStoryController extends Controller
         $perfeatures = $perfeature->select('perfeature_name')->get();
 
         //get the list of team members for the team
-        $teamlist = TeamMapping::where('team_name', $team->team_name)->get();
+        //$teamlist = TeamMapping::where('team_name', $team->team_name)->get();
         
         //get related sprint with the user story
         $sprint = Sprint::where('sprint_id', $sprint_id)->first();
