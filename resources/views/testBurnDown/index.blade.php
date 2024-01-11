@@ -1,3 +1,5 @@
+@include('inc.style')
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,6 +69,36 @@
             
         </p>
         
+    </div>
+
+    <div>
+        <h2>Tasks</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($tasks as $task)
+                <tr>
+                    <td>{{ $task->id }}</td>
+                    <td>{{ $task->title }}</td>
+                    <td>{{ $task->description }}</td>
+                    <td>
+                        <?php
+                            $status = $statuses->firstWhere('id', $task->status_id);
+                        ?>
+    
+                        {{ $status->title }}
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
 </body>

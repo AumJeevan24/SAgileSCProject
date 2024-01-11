@@ -12,12 +12,20 @@ class BurnDownChartController extends Controller
     public function index($proj_id, $sprint_id)
     {
         
-        $tasks = Task::where('sprint_id', $sprint_id)->get(['start_date','end_date','status_id']);
+        $tasks = Task::where('sprint_id', $sprint_id)->get(['start_date','end_date','status_id','id','title','description']);
         $sprint = Sprint::where("sprint_id", $sprint_id)->first();
-        $statuses = Status::where('project_id', $proj_id)->get();
+        //get the status that is related to the project
+        $statuses = Status::whereIn('project_id', [$proj_id])->get();
         $user = \Auth::user();
         $countryName = $user->country;
         //var_dump($countryName);
+
+        // Fetch all tasks for the sprint
+        $allTasks = Task::where('sprint_id', $sprint_id)->get(['start_date', 'end_date', 'status_id']);
+
+        
+        // Calculate the total number of tasks at the start of the sprint
+        $totalTasksAtStart = $allTasks->count();
 
         $sprintName = $sprint->sprint_name;
         $start_date = $sprint->start_sprint;
@@ -28,6 +36,9 @@ class BurnDownChartController extends Controller
 
         if ($this->isBeforeStartDate($start_date, $currentDate)) {
 
+            // Update tasks when before the start date
+            $taskUpdate = $this->updateTask($tasks); // Get the task updates here
+
             $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
             $sprint->idealHoursPerDay = $idealData;
             $sprint->save();
@@ -35,14 +46,18 @@ class BurnDownChartController extends Controller
             //$actualDataHoursSpent = array($this->calcTotalHoursAssigned($tasks));
             $actualData = array($this->calcTotalHoursAssigned($tasks));
             $hoursSpent = array_fill(0, count($idealData), 0);
+
             
 
             // var_dump($idealData);
             // var_dump($actualData);
         
-            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName'),['start_date' => $start_date, 'end_date' => $end_date]);
+            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName','$totalTasksAtStart','tasks', 'statuses'),['start_date' => $start_date, 'end_date' => $end_date]);
 
         }else if ($this->isBeforeEndDate($end_date, $currentDate)){
+
+            // Update tasks when before the end date
+            $taskUpdate = $this->updateTask($tasks); // Get the task updates here
 
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
 
@@ -69,7 +84,7 @@ class BurnDownChartController extends Controller
             // var_dump($actualData);
             // var_dump($hoursSpent);
 
-            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName'),['start_date' => $start_date, 'end_date' => $end_date]);
+            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName','tasks', 'statuses'),['start_date' => $start_date, 'end_date' => $end_date]);
         }else{
 
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
@@ -92,10 +107,97 @@ class BurnDownChartController extends Controller
             // var_dump($actualData);
             // var_dump($hoursSpent);
 
-            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName'),['start_date' => $start_date, 'end_date' => $end_date]);
+            // Update tasks for other conditions
+            $this->updateTask($tasks); // Call the updateTask function here
+
+            return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName','tasks', 'statuses'),['start_date' => $start_date, 'end_date' => $end_date]);
         }
 
     }
+
+    public function detectChanges()
+    {
+        try {
+            $currentDate = now(); // Get the current date and time
+            $doneStatusId = 2; // Replace with the ID of the 'Done' status
+            $changeWindow = 1; // Change detection window in minutes
+    
+            // Fetch tasks that either changed their status to 'Done' or were created within the last minute
+            $tasksChanged = Task::where(function ($query) use ($doneStatusId, $currentDate, $changeWindow) {
+                $query->where('status_id', $doneStatusId)
+                    ->where('updated_at', '>=', $currentDate->subMinutes($changeWindow));
+            })->orWhere(function ($query) use ($currentDate, $changeWindow) {
+                $query->where('created_at', '>=', $currentDate->subMinutes($changeWindow));
+            })->get();
+    
+            foreach ($tasksChanged as $task) {
+                $action = null;
+    
+                if ($task->created_at >= $currentDate->subMinutes($changeWindow)) {
+                    $action = 'created';
+                } elseif ($task->status_id === $doneStatusId) {
+                    $action = 'status_changed_to_done';
+                } else {
+                    // Add more conditions or actions as needed
+                    $action = 'other_change_detected';
+                }
+    
+                $existingTaskUpdates = DB::table('sprint')
+                    ->where('sprint_id', $task->sprint_id)
+                    ->value('taskUpdates');
+    
+                $taskUpdate = [
+                    'task_id' => $task->id,
+                    'action' => $action,
+                    'created_at' => now(),
+                ];
+    
+                $taskUpdates = $existingTaskUpdates
+                    ? json_decode($existingTaskUpdates, true)
+                    : [];
+    
+                $taskUpdates[] = $taskUpdate;
+    
+                DB::table('sprint')
+                    ->where('sprint_id', $task->sprint_id)
+                    ->update([
+                        'taskUpdates' => json_encode($taskUpdates),
+                        'updated_at' => now()
+                    ]);
+            }
+    
+            return $tasksChanged;
+        } catch (\Exception $e) {
+            // Handle exceptions or errors
+            \Log::error('Error in detectChanges: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function updateTask($tasks)
+    {
+        $updatedTasks = [];
+
+        // Logic to update each task or retrieve necessary information for tooltips
+        foreach ($tasks as $task) {
+            // Example: Update task status or perform any required calculations for tooltips
+            // Replace this with your actual update logic
+            $task->status_id = 2; // Updating status to 2 as an example
+            $task->save();
+
+            // Prepare the necessary information for the tooltip
+            $updatedTasks[$task->id] = [
+                'id' => $task->id,
+                'status' => $task->status_id,
+                // Add other relevant task information for tooltips
+            ];
+        }
+
+        return $updatedTasks;
+    }
+
+
+        
 
     public function isBeforeStartDate($startDate, $currentDate)
     {
