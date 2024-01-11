@@ -100,14 +100,6 @@ class KanbanController extends Controller
             foreach ($positions as $position) {
                 $task = Task::find($position['taskId']);
                 $task->status_id = $position['statusId'];
-
-                $statusTemp = Status::where('id', $task->status_id)->first();
-                $statusTempName = $statusTemp->slug;
-
-                if ($statusTempName == "done") {
-                    $task->completion_date = now();
-                }
-
                 $task->order = $position['position'];
                 $task->save();
             }
