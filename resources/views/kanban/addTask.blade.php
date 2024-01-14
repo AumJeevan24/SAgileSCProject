@@ -61,7 +61,7 @@
 
 <body>
 
-    <form id="addTaskForm" action="{{route('kanban.storeTask')}}" method="post">
+    <form id="addTaskForm" action="{{ route('tasks.store') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <label for="title">Title:</label>
@@ -88,12 +88,19 @@
 
         <input type="hidden" name="status_id" value="{{ $status_id }}">
 
+        @php
+            $userStoryID = 0;
+        @endphp
+
         <div style="display: flex; justify-content: space-between;">
             <div style="width: 48%;">
                 <label for="userstory">User Story:</label>
                 <select name="userstory" required>
                     @foreach ($userStories as $userStory)
                     <option value="{{ $userStory->user_story }}">{{ $userStory->user_story }}</option>
+                    @php
+                        $userStoryID = $userStory->u_id;
+                    @endphp
                     @endforeach
                 </select>
             </div>
@@ -104,6 +111,9 @@
         </div>
 
         <input type="hidden" name="sprintProjId" value="{{ $sprintProjId }}">
+        <input type="hidden" name="isKanban" value="1">
+        <input type="hidden" name="userstory_id" value="{{ $userStory -> u_id }}">
+
 
 
         <div style="display: flex; justify-content: space-between;">

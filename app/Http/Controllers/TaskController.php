@@ -183,7 +183,13 @@ class TaskController extends Controller
         $userstory = UserStory::where('u_id', $request->userstory_id)->first();
 
         //get the project and sprint related to the task 
-        $sprint = Sprint::where('sprint_id', $userstory->sprint_id)->first();
+
+        if ($request->isKanban == "1") {
+            $sprint = Sprint::where('sprint_id', $request->sprint_id)->first();
+        } else {
+            $sprint = Sprint::where('sprint_id', $userstory->sprint_id)->first(); 
+        }
+
         $project = Project::where('proj_name', $sprint->proj_name)->first();
 
         //validate the request
@@ -229,15 +235,18 @@ class TaskController extends Controller
         $pro = \App\Project::whereIn('team_name', $teammapping)->get(); // use whereIn() to retrieve the projects that have a team_name value in the array
         $statuses = Status::all();
 
-        return redirect()->route('tasks.index', ['u_id' => $userstory->u_id])
+        if ($request->isKanban == "1") {
+            return redirect()->route('sprint.kanbanPage', ['proj_id' => $request->sprintProjId, 'sprint_id' => $request->sprint_id]);
+        } else {
+            return redirect()->route('tasks.index', ['u_id' => $userstory->u_id])
             ->with('title', 'Tasks for ' . $userstory->user_story)
             ->with('success', 'Task has successfully been created!')
             ->with('task', $tasks)
             ->with('statuses', $statuses)
             ->with('userstory_id', $userstory->u_id)
             ->with('pros', $pro);
+        }
     }
-
 
     public function sync(Request $request)
     {

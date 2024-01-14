@@ -153,50 +153,6 @@ class KanbanController extends Controller
         ]);    
     }
 
-    public function storeTask(Request $request)
-    {
-
-        $request->validate([
-            //validate for existing task names
-            'title' => 'required|unique:tasks,title,NULL,id,userstory_id,'.$request->userstory_id,
-            'description' => 'required',
-
-        ], [
-            'title.required' => '*The Task Name is required',
-            'title.unique' => '*There is already an existing task in the userstory with the same name',
-            'description.required' => '*The Description is required',
-        ]);
-
-        $task = new Task();
-        $tempUserStoryObj = UserStory::where('user_story', $request->userstory)->first();
-        $task->userstory_id = $tempUserStoryObj->u_id;
-        $task->title = $request->title;
-        $task->description = $request->description;
-        $task->user_names = json_encode($request->user_name);
-        $task->status_id = $request->status_id;
-        $task->start_date = $request->start_date;
-        $task->end_date = $request->end_date;
-        $task->proj_id = $request->sprintProjId;
-        $task->sprint_id = $request->sprint_id;
-        
-        // Save the task to the database
-        $task->save();
-
-        // Redirect to kanban board
-        $sprint = Sprint::where('sprint_id', $request->sprint_id)->first();
-        $project = Project::where('id', $request->sprintProjId)->first();
-        $statuses = Status::where('project_id', $request->sprintProjId)->get();
-        $tasks = Task::where("proj_id", $request->sprintProjId)->where("sprint_id", $request->sprint_id)->get();
-
-        // Group tasks by status id
-        $tasksByStatus = [];
-        foreach ($tasks as $task) {
-            $tasksByStatus[$task->status_id][] = $task;
-        }
-
-        return redirect()->route('sprint.kanbanPage', ['proj_id' => $request->sprintProjId, 'sprint_id' => $request->sprint_id]);
-    }
-
     // Delete a task
     public function deleteTask(Request $request)
     {
