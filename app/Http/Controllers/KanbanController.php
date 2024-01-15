@@ -49,27 +49,16 @@ class KanbanController extends Controller
         $sprintID = $request->input('sprintID');
         $projectID = $request->input('project_id');
 
-        // assign the request parameters to a new Status 
-        $statuses = new Status();
-        $statuses->title = $newLaneName;
+        // Create an instance of StatusController
+        $statusController = new StatusController();
 
-        // Takes the title of status and changes it to lowercase and - when there is whitespace
-        $slug = Str::slug($newLaneName, "-");
-        $statuses->slug = strtolower($slug);
+        // Call the store method of StatusController
+       $statusController->store(new Request([
+            'title' => $newLaneName,
+            'project_id' => $projectID,
+        ]));
 
-        // gets the highest order in the status with the same project and adds 1 order higher to the current status
-        $projectID = $request->project_id;
-        $highestOrder = DB::table('statuses')
-            ->select(DB::raw('MAX(`order`) AS `highest_order`'))
-            ->where('project_id', $projectID)
-            ->first();
-
-        $statuses->order = $highestOrder ? $highestOrder->highest_order + 1 : 1;
-        $statuses->project_id = $request->project_id;
-        $statuses->save();
-
-        // redirect to the appropriate page
-        // return back();
+        // Return the modified response
         return response()->json(['message' => 'Status created successfully', 'reload' => true]);
     }
 
@@ -105,9 +94,9 @@ class KanbanController extends Controller
             }
 
             return response()->json(['message' => 'Task positions saved successfully']);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Error saving task positions'], 500);
-    }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error saving task positions'], 500);
+        }
     }
 
     // Delete a lane
@@ -131,6 +120,7 @@ class KanbanController extends Controller
         }
     }
 
+    // Redirect to Create Task Page
     public function createTask(Request $request)
     {
         $sprintId = $request->input('sprintId');
@@ -168,7 +158,7 @@ class KanbanController extends Controller
         }
     }
 
-    // Update a task
+    // Redirect to updateTaskPage
     public function updateTaskPage($taskId)
     {
         $task = Task::findOrFail($taskId);
@@ -189,39 +179,4 @@ class KanbanController extends Controller
             'sprint' => $sprint
         ]);
     }
-
-    public function updateTask(Request $request, $taskId)
-{
-    $task = Task::findOrFail($taskId);
-
-    // Validate the request
-    $request->validate([
-        'title' => 'required',
-        'description' => 'nullable',
-        'order' => 'required|numeric',
-        'user_name' => 'required',
-        'userstory' => 'required',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date|after_or_equal:start_date',
-    ]);
-
-    // Update task details
-    $task->title = $request->input('title');
-    $task->description = $request->input('description');
-    $task->order = $request->input('order');
-    $task->user_names = json_encode($request->user_name);
-    $task->userstory_id = UserStory::where('user_story', $request->input('userstory'))->value('u_id');
-    $task->start_date = $request->input('start_date');
-    $task->end_date = $request->input('end_date');
-
-    // Save the updated task to the database
-    $task->save();
-
-    // Redirect to kanban board or any other desired page
-    return redirect()->route('sprint.kanbanPage', [
-        'proj_id' => $task->proj_id,
-        'sprint_id' => $task->sprint_id,
-    ])->with('success', 'Task updated successfully');
-}
-
 }

@@ -62,7 +62,7 @@
 
 <body>
 
-    <form id="updateTaskForm" action="{{ route('kanban.updateTask', ['taskId' => $task->id]) }}" method="post">
+    <form id="updateTaskForm" action="{{ route('tasks.update', ['task' => $task]) }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <label for="title">Title:</label>
@@ -92,6 +92,7 @@
         <input type="hidden" name="status_id" value="{{ $status_id }}">
         <input type="hidden" name="sprint_id" value="{{ $sprint_id }}">
         <input type="hidden" name="sprintProjId" value="{{ $sprintProjId }}">
+        <input type="hidden" name="isKanban" value="1">
 
         <div style="display: flex; justify-content: space-between;">
             <div style="width: 48%;">

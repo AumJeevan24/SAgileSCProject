@@ -369,14 +369,18 @@ class TaskController extends Controller
         $teammapping = \App\TeamMapping::where('username', '=', $user->username)->pluck('team_name')->toArray(); // use pluck() to retrieve an array of team names
         $pro = \App\Project::whereIn('team_name', $teammapping)->get(); // use whereIn() to retrieve the projects that have a team_name value in the array
         $statuses = Status::all();
-        
-        return redirect()->route('tasks.index', ['u_id' => $userstory->u_id])
-        ->with('title', 'Tasks for ' . $userstory->user_story)
-        ->with('success', 'Task has successfully been updated!')
-        ->with('task', $tasks)
-        ->with('statuses', $statuses)
-        ->with('userstory_id', $userstory->u_id)
-        ->with('pros', $pro);
+
+        if ($request->isKanban == "1") {
+            return redirect()->route('sprint.kanbanPage', ['proj_id' => $request->sprintProjId, 'sprint_id' => $request->sprint_id]);
+        } else {
+            return redirect()->route('tasks.index', ['u_id' => $userstory->u_id])
+            ->with('title', 'Tasks for ' . $userstory->user_story)
+            ->with('success', 'Task has successfully been updated!')
+            ->with('task', $tasks)
+            ->with('statuses', $statuses)
+            ->with('userstory_id', $userstory->u_id)
+            ->with('pros', $pro);
+        }
 
     }
 
