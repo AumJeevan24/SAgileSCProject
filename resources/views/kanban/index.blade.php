@@ -28,12 +28,9 @@
             <div class="swim-lane" data-status-id="{{ $status->id }}">
                 <h3 class="heading">{{ $status->title }}</h3>
 
-
                 <button type="button" class="rename-btn">Rename</button>
 
-
                 <button type="button" class="delete-btn">Delete</button>
-
 
                 <form class="taskForm" action="{{ route('kanban.createTask') }}" method="post">
                     @csrf
@@ -83,7 +80,6 @@
             location.reload();
         }
     }
-
 
     // Function to handle common logic for handling drag and drop events
     function handleDragDropEvents(sourceLane, targetLane) {
@@ -147,11 +143,13 @@
             });
     }
 
+    //EventListener After DOMContentLoaded
     document.addEventListener("DOMContentLoaded", () => {
         const addLaneBtn = document.getElementById("add-lane-btn");
         const renameBtns = document.querySelectorAll(".rename-btn");
         const deleteBtns = document.querySelectorAll(".delete-btn");
 
+        //Listener for rename button
         renameBtns.forEach((btn) => {
             btn.addEventListener("click", () => {
                 const newName = prompt("Enter new name for the lane:");
@@ -163,6 +161,7 @@
             });
         });
 
+        //Listener for delete button
         deleteBtns.forEach((btn) => {
             btn.addEventListener("click", () => {
                 const lane = btn.closest(".swim-lane");
@@ -188,8 +187,7 @@
                         // Check if the deletion was successful before removing the lane from the UI
                         if (data.success) {
                             lane.remove();
-                            alert(data
-                            .message); // Display a message received from the server
+                            alert(data.message); // Display a message received from the server
                         } else {
                             alert(data.error);
                         }
@@ -202,6 +200,7 @@
             });
         });
 
+        // Listener for delete task button
         document.querySelectorAll(".delete-task-btn").forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 const taskContainer = btn.closest(".task");
@@ -243,8 +242,8 @@
             });
         });
 
+        // Listener for save button - triggered through task movement
         const saveBtn = document.getElementById("save-btn");
-
         saveBtn.addEventListener("click", () => {
             console.log("Save button clicked");
 
@@ -293,6 +292,7 @@
                 });
         });
 
+        // Task Dragging Logic
         const draggables = document.querySelectorAll(".task");
         const droppables = document.querySelectorAll(".swim-lane");
 
@@ -324,82 +324,10 @@
             });
         });
 
-        // Function to create a new lane
-        function createNewLane(laneName) {
-            const newLane = document.createElement("div");
-            newLane.classList.add("swim-lane");
-
-            const newHeading = document.createElement("h3");
-            newHeading.classList.add("heading");
-            newHeading.innerText = laneName;
-
-            const renameForm = document.createElement("form");
-            const renameBtn = document.createElement("button");
-            renameBtn.setAttribute("type", "button");
-            renameBtn.innerText = "Rename";
-            renameForm.appendChild(renameBtn);
-
-            const deleteForm = document.createElement("form");
-            const deleteBtn = document.createElement("button");
-            deleteBtn.setAttribute("type", "button");
-            deleteBtn.innerText = "Delete";
-            deleteForm.appendChild(deleteBtn);
-
-            const newForm = document.createElement("form");
-            const newInput = document.createElement("input");
-            newInput.setAttribute("type", "text");
-            newInput.setAttribute("placeholder", "New Task...");
-            const newSubmitBtn = document.createElement("button");
-            newSubmitBtn.setAttribute("type", "submit");
-            newSubmitBtn.innerText = "Add +";
-
-            newForm.appendChild(newInput);
-            newForm.appendChild(newSubmitBtn);
-
-            newLane.appendChild(newHeading);
-            newLane.appendChild(renameBtn);
-            newLane.appendChild(deleteBtn);
-            newLane.appendChild(newForm);
-
-            document.querySelector(".lanes").appendChild(newLane);
-
-            // Add event listener for submitting new tasks in the new lane
-            newForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                const value = newInput.value;
-
-                if (!value) return;
-
-                const newTask = createTaskElement(value);
-
-                newLane.appendChild(newTask);
-
-                newInput.value = "";
-            });
-
-            // Add event listener for renaming the lane
-            renameBtn.addEventListener("click", () => {
-                const newName = prompt("Enter new name for the lane:");
-
-                if (newName !== null) {
-                    changeLaneName(newLane, newName);
-                }
-            });
-
-            // Add event listener for deleting the lane
-            deleteBtn.addEventListener("click", () => {
-                newLane.remove();
-            });
-
-            // Call the function to handle drag and drop events for the new lane
-            handleDragDropEvents(newLane, newLane);
-        }
-
         // Add event listener for adding a new lane
         addLaneBtn.addEventListener("click", () => {
             const newLaneName = prompt("Enter the name for the new lane:");
             if (newLaneName !== null) {
-                createNewLane(newLaneName);
 
                 var projectID = "{{ $project->id }}"
                 var sprintID = "{{ $sprint->sprint_ID }}";
@@ -435,14 +363,11 @@
             }
         });
 
-        // Call the function to handle drag and drop events for existing lanes
-        handleDragDropEvents(todoLane, todoLane);
-        handleDragDropEvents(doingLane, doingLane);
-        handleDragDropEvents(doneLane, doneLane);
     });
 
     //////////////////////////////////////////////////////////////////////
 
+    // Logic for putting task above other task - drag&drop logic
     const insertAboveTask = (zone, mouseY) => {
         const els = zone.querySelectorAll(".task:not(.is-dragging)");
 
@@ -465,6 +390,7 @@
         return closestTask;
     };
 
+    // Listener for edit task page
     document.querySelectorAll('.task').forEach(function(task) {
         task.addEventListener('click', function() {
             var taskId = task.getAttribute('data-task-id');
@@ -474,29 +400,6 @@
         });
     });
     </script>
-
-    <!-- Script for handling task click and fetching description -->
-    <!-- <script>
-            document.querySelectorAll('.task').forEach(function (task) {
-                task.addEventListener('click', function () {
-                    var taskId = task.getAttribute('data-task-id');
-                    fetch(`/tasks/${taskId}/description`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.description) {
-                                // Show the task description (customize this based on your UI)
-                                alert(data.description);
-                            } else {
-                                alert('Task description not available.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Failed to fetch task description.');
-                        });
-                });
-            });
-        </script> -->
 </body>
 
 </html>
