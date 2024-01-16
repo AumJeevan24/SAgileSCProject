@@ -36,8 +36,6 @@ class BurnDownChartController extends Controller
 
         if ($this->isBeforeStartDate($start_date, $currentDate)) {
 
-            // Update tasks when before the start date
-            $taskUpdate = $this->updateTask($tasks); // Get the task updates here
 
             $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
             $sprint->idealHoursPerDay = $idealData;
@@ -56,8 +54,6 @@ class BurnDownChartController extends Controller
 
         }else if ($this->isBeforeEndDate($end_date, $currentDate)){
 
-            // Update tasks when before the end date
-            $taskUpdate = $this->updateTask($tasks); // Get the task updates here
 
             $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
 
@@ -107,8 +103,6 @@ class BurnDownChartController extends Controller
             // var_dump($actualData);
             // var_dump($hoursSpent);
 
-            // Update tasks for other conditions
-            $this->updateTask($tasks); // Call the updateTask function here
 
             return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName','tasks', 'statuses'),['start_date' => $start_date, 'end_date' => $end_date]);
         }
