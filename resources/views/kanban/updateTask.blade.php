@@ -79,12 +79,13 @@
 
             <div style="width: 48%;">
                 <label for="user_name">User Name:</label>
-                <select name="user_name[]" multiple required>
-                    @foreach ($userList as $user)
-                    <option value="{{ $user->name }}" {{ $user->name == $task->user_name ? 'selected' : '' }}>
-                        {{ $user->name }}
-                    </option>
-                    @endforeach
+                <select name="user_names[]" multiple>
+                        @foreach($teamlist as $teammember)
+                        <option value="{{ $teammember['username'] }}"
+                            {{ (old('user_names') && in_array($teammember['username'], old('user_names')) ? 'selected' : '') }}>
+                            {{ $teammember['username'] }} (Team: {{ $teammember['team_name'] }})
+                        </option>
+                        @endforeach
                 </select>
             </div>
         </div>

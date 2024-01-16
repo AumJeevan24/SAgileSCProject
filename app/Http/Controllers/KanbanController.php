@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Status;
 use App\Task;
 use App\Project;
+use App\TeamMapping;
 use App\Http\Controllers\Auth;
 use App\User;
 use App\UserStory;
@@ -129,9 +130,29 @@ class KanbanController extends Controller
         $sprintProjName = $sprint->proj_name;
         $sprintProj = Project::where('proj_name', $sprintProjName)->first();
         $sprintProjId = $sprintProj->id;
-
+ 
         $userStories = UserStory::where('sprint_id', $sprintId)->get();
         $userList = User::all();
+
+        //get the team for the project //tukar get kalau nak ambik semua
+        $team = Project::where('proj_name', $sprintProjName)->get();
+        // Iterate through each team
+        foreach ($team as $teamItem) {
+            // Get the list of team members for the current team
+            $teamlist = TeamMapping::where('team_name', $teamItem->team_name)->get();
+
+            // Now $teamlist contains the team members for the current team
+            foreach ($teamlist as $teammember) {
+                // Access individual team member properties like $teammember->username
+                // Do something with each team member
+
+                // Save username and team_name in a 2D array
+                $userTeams[] = [
+                    'username' => $teammember->username,
+                    'team_name' => $teamItem->team_name,
+                ];
+            }
+        }
 
         return view('kanban.addTask', [
             'userStories' => $userStories,
@@ -139,8 +160,10 @@ class KanbanController extends Controller
             'sprint_id' => $sprintId,
             'status_id' => $statusId,
             'sprintProjId' => $sprintProjId,
-            'sprint' => $sprint
-        ]);    
+            'sprint' => $sprint,
+            'teamlist' =>  $userTeams
+        ]);
+        
     }
 
     // Delete a task
@@ -168,6 +191,27 @@ class KanbanController extends Controller
         $sprintProjId = $task->proj_id;  // Add this line
         $userStories = UserStory::where('sprint_id', $task->sprint_id)->get();
         $sprint = Sprint::where('sprint_id', $sprint_id)->first();
+        $sprintProjName = $sprint->proj_name;
+
+        //get the team for the project //tukar get kalau nak ambik semua
+        $team = Project::where('proj_name', $sprintProjName)->get();
+        // Iterate through each team
+        foreach ($team as $teamItem) {
+            // Get the list of team members for the current team
+            $teamlist = TeamMapping::where('team_name', $teamItem->team_name)->get();
+
+            // Now $teamlist contains the team members for the current team
+            foreach ($teamlist as $teammember) {
+                // Access individual team member properties like $teammember->username
+                // Do something with each team member
+
+                // Save username and team_name in a 2D array
+                $userTeams[] = [
+                    'username' => $teammember->username,
+                    'team_name' => $teamItem->team_name,
+                ];
+            }
+        }
 
         return view('kanban.updateTask', [
             'task' => $task,
@@ -176,7 +220,8 @@ class KanbanController extends Controller
             'status_id' => $status_id,
             'sprint_id' => $sprint_id,
             'sprintProjId' => $sprintProjId,  
-            'sprint' => $sprint
+            'sprint' => $sprint,
+            'teamlist' =>  $userTeams
         ]);
     }
 }
