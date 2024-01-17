@@ -5,7 +5,7 @@
 @section('content')
     <!-- Your form and HTML content -->
     <div>
-        @include('inc.title')
+        @include('inc.title', ['title' => 'Your Title'])
         <br>
         <form action="{{ route('teams.store') }}" method="post" enctype="multipart/form-data">
             @csrf

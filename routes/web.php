@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SprintController;
+use App\Http\Controllers\TeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +64,7 @@ Route::post('teams/{team}', 'TeamController@update')->name('teams.update');
 Route::get('teams/{team}/destroy', 'TeamController@destroy')->name('teams.destroy');
 Route::get('teams','TeamController@search');
 Route::post('/send-invitation-email', 'TeamController@sendInvitationEmail')->name('send.invitation.email');
-
+Route::get('/',[TeamController::class,'sendMail']);
 
 //Route for Defect Feature
 Route::get('deffeature', 'DefectFeatureController@index')->name('deffeature.index');
@@ -140,6 +141,7 @@ Route::get('teammappings','TeamMappingController@search')->name('teammappings.se
 Route::get('teammappings', 'TeamMappingController@getUsers');
 Route::post('getUsers', 'TeamMappingController@getUsers')->name('getUsers.post');
 
+
 //Route for user stories
 Route::get('userstory', 'UserStoryController@getID')->name('userstory.getID');
 Route::get('userstory', 'UserStoryController@index')->name('userstory.index');
@@ -173,6 +175,7 @@ Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.crea
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
+
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');

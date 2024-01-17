@@ -6,7 +6,7 @@
 @include('inc.navbar')
 
 @section('content')
-@include('inc.title')
+@include('inc.title',['title' => 'Your Title'])
 <br>
     <table>
         <tr>
@@ -54,8 +54,12 @@
           
       </table>
 
-  <br><br>
+      <br><br><br>
 
       <button type="submit"><a href="{{route('tasks.create', $userstory_id)}}">Add Task</a></button>
+
+      <button type="submit"><a href="{{route('tasks.calendarTask')}}">Task Calendar</a></button>
+      
+      <br><br>
       
 @endsection

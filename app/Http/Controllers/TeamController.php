@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TeamInvitation;
 use Illuminate\Support\Facades\Log;
+use GuzzleHTTP;
 
 
 class TeamController extends Controller
@@ -47,14 +48,19 @@ class TeamController extends Controller
         $current_project = "";
 
         $roles = Role::all(); // Fetch roles from your database
-        //dd($roles);
+        // dd($roles); // Add this line to check the $roles variable
+        var_dump($roles);
+
         
-        return view('team.create')
-            ->with('teams',$team->all())
-            ->with('project', $project->all())
-            ->with('title', 'Create Team')
-            ->with('current_project', $current_project)
-            ->with('roles', $roles);
+        // return view('team.create')
+        //     ->with('teams',$team->all())
+        //     ->with('project', $project->all())
+        //     ->with('title', 'Create Team')
+        //     ->with('current_project', $current_project)
+        //     ->with('roles', $roles);
+
+        return view('team.create', compact('teams', 'project', 'title', 'current_project', 'roles'));
+
     }
     
     public function store(Request $request)
@@ -140,45 +146,17 @@ class TeamController extends Controller
 
     }
 
-    public function sendInvitationEmail(Request $request)
-    {
-        $user = \Auth::user();
-    
-        $email = $request->input('email');
-        $role = $request->input('role');
-    
-        if (empty($email)) {
-            return response()->json(['error' => 'Email address is missing'], 400);
-        }
-    
-        Log::info('Request data: ' . json_encode($request->all()));
-    
-        // Debugging to check the values before sending the email
-        dd($email, $role);
-    
-        try {
-            Mail::to($email)->send(new TeamInvitation($role));
-    
-            // Log after attempting to send the email
-            Log::info('Email sent successfully');
-    
-            return response()->json(['message' => 'Email sent']);
-        } catch (\Exception $e) {
-            Log::error('Error sending email: ' . $e->getMessage());
-    
-            // Log the email and role for debugging when an error occurs
-            Log::info('Failed Email: ' . $email);
-            Log::info('Failed Role: ' . $role);
-    
-            return response()->json(['error' => 'Error sending email'], 500);
-        }
+    public function sendMail(){
+
+        $name = 'bob';
+        Mail::to('Amarulakmal@graduate.utm.my')->send(new TeamInvitation($name));
+        return view('Team.create');
+
     }
 
-    // public function createProject() {
-    //     $teams = Team::all(); // Fetch all teams
-    
-    //     return view('your.project.creation.view', ['teams' => $teams]);
-    // }
+    public function sendWhatsapp(){
+        
+    }
     
     
 

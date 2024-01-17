@@ -7,7 +7,7 @@
 @include('inc.navbar')
 
 @section('content')
-    @include('inc.title')
+    @include('inc.title',['title' => 'Your Title'])
     <br>
     <table>
         @if (session('success'))
@@ -45,7 +45,5 @@
     </table>
     <br><br><br>
 
-    <button type="submit">
-        <a href="{{ route('teams.create') }}">Add Team</a>
-    </button>
+    <button type="submit"><a href="{{ route('teams.create') }}">Add Team</a></button>
 @endsection
