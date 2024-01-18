@@ -10,7 +10,7 @@ use App\TeamMapping;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\TeamInvitation;
+use App\Mail\EmailNotifier;
 use Illuminate\Support\Facades\Log;
 use GuzzleHTTP;
 
@@ -49,7 +49,7 @@ class TeamController extends Controller
 
         $roles = Role::all(); // Fetch roles from your database
         // dd($roles); // Add this line to check the $roles variable
-        var_dump($roles);
+        // var_dump($roles);
 
         
         return view('team.create')
@@ -148,6 +148,8 @@ class TeamController extends Controller
 
     public function sendMail(){
 
+        Mail::to('Amarulakmal@graduate.utm.my')->send(new EmailNotifier());
+
         $user = \Auth::user();
 
         $team = new Team;
@@ -162,9 +164,6 @@ class TeamController extends Controller
         // dd($roles); // Add this line to check the $roles variable
         // var_dump($roles);
 
-        $name = 'bob';
-        Mail::to('Amarulakmal@graduate.utm.my')->send(new TeamInvitation($name));
-
         return view('team.create')
             ->with('teams',$team->all())
             ->with('project', $project->all())
@@ -173,8 +172,30 @@ class TeamController extends Controller
             ->with('roles', $roles);
     }
 
-    public function sendWhatsapp(){
-        
+
+    public function sendWhatsAppMessage()
+    {
+        $twilioSid = config('ACe1e8dc164ce3290c0cb4430984be7cf0');
+        $twilioToken = config('ACe1e8dc164ce3290c0cb4430984be7cf0');
+        $twilioWhatsAppNumber = config('+14155238886');
+        $recipientNumber = '+0194690229'; // Replace with the recipient's phone number in WhatsApp format (e.g., "whatsapp:+1234567890")
+        $message = "Hi, You are invite to join our team. please click the link below to join our team.";
+
+        $twilio = new Client($twilioSid, $twilioToken);
+
+        try {
+            $twilio->messages->create(
+                $recipientNumber,
+                [
+                    "from" => $twilioWhatsAppNumber,
+                    "body" => $message,
+                ]
+            );
+
+            return response()->json(['message' => 'WhatsApp message sent successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
     
     

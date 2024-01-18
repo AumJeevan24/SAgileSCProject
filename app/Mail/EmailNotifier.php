@@ -7,21 +7,21 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class TeamInvitation extends Mailable
+class EmailNotifier extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $name;
-    public function __construct($name)
+    
+    public function __construct()
     {
-        $this->name = $name;
+
     }
 
     public function build()
     {
         // return $this->view('team.team_invitation')
         //             ->subject('Invitation to Join Team');
-        return $this->from('your-email@example.com', 'Your Name')
+        return $this->from('your-email@example.com', 'Team Leader')
                     ->markdown('Team.invitationEmailTest');
     }
 }

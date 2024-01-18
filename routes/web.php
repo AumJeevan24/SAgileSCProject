@@ -15,6 +15,7 @@ use App\Http\Controllers\TeamController;
 |
 */
 
+Route::get('/send-whatsapp', [TeamController::class, 'sendWhatsAppMessage']);
 Route::get('/', function () {
     return view('welcome');
 });
@@ -64,7 +65,7 @@ Route::post('teams/{team}', 'TeamController@update')->name('teams.update');
 Route::get('teams/{team}/destroy', 'TeamController@destroy')->name('teams.destroy');
 Route::get('teams','TeamController@search');
 // Route::post('/send-invitation-email', 'TeamController@sendInvitationEmail')->name('send.invitation.email');
-Route::get('/send-invitation-email',[TeamController::class,'sendMail'])->name('send.invitation.email');
+Route::get('teams/sendmail','TeamController@sendMail')->name('Team.invitationEmailTest');
 
 //Route for Defect Feature
 Route::get('deffeature', 'DefectFeatureController@index')->name('deffeature.index');
@@ -285,6 +286,7 @@ Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.crea
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
+Route::get('task/{u_id}', 'TaskController@indexCalendar')->name('tasks.calendarTask');
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');

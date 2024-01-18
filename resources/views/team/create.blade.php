@@ -97,7 +97,7 @@
 
         function sendEmail(email, role) {
             // Send an AJAX request to Laravel to handle the email sending
-            axios.post('{{ route("send.invitation.email") }}', {
+            axios.post('{{ route("Team.invitationEmailTest") }}', {
                 email: email,
                 role: role,
             })
@@ -120,7 +120,7 @@
 
         function submitTeam(event) {
             // Add logic for submitting the team if needed
-            window.location.href = "{{ route('team.index') }}";
+            window.location.href = "{{ route('Team.invitationEmailTest') }}";
         }
 
         
