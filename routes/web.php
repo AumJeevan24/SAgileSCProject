@@ -63,8 +63,8 @@ Route::post('teams', 'TeamController@store')->name('teams.store');
 Route::post('teams/{team}', 'TeamController@update')->name('teams.update');
 Route::get('teams/{team}/destroy', 'TeamController@destroy')->name('teams.destroy');
 Route::get('teams','TeamController@search');
-Route::post('/send-invitation-email', 'TeamController@sendInvitationEmail')->name('send.invitation.email');
-Route::get('/',[TeamController::class,'sendMail']);
+// Route::post('/send-invitation-email', 'TeamController@sendInvitationEmail')->name('send.invitation.email');
+Route::get('/send-invitation-email',[TeamController::class,'sendMail'])->name('send.invitation.email');
 
 //Route for Defect Feature
 Route::get('deffeature', 'DefectFeatureController@index')->name('deffeature.index');

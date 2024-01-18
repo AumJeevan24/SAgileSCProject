@@ -52,14 +52,14 @@ class TeamController extends Controller
         var_dump($roles);
 
         
-        // return view('team.create')
-        //     ->with('teams',$team->all())
-        //     ->with('project', $project->all())
-        //     ->with('title', 'Create Team')
-        //     ->with('current_project', $current_project)
-        //     ->with('roles', $roles);
+        return view('team.create')
+            ->with('teams',$team->all())
+            ->with('project', $project->all())
+            ->with('title', 'Create Team')
+            ->with('current_project', $current_project)
+            ->with('roles', $roles);
 
-        return view('team.create', compact('teams', 'project', 'title', 'current_project', 'roles'));
+        // return view('team.create', compact('teams', 'project', 'title', 'current_project', 'roles'));
 
     }
     
@@ -148,10 +148,29 @@ class TeamController extends Controller
 
     public function sendMail(){
 
+        $user = \Auth::user();
+
+        $team = new Team;
+        // $role = new Role;
+
+        // Retrieve the projects with team_name == null 
+        $project = Project::whereNull('team_name')->get();
+
+        $current_project = "";
+
+        $roles = Role::all(); // Fetch roles from your database
+        // dd($roles); // Add this line to check the $roles variable
+        // var_dump($roles);
+
         $name = 'bob';
         Mail::to('Amarulakmal@graduate.utm.my')->send(new TeamInvitation($name));
-        return view('Team.create');
 
+        return view('team.create')
+            ->with('teams',$team->all())
+            ->with('project', $project->all())
+            ->with('title', 'Create Team')
+            ->with('current_project', $current_project)
+            ->with('roles', $roles);
     }
 
     public function sendWhatsapp(){
