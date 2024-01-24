@@ -217,11 +217,24 @@ class BurnDownChartController extends Controller
 
                 $taskStartDateTimeHours = strtotime($task->start_date)/ 3600; //hours
                 $taskEndDateTimeHours = strtotime($task->end_date)/ 3600;
-                $taskStartDateTime = $task->start_date;
-                $taskEndDatetime = $task->end_date;
-                $currentDateHours = $currentDate->timestamp / 3600;
+                //$taskStartDateTime = $task->start_date;
+                //$taskEndDatetime = $task->end_date;
+                //$currentDateHours = $currentDate->timestamp / 3600;
 
                 //var_dump("Start: " . $taskStartDateTimeHours . ", End: " . $taskStartDateTimeHours . ", Current: " . $currentDateHours );
+                if (!is_null($task->newTask_update)) {
+                    $taskUpdateTime = $task->newTask_update;
+                    var_dump("taskUpdateTime: " . $taskUpdateTime);
+                    
+            
+                }else{
+                    var_dump("null");
+                    var_dump("taskStartDate: " . $task->start_date);
+                    //$taskUpdateTime = $task->newTask_update;
+                    var_dump("taskUpdateTime: " . $task->newTask_update);
+                    var_dump("taskEndtDate: " . $task->end_date);
+                    var_dump("taskTitle: " . $task->title);
+                }
                 
                 $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
                 $doneHoursSpent += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
@@ -244,7 +257,6 @@ class BurnDownChartController extends Controller
         $lastArray = count($actualData) - 1;
         $lastDay = end($actualData);
         $lastHours =  end($hoursSpent);
-        //$daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 2;
         $fillArray =  abs($daysDifferenceStartCurrent - $countArray);
         // var_dump("countArray: " . $countArray);
         // var_dump("daysDifferenceStartCurrent: " . $daysDifferenceStartCurrent);
@@ -252,28 +264,28 @@ class BurnDownChartController extends Controller
 
         $dayDifTemp = $daysDifferenceStartCurrent;
 
-        if($dayDifTemp == 1){
-            $dayDifTemp = $dayDifTemp + 1;
-        }
+        // if($dayDifTemp == 1){
+        //     $dayDifTemp = $dayDifTemp + 1;
+        // }
 
         if ($countArray <= $dayDifTemp) {
 
-            if($countArray == 2){
-                for ($i = 0; $i < $daysDifferenceStartCurrent -2; $i++) {
-                    $actualData[] = $lastDay;
-                    $hoursSpent[] = $lastHours;
-                    // var_dump("inside countArray loop");
-                }
-                // var_dump("inside countArray ");
-            }
-            else{
+            // if($countArray == 2){
+            //     for ($i = 0; $i < $daysDifferenceStartCurrent -2; $i++) {
+            //         $actualData[] = $lastDay;
+            //         $hoursSpent[] = $lastHours;
+            //          var_dump("inside countArray loop");
+            //     }
+            //     // var_dump("inside countArray ");
+            // }
+            // else{
                 for ($i = 0; $i < $fillArray; $i++) {
                     $actualData[] = $lastDay;
                     $hoursSpent[] = $lastHours;
-                    // var_dump("inside fillArray loop");
+                    //var_dump("inside fillArray loop");
                 }
                 // var_dump("inside fillArray ");
-            }
+            // }
 
         }
 
