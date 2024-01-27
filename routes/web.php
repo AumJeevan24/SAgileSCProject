@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -171,7 +172,8 @@ Route::get('sprint/task', 'TaskController@kanbanBoard')->name('tasks.kanban');
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
 Route::get('/tasks/{task_id}/description', 'TaskController@getTaskDescription')->name('tasks.description');
 //Main Task Page 
-Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+// Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
@@ -282,11 +284,13 @@ Route::post('/updateTaskStore/{taskId}', 'KanbanController@updateTask')->name('k
 
 //Main Task Page 
 Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+// Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
-Route::get('task/{u_id}', 'TaskController@indexCalendar')->name('tasks.calendarTask');
+// Route::get('task/{userstory_id}', 'TaskController@indexCalendar')->name('tasks.calendarTask');
+Route::get('task/{userstory_id}/calendarTask', 'TaskController@indexCalendar')->name('tasks.calendarTask');
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');

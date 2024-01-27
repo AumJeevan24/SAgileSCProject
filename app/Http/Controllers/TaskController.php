@@ -38,6 +38,25 @@ class TaskController extends Controller
             ->with('pros', $pro);
     }
 
+    public function indexCalendar($userstory_id){
+
+        //Get the project where user's team name(s) is the same with project's team name
+        $user = \Auth::user();
+        $teammapping = \App\TeamMapping::where('username', '=', $user->username)->pluck('team_name')->toArray(); // use pluck() to retrieve an array of team names
+        $pro = \App\Project::whereIn('team_name', $teammapping)->get(); // use whereIn() to retrieve the projects that have a team_name value in the array
+
+        //Get the task that is related to the userstory 
+        $tasks = Task::where('userstory_id', $userstory_id)->get();
+        //Get the userstory that is passed in the parameter
+        $userstory = UserStory::where('u_id', $userstory_id)->first();
+
+        return view('tasks.calendarTask')
+        ->with('userstory_id', $userstory_id)
+        ->with('tasks', $tasks)
+        ->with('title', 'Tasks for ' . $userstory->user_story)
+        ->with('pros', $pro);
+    }
+
     //index Kanban Board
     public function indexKanbanBoard() 
     {
@@ -406,4 +425,6 @@ class TaskController extends Controller
         ->with('userstory_id', $userstory->u_id)
         ->with('pros', $pro);
     }
+
+
 }
