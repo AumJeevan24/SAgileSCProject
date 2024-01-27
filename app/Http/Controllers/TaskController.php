@@ -245,6 +245,7 @@ class TaskController extends Controller
         $task->end_date = $request->end_date;
         $task->proj_id = $project->id;
         $task->sprint_id = $sprint->sprint_id;
+        $task->newTask_update = now()->timezone("Asia/Kuala_Lumpur")->toDateString();
         $task->save();
 
         $tasks = Task::where('userstory_id', $request->userstory_id)->get();
@@ -379,6 +380,7 @@ class TaskController extends Controller
         $task->status_id = $request->status_id;
         $task->start_date = $request->start_date;
         $task->end_date = $request->end_date;
+        $task->newTask_update = now()->timezone("Asia/Kuala_Lumpur")->toDateString();
         $task->save();
 
         $tasks = Task::where('userstory_id', $task->userstory_id)->get();
