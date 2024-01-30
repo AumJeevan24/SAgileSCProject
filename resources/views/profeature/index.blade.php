@@ -54,7 +54,7 @@
         <!-- Edit link -->
         <td><button type="submit" class="btn"><a href="{{ route('projects.edit', $project->id) }}">Edit</a></td>
         <!-- Delete form -->
-        <td><form action="{{ route('projects.destroy', $project->id) }}" method="POST">
+        <td><form action="{{ route('projects.destroy', $project->id) }}" method="POST" style="margin-block-end: 0em">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>

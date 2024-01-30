@@ -8,17 +8,16 @@
     }
 
     td, th {
-        border: 1px solid #e74c3c; /* Theme 2: Red border color */
+        border: 2px solid #e6d3f5; /* Pastel purple border color for a bold look */
         text-align: left;
-        padding: 8px;
+        padding: 10px; /* Moderate padding for a balanced appearance */
     }
 
     tr:nth-child(even) {
-        background-color: #f5b7b1; /* Theme 2: Light background color */
+        background-color: #e6d3f5; /* Light pastel purple background color */
     }
 
     .active {
-        background-color: #27ae60; /* Theme 2: Green background color for active elements */
-        color: #ffffff; /* Theme 2: White text color for active elements */
-    }
+  background-color: rgb(29, 28, 100);
+  }
 </style>
