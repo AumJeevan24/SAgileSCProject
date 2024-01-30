@@ -72,40 +72,20 @@ class TaskController extends Controller
     }
 
     //view specific Kanban Board
-    public function viewKanbanBoard($proj_id) 
+    public function kanbanIndex($proj_id, $sprint_id)
     {
-        //the function will send the required data to the kanban board to display
-        //the kanban board will display all tasks that is related to specific project 
-
-        //get the task that is related to specific project
-        $tasks = Task::whereIn('proj_id', [$proj_id])->get();
+        $sprint = Sprint::where('sprint_id', $sprint_id)->first();
         $project = Project::where('id', $proj_id)->first();
+        $statuses = Status::where('project_id', $proj_id)->get();
+        $tasks = Task::where("proj_id", $proj_id)->where("sprint_id", $sprint_id)->get();
 
-        //get the status that is related to the project
-        $statuses = Status::whereIn('project_id', [$proj_id])->get();
+        // Group tasks by status id
+        $tasksByStatus = [];
+        foreach ($tasks as $task) {
+            $tasksByStatus[$task->status_id][] = $task;
+        }
 
-        return view('tasks.viewkanban')
-            ->with('title', $project->proj_name)
-            ->with('tasks', $tasks)
-            ->with('statuses', $statuses);
-    }
-
-    public function viewKanbanBoardAlt($proj_id) 
-    {
-        //the function will send the required data to the kanban board to display
-        //the kanban board will display all tasks that is related to specific project 
-
-        //get the task that is related to specific project
-        $tasks = Task::whereIn('proj_id', [$proj_id])->get();
-        $project = Project::where('id', $proj_id)->first();
-
-        //get the status that is related to the project
-        $statuses = Status::whereIn('project_id', [$proj_id])->get();
-
-        return view('kanban.kanban')
-            ->with('title', $project->proj_name)
-            ->with('tasks', $tasks)
-            ->with('statuses', $statuses);
+        return view('kanban.index', ['statuses' => $statuses, 'tasksByStatus' => $tasksByStatus, 'sprint' => $sprint, 'project' => $project]);
     }
 
 
@@ -188,6 +168,51 @@ class TaskController extends Controller
         ->with('teamlist',  $userTeams)
         ->with('sprint', $sprint)
         ->with('userstory_id', $userstory_id);
+    }
+
+    // Redirect to Create Task Page
+    public function createTask(Request $request)
+    {
+        $sprintId = $request->input('sprintId');
+        $statusId = $request->input('statusId');
+        $sprint = Sprint::where('sprint_id', $sprintId)->first();
+        $sprintProjName = $sprint->proj_name;
+        $sprintProj = Project::where('proj_name', $sprintProjName)->first();
+        $sprintProjId = $sprintProj->id;
+ 
+        $userStories = UserStory::where('sprint_id', $sprintId)->get();
+        $userList = User::all();
+
+        //get the team for the project //tukar get kalau nak ambik semua
+        $team = Project::where('proj_name', $sprintProjName)->get();
+        // Iterate through each team
+        foreach ($team as $teamItem) {
+            // Get the list of team members for the current team
+            $teamlist = TeamMapping::where('team_name', $teamItem->team_name)->get();
+
+            // Now $teamlist contains the team members for the current team
+            foreach ($teamlist as $teammember) {
+                // Access individual team member properties like $teammember->username
+                // Do something with each team member
+
+                // Save username and team_name in a 2D array
+                $userTeams[] = [
+                    'username' => $teammember->username,
+                    'team_name' => $teamItem->team_name,
+                ];
+            }
+        }
+
+        return view('kanban.addTask', [
+            'userStories' => $userStories,
+            'userList' => $userList,
+            'sprint_id' => $sprintId,
+            'status_id' => $statusId,
+            'sprintProjId' => $sprintProjId,
+            'sprint' => $sprint,
+            'teamlist' =>  $userTeams
+        ]);
+        
     }
 
     /**
@@ -405,6 +430,50 @@ class TaskController extends Controller
 
     }
 
+    // Redirect to updateTaskPage
+    public function updateTaskPage($taskId)
+    {
+        $task = Task::findOrFail($taskId);
+        $userList = User::all();
+        $status_id = $task->status_id;
+        $sprint_id = $task->sprint_id;
+        $sprintProjId = $task->proj_id;  // Add this line
+        $userStories = UserStory::where('sprint_id', $task->sprint_id)->get();
+        $sprint = Sprint::where('sprint_id', $sprint_id)->first();
+        $sprintProjName = $sprint->proj_name;
+
+        //get the team for the project //tukar get kalau nak ambik semua
+        $team = Project::where('proj_name', $sprintProjName)->get();
+        // Iterate through each team
+        foreach ($team as $teamItem) {
+            // Get the list of team members for the current team
+            $teamlist = TeamMapping::where('team_name', $teamItem->team_name)->get();
+
+            // Now $teamlist contains the team members for the current team
+            foreach ($teamlist as $teammember) {
+                // Access individual team member properties like $teammember->username
+                // Do something with each team member
+
+                // Save username and team_name in a 2D array
+                $userTeams[] = [
+                    'username' => $teammember->username,
+                    'team_name' => $teamItem->team_name,
+                ];
+            }
+        }
+
+        return view('kanban.updateTask', [
+            'task' => $task,
+            'userStories' => $userStories,
+            'userList' => $userList,
+            'status_id' => $status_id,
+            'sprint_id' => $sprint_id,
+            'sprintProjId' => $sprintProjId,  
+            'sprint' => $sprint,
+            'teamlist' =>  $userTeams
+        ]);
+    }
+
     public function destroy(Task $task)
     {
         $userstory = UserStory::where('u_id', $task->userstory_id)->first();
@@ -426,6 +495,21 @@ class TaskController extends Controller
         ->with('statuses', $statuses)
         ->with('userstory_id', $userstory->u_id)
         ->with('pros', $pro);
+    }
+
+    // Delete a task
+    public function deleteTask(Request $request)
+    {
+        $taskId = $request->input('taskId');
+
+        try {
+            // Find and delete the task
+            Task::destroy($taskId);
+
+            return response()->json(['success' => true, 'message' => 'Task deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => 'Error deleting task'], 500);
+        }
     }
 
 

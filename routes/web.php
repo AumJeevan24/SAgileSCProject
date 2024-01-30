@@ -275,16 +275,14 @@ Route::get('kanban/{proj_id}', 'TaskController@viewKanbanBoard')->name('tasks.vi
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
 
 //Kanban Page
-Route::get('/{proj_id}/{sprint_id}/kanbanBoard', 'KanbanController@kanbanIndex')->name('sprint.kanbanPage');
-Route::post('/addStatus', 'KanbanController@createStatus')->name('kanban.createStatus');
-Route::put('/updateStatus', 'KanbanController@updateStatus')->name('kanban.updateStatus');
-Route::put('/updateTaskStatus', 'KanbanController@updateTaskStatus')->name('kanban.updateTaskStatus');
-Route::delete('/deleteStatus', 'KanbanController@deleteStatus')->name('kanban.deleteStatus');
-Route::post('/storeTask', 'KanbanController@storeTask')->name('kanban.storeTask');
-Route::post('/createTask', 'KanbanController@createTask')->name('kanban.createTask');
-Route::delete('/deleteTask', 'KanbanController@deleteTask')->name('kanban.deleteTask');
-Route::get('/updateTask/{taskId}', 'KanbanController@updateTaskPage')->name('kanban.updateTaskPage');
-Route::post('/updateTaskStore/{taskId}', 'KanbanController@updateTask')->name('kanban.updateTask');
+Route::get('/{proj_id}/{sprint_id}/kanbanBoard', 'TaskController@kanbanIndex')->name('sprint.kanbanPage');
+Route::post('/addStatus', 'StatusController@createStatus')->name('kanban.createStatus');
+Route::put('/updateStatus', 'StatusController@updateStatus')->name('kanban.updateStatus');
+Route::put('/updateTaskStatus', 'StatusController@updateTaskStatus')->name('kanban.updateTaskStatus');
+Route::delete('/deleteStatus', 'StatusController@deleteStatus')->name('kanban.deleteStatus');
+Route::post('/createTask', 'TaskController@createTask')->name('kanban.createTask');
+Route::delete('/deleteTask', 'TaskController@deleteTask')->name('kanban.deleteTask');
+Route::get('/updateTask/{taskId}', 'TaskController@updateTaskPage')->name('kanban.updateTaskPage');
 
 
 
