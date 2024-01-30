@@ -1,6 +1,11 @@
 @extends('layouts.app2')
 
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 @include('inc.success')
 @include('inc.dashboard')
 @include('inc.navbar')
@@ -43,24 +48,22 @@
         <td>{{ date('d F Y', strtotime($project->start_date)) }}</td>
         <td>{{ date('d F Y', strtotime($project->end_date)) }}</td>
        <!-- Display team name -->
-<td><a href="{{ route('team.index') }}">{{ $project->team_name }}</a></td>
+<td><button type="submit" class="btn"><a href="{{ route('team.index') }}">{{ $project->team_name }}</a></td>
 <!-- Rest of the code remains the same -->
 
         <!-- Edit link -->
-        <td><a href="{{ route('projects.edit', $project->id) }}">Edit</a></td>
+        <td><button type="submit" class="btn"><a href="{{ route('projects.edit', $project->id) }}">Edit</a></td>
         <!-- Delete form -->
-        <td>
-            <form action="{{ route('projects.destroy', $project->id) }}" method="POST">
+        <td><form action="{{ route('projects.destroy', $project->id) }}" method="POST">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>
-            </form>
-        </td>
+            </form></td>
         <!-- Links related to the project -->
-        <td><a href="{{ route('backlog.index', $project->id) }}">View</a></td>
-        <td><a href="{{ action('ProductFeatureController@index2', $project->proj_name) }}">View</a></td>
-        <td><a href="{{ action('ForumController@index') }}">View</a></td>
-        <td><a href="">View</a></td>
+        <td><button type="submit" class="btn"><a href="{{ route('backlog.index', $project->id) }}">View</a></td>
+        <td><button type="submit" class="btn"><a href="{{ action('ProductFeatureController@index2', $project->proj_name) }}">View</a></td>
+        <td><button type="submit" class="btn"><a href="{{ action('ForumController@index') }}">View</a></td>
+        <td><button type="submit" class="btn"><a href="">View</a></td>
     </tr>
 @endforeach
 

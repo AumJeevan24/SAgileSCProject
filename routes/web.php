@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ThemeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +26,11 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
+//Route for theme config
+Route::get('/set-theme/{theme}', [ThemeController::class, 'setTheme'])->name('set-theme');
+Route::get('/show-theme', [ThemeController::class, 'showTheme'])->name('show-theme');
+Route::get('/choose-theme', [ThemeController::class, 'chooseTheme'])->name('choose-theme');
 
 //Route for Project Actions
 Route::get('projects', 'ProjectController@index')->name('project.index');

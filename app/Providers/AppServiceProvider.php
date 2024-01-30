@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\ThemeConfig;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use app\Http\Team;
@@ -18,7 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(ThemeConfig::class, function ($app) {
+            return new ThemeConfig();
+        });
     }
 
     /**
