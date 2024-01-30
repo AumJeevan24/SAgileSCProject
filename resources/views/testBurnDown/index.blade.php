@@ -80,7 +80,6 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Status</th>
-                    <th>Last Update</th>
                 </tr>
             </thead>
             <tbody>
@@ -96,7 +95,6 @@
     
                         {{ $status->title }}
                     </td>
-                    <td>{{ $task->newTask_update }}
                 </tr>
                 @endforeach
             </tbody>
