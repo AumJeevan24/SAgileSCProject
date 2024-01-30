@@ -1,7 +1,12 @@
 @extends('layouts.app2')
 
 
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 
 @include('inc.success')
 

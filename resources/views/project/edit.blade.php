@@ -1,7 +1,12 @@
 @extends('layouts.app2')
 
 @include('inc.navbar')
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 
 @section('content')
 @include('inc.title')
