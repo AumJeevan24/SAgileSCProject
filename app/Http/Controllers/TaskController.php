@@ -50,11 +50,11 @@ class TaskController extends Controller
         //Get the userstory that is passed in the parameter
         $userstory = UserStory::where('u_id', $userstory_id)->first();
 
-        return view('tasks.calendarTask')
-        ->with('userstory_id', $userstory_id)
-        ->with('tasks', $tasks)
-        ->with('title', 'Tasks for ' . $userstory->user_story)
-        ->with('pros', $pro);
+        return view('tasks.calendarTask');
+        // ->with('userstory_id', $userstory_id)
+        // ->with('tasks', $tasks)
+        // ->with('title', 'Tasks for ' . $userstory->user_story)
+        // ->with('pros', $pro);
     }
 
     //index Kanban Board

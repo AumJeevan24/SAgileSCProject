@@ -7,15 +7,31 @@ use App\Team;
 
 class Notifier
 {
+        /**
+     * Handle the user "notify" event.
+     *
+     * @param  \App\team
+     * @return void
+     */
+    public function notify(Request $request)
+    {
+        send(new EmailNotifier);
+        send(new WhatsappNotifier);
+    }
+
+
+
+
+
     /**
      * Handle the user "created" event.
      *
-     * @param  \App\User  $user
+     * @param  \App\Team
      * @return void
      */
-    public function created(User $user)
+    public function created()
     {
-        $user -> notify(new TeamInvitation);
+
     }
 
     /**
@@ -24,7 +40,7 @@ class Notifier
      * @param  \App\User  $user
      * @return void
      */
-    public function updated(User $user)
+    public function updated()
     {
         //
     }
@@ -35,7 +51,7 @@ class Notifier
      * @param  \App\User  $user
      * @return void
      */
-    public function deleted(User $user)
+    public function deleted()
     {
         //
     }
@@ -46,7 +62,7 @@ class Notifier
      * @param  \App\User  $user
      * @return void
      */
-    public function restored(User $user)
+    public function restored()
     {
         //
     }
@@ -57,7 +73,7 @@ class Notifier
      * @param  \App\User  $user
      * @return void
      */
-    public function forceDeleted(User $user)
+    public function forceDeleted()
     {
         //
     }

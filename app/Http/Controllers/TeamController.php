@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailNotifier;
 use Illuminate\Support\Facades\Log;
 use GuzzleHTTP;
+use Illuminate\Notifications\Notification;
+use Twilio\Rest\Client;
 
 
 class TeamController extends Controller
@@ -41,7 +43,7 @@ class TeamController extends Controller
 
         $team = new Team;
         // $role = new Role;
-
+        
         // Retrieve the projects with team_name == null 
         $project = Project::whereNull('team_name')->get();
 
@@ -197,7 +199,35 @@ class TeamController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+
+    public function send($notifiable, Notification $notification)
+    {
+        $message = $notification->toWhatsApp($notifiable);
+
+
+        $to = $notifiable->config('+0194690229');
+        $from = config('+14155238886');
+
+
+        $twilio = new Client(config('ACe1e8dc164ce3290c0cb4430984be7cf0'), config('ACe1e8dc164ce3290c0cb4430984be7cf0'));
+
+
+        return $twilio->messages->create('whatsapp:' . $to, [
+            "from" => 'whatsapp:' . $from,
+            "body" => $message->content
+        ]);
+    }
     
+    
+    public $content;
+        
+    public function content($content)
+    {
+        $this->content = $content;
+      
+        return $this;
+    }
     
 
     
