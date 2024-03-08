@@ -14,25 +14,16 @@ class BurnDownChartController extends Controller
         
         $tasks = Task::where('sprint_id', $sprint_id)->get(['start_date','end_date','status_id','id','title','description']);
         $sprint = Sprint::where("sprint_id", $sprint_id)->first();
-        //get the status that is related to the project
         $statuses = Status::whereIn('project_id', [$proj_id])->get();
         $user = \Auth::user();
         $countryName = $user->country;
-        //var_dump($countryName);
-
-        // Fetch all tasks for the sprint
         $allTasks = Task::where('sprint_id', $sprint_id)->get(['start_date', 'end_date', 'status_id']);
-
-        
-        // Calculate the total number of tasks at the start of the sprint
         $totalTasksAtStart = $allTasks->count();
-
         $sprintName = $sprint->sprint_name;
         $start_date = $sprint->start_sprint;
         $end_date = $sprint->end_sprint;
         $timezone = $this->getTimeZone($countryName);
         $currentDate = now()->timezone($timezone);
-        // var_dump($timezone);
 
         if ($this->isBeforeStartDate($start_date, $currentDate)) {
 
@@ -40,15 +31,9 @@ class BurnDownChartController extends Controller
             $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
             $sprint->idealHoursPerDay = $idealData;
             $sprint->save();
-            //$actualData = array(144,144,144,); 
-            //$actualDataHoursSpent = array($this->calcTotalHoursAssigned($tasks));
+
             $actualData = array($this->calcTotalHoursAssigned($tasks));
             $hoursSpent = array_fill(0, count($idealData), 0);
-
-            
-
-            // var_dump($idealData);
-            // var_dump($actualData);
         
             return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName','totalTasksAtStart','tasks', 'statuses'),['start_date' => $start_date, 'end_date' => $end_date]);
 
@@ -62,8 +47,9 @@ class BurnDownChartController extends Controller
                 $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
                 $sprint->idealHoursPerDay = $idealData;
                 $sprint->save();
-                // var_dump("ideal data kosong" );
+
             }
+
             $dayZero = reset($idealData);
 
             $actualData =  $sprint->actualHoursPerDay ? json_decode($sprint->actualHoursPerDay, true) : [];
@@ -71,43 +57,12 @@ class BurnDownChartController extends Controller
             $actualDataHoursSpent =  $this->calculateActualLineHoursLine($start_date,$end_date,$actualData,$hoursSpent,$tasks,$statuses,$dayZero,$currentDate);
             $actualData =  $actualDataHoursSpent['actualData'];
             $hoursSpent = $actualDataHoursSpent['hoursSpent'];
-            //$actualData =  $this->calculateActualLine($start_date,$end_date,$actualData,$tasks,$statuses,$dayZero,$currentDate);
             $sprint->actualHoursPerDay = $actualData;
             $sprint->hoursSpent =  $hoursSpent;
             $sprint->save();
-    
-            //$actualData = array(96,120,72,72,48,0); 
-            // var_dump($idealData); 
-            // var_dump($actualData);
-            // var_dump($hoursSpent);
 
             return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName','tasks', 'statuses'),['start_date' => $start_date, 'end_date' => $end_date]);
         }
-        // }else{
-
-        //     $idealData = $sprint->idealHoursPerDay ? json_decode($sprint->idealHoursPerDay, true) : [];
-        //     $actualData = $sprint->actualHoursPerDay ? json_decode($sprint->actualHoursPerDay, true) : [];
-        //     $hoursSpent = $sprint->hoursSpent ? json_decode($sprint->hoursSpent, true) : [];
-
-        //     if(empty($idealData)){
-        //         $idealData = $this->calculateIdealDataForTasks($tasks,$sprint);
-        //         $sprint->idealHoursPerDay = $idealData;
-        //         $sprint->save();
-        //     }
-
-        //     if(empty($actualData) || empty($hoursSpent)){
-        //         $actualData = array($this->calcTotalHoursAssigned($tasks));
-        //         $hoursSpent = array_fill(0, count($idealData), 0);
-        //     }
-
-        //     //$actualData = array(146,146,146,); 
-        //     // var_dump($idealData);
-        //     // var_dump($actualData);
-        //     // var_dump($hoursSpent);
-
-
-        //     return view('testBurnDown.index', compact('idealData','actualData','hoursSpent', 'sprintName','tasks', 'statuses'),['start_date' => $start_date, 'end_date' => $end_date]);
-        // }
 
     }   
 
@@ -130,35 +85,30 @@ class BurnDownChartController extends Controller
         foreach($tasks as $taskz){
 
             $id = $taskz->id;
-            //var_dump("task name: " . $taskz->title);
             $dayCreated = \DB::select("SELECT DATE(created_at) as created_date FROM tasks WHERE id = ?", [$id]);
             $createdDate = $dayCreated[0]->created_date;
 
             if(strtotime($createdDate) < $start_date){
-                // var_dump("sebelum: " . $taskz->title);
-                // var_dump("task name: " . $taskz->title);
+
                 $taskDayZero->add($taskz);
             }
             
         }
 
         $totalHoursAssigned = $this ->calcTotalHoursAssigned($taskDayZero);
-
         $idealData = [];
-        
         $end_date = strtotime($sprint->end_sprint);
         $sprintDuration = max(1, ($end_date - $start_date) / (60 * 60 * 24)) + 1; // Avoid division by zero
-
         $idealHoursPerDay =  $totalHoursAssigned / $sprintDuration;
-
         $currentDate = $start_date;
-
         $idealData[] = $totalHoursAssigned;
 
         for ($day = 1; $day < $sprintDuration +1; $day++) {
+
             $totalHoursAssigned -= $idealHoursPerDay;
             $idealData[] = max(0, $totalHoursAssigned);
             $currentDate += 24 * 60 * 60; // Move to the next day (in seconds)
+
         }
 
 
@@ -170,14 +120,13 @@ class BurnDownChartController extends Controller
         $totalHoursAssigned =0;
         
         foreach ($tasks as $task) {
+
             $startDateTime = strtotime($task->start_date)/ 3600;
             $endDateTime = strtotime($task->end_date)/ 3600;
 
             if ($startDateTime <= $endDateTime && $endDateTime >= $startDateTime) {
-                // Calculate the total hours within the date range for the task
+
                 $totalHoursAssigned += $this->calculateTotalHoursWithinRange($startDateTime, $endDateTime);
-                // var_dump("task name: " . $task->title);
-                // var_dump("tttttttt: " . $totalHoursAssigned);
             }
         }
 
@@ -188,75 +137,56 @@ class BurnDownChartController extends Controller
     public function calculateTotalHoursWithinRange($startDateTime, $endDateTime) {
         // Calculate the difference in hours between start and end date
         $hoursWithinRange = $endDateTime - $startDateTime;
+
         return $hoursWithinRange;
     }
 
-    public function calculateActualLineHoursLine($startDate, $endDate, $actualData, $hoursSpent, $tasks, $statuses,$dayZero,$currentDate)
+    public function calculateActualLineHoursLine($SprintStartDate, $SprintEndDate, $actualData, $hoursSpent, $tasks, $statuses,$dayZero,$currentDate)
     {
-        $startDateTime = strtotime($startDate);
-        $endDateTime = strtotime($endDate);
+        $SprintStartDateTime = strtotime($SprintStartDate);
+        $SprintEndDateTime = strtotime($SprintEndDate);
         $currenrDateTime = strtotime($currentDate);
         $countArray = count($actualData);
-        //var_dump("countArray: " . $countArray);
-        $totalDays = floor(($endDateTime - $startDateTime) / (60 * 60 * 24)) + 2;
+        $totalDays = floor(($SprintEndDateTime - $SprintStartDateTime) / (60 * 60 * 24)) + 2;
 
-        if($currenrDateTime <= $endDateTime ){
-            $daysDifferenceStartCurrent = floor(($currenrDateTime - $startDateTime) / (60 * 60 * 24));
+        if($currenrDateTime <= $SprintEndDateTime ){
+
+            $daysDifferenceStartCurrent = floor(($currenrDateTime - $SprintStartDateTime) / (60 * 60 * 24));
             $daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 2;
+
         }
         else{
-            $daysDifferenceStartCurrent = $totalDays;
-        }
-        //$fillArray =  abs($daysDifferenceStartCurrent - $countArray);
-        //var_dump(" daysDifferenceStartCurrent: " . $daysDifferenceStartCurrent);
-        // var_dump(" totalDays: " . $totalDays);
-        // var_dump(" fillArray: " . $fillArray);
-        
-        //$daysDifferenceStartCurrent = floor((strtotime($currentDate) - $startDateTime) / (60 * 60 * 24));
-        //$daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 2;
-        $totalHoursAssigned = $this->calcTotalHoursAssigned($tasks);
-        var_dump("Calculated totalHoursAssigned: " . $totalHoursAssigned);
-        // var_dump(" currentDate: " . $currentDate);
-        // var_dump(" startDateTime: " . $startDate);
 
+            $daysDifferenceStartCurrent = $totalDays;
+
+        }
+
+        $totalHoursAssigned = $this->calcTotalHoursAssigned($tasks);
 
         if(empty($actualData) ||array_sum($actualData) == 0){
-            //$actualData = [$totalHoursAssigned];
+
             $actualData[0] = $dayZero;
-            //$actualData[1] = $dayZero;
             $hoursSpent[0] = 0;
-            //$hoursSpent[1] = 0;
-            //$daysDifferenceStartCurrent = $daysDifferenceStartCurrent + 1;
             $countArray = 1;
+
         }
 
         $fillArray =  abs($daysDifferenceStartCurrent - $countArray);
-        //var_dump(" fillArray: " . $fillArray);
-
-        $taskDone = collect(); // Initialize an empty collection
+        $taskDone = collect(); 
         $taskNotDone = collect();
         $lastDay = end($actualData);
         $lastHours =  end($hoursSpent);
         $fillPositionActual = [];
         $fillPositionSpent = [];
+
         for ($i = 0; $i < $fillArray; $i++) {
+
             $fillPositionActual[] = $lastDay;
             $fillPositionSpent[] = $lastHours;
+
         }
 
         $countFillPos = count($fillPositionActual);
-        //var_dump("countFillPos " . $countFillPos);
-        // var_dump("fillPositionActual ");
-        // foreach ($fillPositionActual as $index => $value) {
-            
-        //     var_dump("Index: $index, Value: $value");
-        // }
-        // var_dump("fillPositionSpent ");
-        // foreach ($fillPositionSpent as $index => $value) {
-            
-        //     var_dump("Index: $index, Value: $value");
-        // }
-
         $taskHours = 0;
         $totalTaskHours = 0;
         $lastArray = count($actualData) - 1;
@@ -267,7 +197,7 @@ class BurnDownChartController extends Controller
             $statusTitle = strtolower($status->title);
             
             if($statusTitle == "done"){
-                $taskDone->add($task); // Add the task to the collection
+                $taskDone->add($task); 
             }
             else{
                 $taskNotDone->add($task);;
@@ -277,208 +207,97 @@ class BurnDownChartController extends Controller
             $dayCreated = \DB::select("SELECT DATE(created_at) as created_date FROM tasks WHERE id = ?", [$id]);
             $createdDate = $dayCreated[0]->created_date;
             $arrayPosition = 0;
-            if(strtotime($createdDate) >= $startDateTime){
 
-                $arrayPosition = floor((strtotime($createdDate) - $startDateTime) / (60 * 60 * 24));
+            if(strtotime($createdDate) >= $SprintStartDateTime){
+
+                $arrayPosition = floor((strtotime($createdDate) - $SprintStartDateTime) / (60 * 60 * 24));
                 $arrayPosition = $arrayPosition + 2;
+
             }
             
             $taskStartDateTimeHours = strtotime($task->start_date)/ 3600; //hours
             $taskEndDateTimeHours = strtotime($task->end_date)/ 3600;
             $taskHours = $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
             
-            if( $arrayPosition > $countArray && $arrayPosition < $totalDays){  //passed days
-
-                
-
-                // var_dump("created");
-                // var_dump("task name " . $task->title);
-                // var_dump("created_at (date): " . $createdDate);
-                // var_dump("taskHours same day: " . $taskHours);
+            if( $arrayPosition > $countArray && $arrayPosition < $totalDays){  //calculate the array values for the empty days
 
                 $arrayPosition = ($arrayPosition - $countArray) - 1;
                 for ($i = $arrayPosition; $i < $countFillPos; $i++) {
                     $fillPositionActual[$i] = $fillPositionActual[$i] + $taskHours;
                 }
 
-                // var_dump("arrayPosition: " . $arrayPosition);
-                // var_dump("fillPositionActual[" .$arrayPosition. "]: " .$fillPositionActual[$arrayPosition]);
-
-
             }
-            // var_dump("task name " . $task->title);
-            // var_dump("created_at (date): " . $createdDate);
-            // var_dump("array pos: " . $arrayPosition );
 
         }
 
-        //var_dump("totalTaskHours same day: " . $totalTaskHours);
-        //actualData[$lastArray] += $totalTaskHours;
-
-        // Check if there are no done tasks
         $totalDoneTaskHours = 0;
         $doneTaskHours = 0;
 
         if (!$taskDone->isEmpty()) {
-            //$doneTaskHours = 0;
+
             foreach ($taskDone as $task) {
 
                 $taskStartDateTimeHours = strtotime($task->start_date)/ 3600; //hours
                 $taskEndDateTimeHours = strtotime($task->end_date)/ 3600;
-                //$taskStartDateTime = $task->start_date;
-                //$taskEndDatetime = $task->end_date;
-                //$currentDateHours = $currentDate->timestamp / 3600;
-
-                //var_dump("Start: " . $taskStartDateTimeHours . ", End: " . $taskStartDateTimeHours . ", Current: " . $currentDateHours );
-                // if (!is_null($task->newTask_update)) {
-                //     $taskUpdateTime = $task->newTask_update;
-                //     var_dump("taskUpdateTime: " . $taskUpdateTime);
-                    
-            
-                // }else{
-                //     var_dump("null");
-                //     var_dump("taskStartDate: " . $task->start_date);
-                //     //$taskUpdateTime = $task->newTask_update;
-                //     var_dump("taskUpdateTime: " . $task->newTask_update);
-                //     var_dump("taskEndtDate: " . $task->end_date);
-                //     var_dump("taskTitle: " . $task->title);
-                // }
                 $id = $task->id;
-                //var_dump("id: " . $id);
                 
                 $dayUpdated = \DB::select("SELECT DATE(updated_at) as updated_date FROM tasks WHERE id = ?", [$id]);
-                $dayCreated = \DB::select("SELECT DATE(created_at) as created_date FROM tasks WHERE id = ?", [$id]);
                 
-                if (!empty($dayUpdated) && !empty($dayCreated)) {
+                if (!empty($dayUpdated)) {
                     $updatedDate = $dayUpdated[0]->updated_date;
-                    $createdDate = $dayCreated[0]->created_date;
                 
-                    // var_dump("updated_at (date): " . $updatedDate);
-                    // var_dump("created_at (date): " . $createdDate);
-                } else {
-                    // var_dump("Record not found");
-                }
+                } 
 
-                $arrayPosition = floor((strtotime($updatedDate) - $startDateTime) / (60 * 60 * 24));
+                $arrayPosition = floor((strtotime($updatedDate) - $SprintStartDateTime) / (60 * 60 * 24));
                 $arrayPosition = $arrayPosition + 2;
                 $doneTaskHours = $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
-                //var_dump("arrayPosition: " . $arrayPosition);
-                if( $arrayPosition > $countArray && $arrayPosition < $totalDays){    //passed days
-
-                    var_dump("updated_at (date): " . $updatedDate);
+                
+                if( $arrayPosition > $countArray && $arrayPosition < $totalDays){    //calculate the array values for the empty days
 
                     $arrayPosition = ($arrayPosition - $countArray) - 1;
-                    // $doneTaskHours = $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
+                    
                     for ($i = $arrayPosition; $i < $countFillPos; $i++) {
                         $fillPositionActual[$i] = $fillPositionActual[$i] - $doneTaskHours;
                     }
                     for ($i = $arrayPosition; $i < $countFillPos; $i++) {
                         $fillPositionSpent[$i] = $fillPositionSpent[$i] + $doneTaskHours;
                     }
-                    // var_dump("updated");
-                    // var_dump("doneTaskHours: " . $doneTaskHours);
-                    // var_dump("arrayPosition: " . $arrayPosition);
-                    // var_dump("fillPositionActual[" .$arrayPosition. "]: " .$fillPositionActual[$arrayPosition]);
 
-                    //$totalDoneTaskHours += $doneTaskHours;
                     
-                }elseif($arrayPosition == $countArray && $arrayPosition < $totalDays){
-                    // $actualData[$lastArray] = $actualData[$lastArray] - $doneTaskHours;
-                    // $hoursSpent[$lastArray] = $hoursSpent[$lastArray] + $doneTaskHours;
+                }elseif($arrayPosition == $countArray || $arrayPosition <= $totalDays){      //calculate the total done task hours
+
                     $totalDoneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
-                    var_dump("totalDoneTaskHours: " . $totalDoneTaskHours);
-                    
 
                 }
-                
-                // $doneTaskHours += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
-                // $doneHoursSpent += $this->calculateTotalHoursWithinRange($taskStartDateTimeHours, $taskEndDateTimeHours);
 
             }
-
-
-            // $actualData[$lastArray] = $totalHoursAssigned - $totalDoneTaskHours;
-            // $hoursSpent[$lastArray] = $totalDoneTaskHours;
             
         }
 
-        if($currenrDateTime <= $endDateTime){
-            $actualData[$lastArray] = $totalHoursAssigned - $totalDoneTaskHours;
-            $hoursSpent[$lastArray] = $totalDoneTaskHours;
-        }
-
-
-        // var_dump("totalDoneTaskHours: " . $totalDoneTaskHours);
-        // var_dump("actual");
-        // foreach ($fillPositionActual as $index => $value) {
-        //     var_dump("Index: $index, Value: $value");
-        // }
-        // var_dump("spent");
-        // foreach ($fillPositionSpent as $index => $value) {
-        //     var_dump("Index: $index, Value: $value");
-        // }
-
-
-        // var_dump("Calculated doneTaskHours: " . $doneTaskHours);
-        // var_dump("Calculated doneHoursSpent: " . $doneHoursSpent);
-        // var_dump("Calculated totalHoursAssigned: " . $totalHoursAssigned);
-        //$totalHoursLeft = $totalHoursAssigned - $doneTaskHours;
-        //var_dump("Calculated totalHoursLeft: " . $totalHoursLeft);
-
         if($taskNotDone->isEmpty()){
+
             $totalHoursLeft = 0;
         }
-        
-        // var_dump("countArray: " . $countArray);
-        // var_dump("daysDifferenceStartCurrent: " . $daysDifferenceStartCurrent);
-        // var_dump("fillArray: " . $fillArray);
 
         $dayDifTemp = $daysDifferenceStartCurrent;
 
-        // if($dayDifTemp == 1){
-        //     $dayDifTemp = $dayDifTemp + 1;
-        // }
+        if ($countArray <= $dayDifTemp) {      //fill the empty array until current day
 
-        if ($countArray <= $dayDifTemp) {
+            for ($i = 0; $i < $fillArray; $i++) {
 
-            // if($countArray == 2){
-            //     for ($i = 0; $i < $daysDifferenceStartCurrent -2; $i++) {
-            //         $actualData[] = $lastDay;
-            //         $hoursSpent[] = $lastHours;
-            //          var_dump("inside countArray loop");
-            //     }
-            //     // var_dump("inside countArray ");
-            // }
-            // else{
-                for ($i = 0; $i < $fillArray; $i++) {
-        //            $actualData[] = $lastDay;
-          //          $hoursSpent[] = $lastHours;
-                    $actualData[] = $fillPositionActual[$i];
-                    $hoursSpent[] = $fillPositionSpent[$i];
-                    // var_dump("lastArray: " . $actualData[$lastArray]);
-                    // var_dump("lastHours: " . $hoursSpent[$lastArray]);
-                }
-                // var_dump("inside fillArray ");
-            // }
+                $actualData[] = $fillPositionActual[$i];
+                $hoursSpent[] = $fillPositionSpent[$i];
+
+            }
 
         }
 
-        // $totalHoursLeft = $actualData[$lastArray];
-        // $actualData[$lastArray] = $totalHoursLeft;
-        // $hoursSpent[$lastArray] = $doneHoursSpent;
-        // var_dump("lastArray: " . $actualData[$lastArray]);
-        // var_dump("lastHours: " . $hoursSpent[$lastArray]);
+        if($currenrDateTime <= $SprintEndDateTime){      //Burndown chart cannot upate after sprint end
 
-        // Loop through $actualData
-        // foreach ($actualData as $index => $data) {
-        //     var_dump("actualData[$index]: $data");
-        // }
-
-        // // Loop through $hoursSpent
-        // foreach ($hoursSpent as $index => $hours) {
-        //     var_dump("hoursSpent[$index]: $hours");
-        // }
-
+            $actualData[$lastArray] = $totalHoursAssigned - $totalDoneTaskHours;
+            $hoursSpent[$lastArray] = $totalDoneTaskHours;
+            
+        }
 
         return ['actualData' => $actualData, 'hoursSpent' => $hoursSpent];
     }
