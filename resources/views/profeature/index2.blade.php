@@ -1,7 +1,12 @@
 <!--Sprint Index/Sprint Page-->
 @include('inc.success')
 @extends('layouts.app2')
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 
 @include('inc.dashboard')
 
@@ -19,6 +24,8 @@
       <th>Description</th>
       <th>Start Date</th>
       <th>End Date</th>
+      <th>Kanban</th>
+      <th>Burn Down Chart</th>
       <th>Edit</th>
       <th>Delete</th>
       <th>User Story</th>
@@ -45,15 +52,25 @@
       </th>
 
       <th>
-        <button type="submit"><a href="{{route('sprints.edit', [$sprint->sprint_id])}}">Edit</a></button>
+        <button type="submit" class="btn"><a href="{{ route('sprint.kanbanPage', ['proj_id' => $projects->id, 'sprint_id' => $sprint->sprint_id]) }}" class="button">View</a></button>
+
       </th>
 
       <th>
-        <button type="submit"><a href="{{route('sprints.destroy', $sprint)}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this sprint?');">Delete</button>
+      <button type="submit" class="btn"><a href="{{ route('burnDown.index', ['proj_id' => $projects->id, 'sprint_id' => $sprint->sprint_id]) }}" class="button">View</a></button>
+
       </th>
 
       <th>
-        <button type="submit"><a href="{{action('ProductFeatureController@index3', $sprint['sprint_id'])}}">View</a></button>
+        <button type="submit" class="btn"><a href="{{route('sprints.edit', [$sprint->sprint_id])}}">Edit</a></button>
+      </th>
+
+      <th>
+        <button type="submit" class="btn"><a href="{{route('sprints.destroy', $sprint)}}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this sprint?');">Delete</button>
+      </th>
+
+      <th>
+        <button type="submit" class="btn"><a href="{{action('ProductFeatureController@index3', $sprint['sprint_id'])}}">View</a></button>
       </th>
     </tr>
 

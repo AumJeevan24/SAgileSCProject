@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SprintController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ThemeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +18,7 @@ use App\Http\Controllers\SprintController;
 |
 */
 
+Route::get('/send-whatsapp', [TeamController::class, 'sendWhatsAppMessage']);
 Route::get('/', function () {
     return view('welcome');
 });
@@ -21,6 +26,11 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
+//Route for theme config
+Route::get('/set-theme/{theme}', [ThemeController::class, 'setTheme'])->name('set-theme');
+Route::get('/show-theme', [ThemeController::class, 'showTheme'])->name('show-theme');
+Route::get('/choose-theme', [ThemeController::class, 'chooseTheme'])->name('choose-theme');
 
 //Route for Project Actions
 Route::get('projects', 'ProjectController@index')->name('project.index');
@@ -62,6 +72,8 @@ Route::post('teams', 'TeamController@store')->name('teams.store');
 Route::post('teams/{team}', 'TeamController@update')->name('teams.update');
 Route::get('teams/{team}/destroy', 'TeamController@destroy')->name('teams.destroy');
 Route::get('teams','TeamController@search');
+// Route::post('/send-invitation-email', 'TeamController@sendInvitationEmail')->name('send.invitation.email');
+Route::get('teams/sendmail','TeamController@sendMail')->name('Team.invitationEmailTest');
 
 //Route for Defect Feature
 Route::get('deffeature', 'DefectFeatureController@index')->name('deffeature.index');
@@ -99,7 +111,7 @@ Route::group(['middleware' => 'auth'], function () {
 // Route::get('statuses/{status}/destroy', 'StatusController@destroy')->name('statuses.destroy');
 
 //Route for role
-Route::get('role', 'RoleController@index')->name('role.index');
+Route::get('role', 'RoleController@index')->name('roles.index');
 Route::get('roles/create', 'RoleController@create')->name('roles.create');
 Route::get('roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
 Route::post('roles', 'RoleController@store')->name('roles.store');
@@ -138,6 +150,7 @@ Route::get('teammappings','TeamMappingController@search')->name('teammappings.se
 Route::get('teammappings', 'TeamMappingController@getUsers');
 Route::post('getUsers', 'TeamMappingController@getUsers')->name('getUsers.post');
 
+
 //Route for user stories
 Route::get('userstory', 'UserStoryController@getID')->name('userstory.getID');
 Route::get('userstory', 'UserStoryController@index')->name('userstory.index');
@@ -164,12 +177,15 @@ Route::get('backlog/{userstory}/destroy', 'UserStoryController@destroy')->name('
 //Kanban Board
 Route::get('sprint/task', 'TaskController@kanbanBoard')->name('tasks.kanban'); 
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
+Route::get('/tasks/{task_id}/description', 'TaskController@getTaskDescription')->name('tasks.description');
 //Main Task Page 
-Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+// Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
+
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');
@@ -193,8 +209,10 @@ Route::get('role', 'RoleController@index')->name('role.index');
 Route::get('roles/create', 'RoleController@create')->name('roles.create');
 Route::get('roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
 Route::post('roles', 'RoleController@store')->name('roles.store');
-Route::post('roles/{role}', 'RoleController@update')->name('roles.update');
+Route::patch('roles/{role}', 'RoleController@update')->name('roles.update');
 Route::get('roles/{role}/destroy', 'RoleController@destroy')->name('roles.destroy');
+Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
+
 
 //Route for Coding Standard
 Route::get('codestand', 'CodingStandardController@index')->name('codestand.index');
@@ -255,12 +273,29 @@ Route::get('backlog/{userstory}/destroy', 'UserStoryController@destroy')->name('
 Route::get('sprint/task', 'TaskController@indexKanbanBoard')->name('tasks.kanban'); 
 Route::get('kanban/{proj_id}', 'TaskController@viewKanbanBoard')->name('tasks.viewkanban');
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
+
+//Kanban Page
+Route::get('/{proj_id}/{sprint_id}/kanbanBoard', 'TaskController@kanbanIndex')->name('sprint.kanbanPage');
+Route::post('/addStatus', 'StatusController@createStatus')->name('kanban.createStatus');
+Route::put('/updateStatus', 'StatusController@updateStatus')->name('kanban.updateStatus');
+Route::put('/updateTaskStatus', 'StatusController@updateTaskStatus')->name('kanban.updateTaskStatus');
+Route::delete('/deleteStatus', 'StatusController@deleteStatus')->name('kanban.deleteStatus');
+Route::post('/createTask', 'TaskController@createTask')->name('kanban.createTask');
+Route::delete('/deleteTask', 'TaskController@deleteTask')->name('kanban.deleteTask');
+Route::get('/updateTask/{taskId}', 'TaskController@updateTaskPage')->name('kanban.updateTaskPage');
+
+
+
+
 //Main Task Page 
 Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+// Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
+// Route::get('task/{userstory_id}', 'TaskController@indexCalendar')->name('tasks.calendarTask');
+Route::get('task/{userstory_id}/calendarTask', 'TaskController@indexCalendar')->name('tasks.calendarTask');
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');
@@ -307,9 +342,6 @@ Route::get('/cost/{id}/edit', 'App\Http\Controllers\QuotationController@edit')->
 Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')->name('search_quotation');
 
 
-
-
-
-
-
-
+//route for burn down chart
+Route::get('/{proj_id}/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
+// Route::get('/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');

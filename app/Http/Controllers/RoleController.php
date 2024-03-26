@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Role;
 use App\Project;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+
 
 class RoleController extends Controller
 {
@@ -15,19 +18,24 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //Get the project where user's team name(s) is the same with project's team name
         $user = \Auth::user();
-        $teammapping = \App\TeamMapping::where('username', '=', $user->username)->pluck('team_name')->toArray(); // use pluck() to retrieve an array of team names
-        $pro = \App\Project::whereIn('team_name', $teammapping)->get(); // use whereIn() to retrieve the projects that have a team_name value in the array
-
-        $role = new Role;
-
-        return view ('role.index', ['roles'=>$role->all()])
-            ->with('title', 'Role')
-            ->with('pros', $pro);
-
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Please log in to access this page');
+        }
+    
+        $teammapping = \App\TeamMapping::where('username', $user->username)->pluck('team_name')->toArray();
+        $pro = Project::whereIn('team_name', $teammapping)->get();
+    
+        // Retrieve roles based on team name
+        $roles = Role::all();
+        
+        return view('role.index', [
+            'roles' => $roles,
+            'pro' => $pro,
+            'title' => 'Role'
+        ]);
     }
-
+    
     /**
      * Show the form for creating a new resource.
      *
@@ -39,34 +47,34 @@ class RoleController extends Controller
             ->with('title', 'Create Role');
     }
 
+
+    public function store(Request $request)
+{
+    $validatedData = $request->validate(Role::rules());
+
+    // If validation passes, attempt to create the role
+    try {
+        $role = Role::create([
+            'role_name' => $validatedData['role_name']
+        ]);
+
+        // Role created successfully
+        return redirect()->route('roles.index')->with('success', 'Role created successfully');
+    } catch (\Exception $e) {
+        
+        // Handle any exceptions or errors that occur during role creation
+        return redirect()->back()->withInput()->withErrors(['error' => 'Failed to create role']);
+    }
+}
+
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //validate the request
-        $validation = $request->validate([
-            'role_name' => 'required|unique:roles',
-        ],
-        [
-            'role_name.required' => '*The Role name is required',
-            'role_name.unique' => '*There is already an existing Role with the same name',
-        ]);
-        
-        //assign the request parameters
-        $role =new Role();
-        $role->role_name = $request->role_name;
-        $role->save();
-
-        return redirect()->route('role.index' ,['roles'=>$role->all()])
-        ->with('title', 'Role')
-        ->with('success', 'Role has successfully been created!');
-
-    }
-
+    
     /**
      * Display the specified resource.
      *
@@ -99,13 +107,7 @@ class RoleController extends Controller
      * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
-    {
-        $role->role_name=$request->role_name;
-        $role->save(); 
-    
-        return redirect()->route('role.index', $role);
-    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -122,4 +124,34 @@ class RoleController extends Controller
             ->with('title', 'Role')
             ->with('success', 'Role has successfully been deleted!');    
     }
+
+
+    public function update(Request $request, Role $role)
+{
+    $validatedData = $request->validate([
+        'role_name' => [
+            'required',
+            Rule::unique('roles')->ignore($role->id),
+        ],
+    ]);
+
+    try {
+        $role->update([
+            'role_name' => $validatedData['role_name'],
+            // Update permissions here based on form input
+            'permissions' => $request->input('permissions') ?? []
+        ]);
+
+        return redirect()->route('role.index')->with('success', 'Role updated successfully');
+    } catch (\Exception $e) {
+        \Log::error('Failed to update role: ' . $e->getMessage());
+
+        return redirect()->back()->withInput()->withErrors(['error' => 'Failed to update role']);
+    }
 }
+
+
+
+    
+}
+

@@ -1,6 +1,11 @@
-<!--Kanban Board-->
+<!--tasks.kanban.blade.php-->
 @extends('layouts.app')
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 
 @section('content')
 

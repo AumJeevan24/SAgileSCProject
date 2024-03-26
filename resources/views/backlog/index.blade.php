@@ -1,7 +1,12 @@
 <!--Main Backlog Page-->
 @extends('layouts.app2')
 @include('inc.success')
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 
 @include('inc.dashboard')
 

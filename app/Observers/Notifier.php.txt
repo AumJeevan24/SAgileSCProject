@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Observers;
+
+use App\User;
+use App\Team;
+
+class Notifier
+{
+        /**
+     * Handle the user "notify" event.
+     *
+     * @param  \App\team
+     * @return void
+     */
+    public function notify(Request $request)
+    {
+        send(new EmailNotifier);
+        send(new WhatsappNotifier);
+    }
+
+
+
+
+
+    /**
+     * Handle the user "created" event.
+     *
+     * @param  \App\Team
+     * @return void
+     */
+    public function created()
+    {
+
+    }
+
+    /**
+     * Handle the user "updated" event.
+     *
+     * @param  \App\User  $user
+     * @return void
+     */
+    public function updated()
+    {
+        //
+    }
+
+    /**
+     * Handle the user "deleted" event.
+     *
+     * @param  \App\User  $user
+     * @return void
+     */
+    public function deleted()
+    {
+        //
+    }
+
+    /**
+     * Handle the user "restored" event.
+     *
+     * @param  \App\User  $user
+     * @return void
+     */
+    public function restored()
+    {
+        //
+    }
+
+    /**
+     * Handle the user "force deleted" event.
+     *
+     * @param  \App\User  $user
+     * @return void
+     */
+    public function forceDeleted()
+    {
+        //
+    }
+}

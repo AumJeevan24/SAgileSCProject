@@ -1,10 +1,15 @@
 @extends('layouts.app2')
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 @include('inc.navbar')
 
 @section('content')
 @include('inc.title')
-<br><br>
+<br><br> 
 
    <form action="{{route('roles.store')}}" method="post" enctype="multipart/form-data">
       @csrf
@@ -18,3 +23,5 @@
 
  <br><br>
 @endsection
+
+

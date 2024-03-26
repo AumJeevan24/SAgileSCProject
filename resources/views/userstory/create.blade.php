@@ -1,10 +1,16 @@
-<!--Create User Story Page-->
+
 @extends('layouts.app2')
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 @include('inc.navbar')
 
 @section('content')
 @include('inc.title')
+
 <br><br>
 <form action="{{route('userstory.store')}}" method="post" enctype="multipart/form-data">
     @csrf
@@ -61,6 +67,17 @@
             <option value="{{ $statuses->title}}" {{ ((isset($statuses->title) && $statuses->title== $statuses->title)? "selected":"") }}>{{$statuses->title}}</option>
         @endforeach
     </select> --}}
+    <br> <br>
+
+    Assigned to :
+    <select name="user_names[]" multiple>
+        @foreach($teamlist as $teammember)
+            <option value="{{ $teammember['username'] }}" {{ (old('user_names') && in_array($teammember['username'], old('user_names')) ? 'selected' : '') }}>
+                {{ $teammember['username'] }} (Team: {{ $teammember['team_name'] }})
+            </option>
+        @endforeach
+    </select>
+    <div class="error"><font color="red" size="2">{{ $errors->first('user_id') }}</p></font></div>
     <br>
     
     <div>
