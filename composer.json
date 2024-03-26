@@ -16,7 +16,8 @@
         "laravel/framework": "^7.0",
         "laravel/passport": "9.4.0",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^2.5"
+        "laravel/ui": "^2.5",
+        "twilio/sdk": "^7.13"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.3",

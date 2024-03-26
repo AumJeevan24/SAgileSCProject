@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Tambahan extends Migration
+class AddNewTaskUpdateToTasksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,16 +14,19 @@ class Tambahan extends Migration
     public function up()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->integer('hours_assigned')->default(0);
-            $table->integer('hours_completed')->default(0);
+            $table->date('newTask_update')->nullable();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->dropColumn('hours_assigned');
-            $table->dropColumn('hours_completed');
+            $table->dropColumn('newTask_update');
         });
     }
 }

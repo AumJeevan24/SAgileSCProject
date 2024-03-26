@@ -70,8 +70,40 @@ class UserStoryController extends Controller
         $user = \Auth::user();
         $sprint = Sprint::where('sprint_id', $sprint_id)->first();
         $project = Project::where('proj_name', $sprint->proj_name)->first();
-        $team = Team::where('proj_name', $sprint->proj_name)->first();
-        $roles = TeamMapping::where('team_name', $team->team_name)->distinct('role_name')->pluck('role_name');
+        // $team = Team::where('proj_name', $sprint->proj_name)->get();
+        // $roles = TeamMapping::where('team_name', $team->team_name)->distinct('role_name')->pluck('role_name');
+        // Get the proj_name from the project
+        // $team_name = $project->team_name;
+        $teams = Project::where('proj_name', $sprint->proj_name)->get(); // Get the collection of teams
+
+        $userTeams = [];
+        $roles = [];
+
+        // Iterate through each team
+        foreach ($teams as $team) {
+            // Get the list of team members for the current team
+            $teamlist = TeamMapping::where('team_name', $team->team_name)->get();
+
+            // Now $teamlist contains the team members for the current team
+            foreach ($teamlist as $teammember) {
+                // Access individual team member properties like $teammember->username
+                // Do something with each team member
+
+                // Save username and team_name in a 2D array
+                $userTeams[] = [
+                    'username' => $teammember->username,
+                    'team_name' => $team->team_name,
+                ];
+                // Collect distinct roles from all teams
+                $roles = array_merge($roles, TeamMapping::where('team_name', $team->team_name)->distinct('role_name')->pluck('role_name')->toArray());
+            }
+        }
+
+        $roles = array_unique($roles);
+        // var_dump($userTeams);
+        // var_dump($roles);
+
+        
 
         //send the existing statuses for the project related   
         $status = Status::where('project_id', $project->id)->get();
@@ -79,6 +111,9 @@ class UserStoryController extends Controller
         $perfeature = new PerformanceFeature;
         $secfeatures = $secfeature->select('secfeature_name')->get();
         $perfeatures = $perfeature->select('perfeature_name')->get();
+
+        //get the list of team members for the team
+        //$teamlist = TeamMapping::where('team_name', $team->team_name)->get();
         
         //get related sprint with the user story
         $sprint = Sprint::where('sprint_id', $sprint_id)->first();
@@ -87,6 +122,8 @@ class UserStoryController extends Controller
             ->with('title', 'Create User Story for '. $sprint->sprint_name)
             ->with('sprint_id', $sprint_id)
             ->with('statuses', $status)
+            ->with('teamlist', $userTeams)
+            // ->with('team_name', $team_name)
             ->with('roles', $roles);
 
     }
@@ -130,6 +167,9 @@ class UserStoryController extends Controller
 
         // Assign means value
         $userstory->means = $request->means;
+
+        $userstory->user_names = json_encode($request->user_names);
+
 
         // Assign prio_story value 0: Temporary Fix
         $userstory->prio_story = 0;
@@ -180,6 +220,34 @@ class UserStoryController extends Controller
 
         //send the existing statuses for the project related   
         $status = Status::where('project_id', $project->id)->get();
+
+        //get the team for the project
+        $team = Project::where('proj_name', $project->proj_name)->get();
+
+        //get the list of team members for the team
+        //$teamlist = TeamMapping::where('team_name', $team->team_name)->get();
+        $userTeams = [];
+
+        // Iterate through each team
+        foreach ($team as $teamItem) {
+            // Get the list of team members for the current team
+            $teamlist = TeamMapping::where('team_name', $teamItem->team_name)->get();
+
+            // Now $teamlist contains the team members for the current team
+            foreach ($teamlist as $teammember) {
+                // Access individual team member properties like $teammember->username
+                // Do something with each team member
+
+                // Save username and team_name in a 2D array
+                $userTeams[] = [
+                    'username' => $teammember->username,
+                    'team_name' => $teamItem->team_name,
+                ];
+            }
+        }
+
+        // Get the proj_name from the project
+        $team_name = $project->team_name;
         
         $secfeature = new SecurityFeature;
         $perfeature = new PerformanceFeature;
@@ -191,6 +259,8 @@ class UserStoryController extends Controller
         return view('userstory.edit',['secfeatures'=>$secfeature->all(), 'perfeatures'=>$perfeature->all()])
             ->with('title', 'Edit Userstory - "' . $userstory->user_story . '" in '. $sprint->sprint_name)    
             ->with('userstory', $userstory)
+            ->with('teamlist', $userTeams)
+            ->with('team_name', $team_name)
             ->with('statuses', $status);
     }
 
@@ -223,6 +293,8 @@ class UserStoryController extends Controller
 
         $userstory->perfeature_id = $str_perfeatures;
         $userstory->secfeature_id = $str_secfeatures;
+
+        $userstory->user_names = json_encode($request->user_names);
         
 
         //redirect to index3 page

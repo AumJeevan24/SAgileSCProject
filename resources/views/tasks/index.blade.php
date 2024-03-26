@@ -1,12 +1,17 @@
 <!-- Main Task Page -->
 @extends('layouts.app2')
-@include('inc.style')
+<?php
+    $themeConfig = app(\App\Services\ThemeConfig::class);
+    $styleFile = $themeConfig->getThemeCssFile();
+?>
+
+@include("{$styleFile}")
 @include('inc.success')
 @include('inc.dashboard')
 @include('inc.navbar')
 
 @section('content')
-@include('inc.title')
+@include('inc.title',['title' => 'Your Title'])
 <br>
     <table>
         <tr>
@@ -54,8 +59,12 @@
           
       </table>
 
-  <br><br>
+      <br><br><br>
 
       <button type="submit"><a href="{{route('tasks.create', $userstory_id)}}">Add Task</a></button>
+
+      <button type="submit"><a href="{{route('tasks.calendarTask', $userstory_id)}}">Task Calendar</a></button>
+      
+      <br><br>
       
 @endsection
