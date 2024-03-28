@@ -24,10 +24,12 @@ Before you start, make sure you have the following software installed on your sy
 - Git
 
 Ensure PHP version installed in XAMPP is **v8.0.28**
+- [XAMPP PHP Version Change Tutorial](https://www.youtube.com/watch?v=Uto36GI6HIg)
+- [XAMPP Version 8.0.28](https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.0.28/)
 
 The project must be installed in `C:\path\to\xampp\htdocs\SAgilePMT_UTM`
 
-In your phpMyAdmin create a database `kanban` and import `kanban.sql`
+In your phpMyAdmin create a database `kanban` and import [`kanban.sql`](kanban.sql)
 
 
 # Start the Server
