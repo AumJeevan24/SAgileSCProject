@@ -1,11 +1,6 @@
 @extends('layouts.app2')
 @section('dashboard')
-<?php
-    $themeConfig = app(\App\Services\ThemeConfig::class);
-    $styleFile = $themeConfig->getThemeCssFile();
-?>
-
-@include("{$styleFile}")
+@include('inc.style')
 @include('inc.navbar')
 
 @section('content')
