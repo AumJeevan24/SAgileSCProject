@@ -13,7 +13,7 @@ class ThemeController extends Controller
     {
         $selectedTheme = $request->input('theme');
         $themeConfig->setTheme($selectedTheme);
-        return redirect()->back();
+        return redirect()->route('show-theme');
     }
 }
 

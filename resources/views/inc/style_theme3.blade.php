@@ -8,17 +8,17 @@
     }
 
     td, th {
-        border: 1px solid #fad596; /* Pastel orange border color */
+        border: 1px solid #2ecc71; /* Theme 3: Green border color */
         text-align: left;
         padding: 8px;
-        transition: background-color 0.3s; /* Add a smooth transition effect */
     }
 
     tr:nth-child(even) {
-        background-color: #fad596; /* Light pastel orange background color */
+        background-color: #d0f4e6; /* Theme 3: Light background color */
     }
 
     .active {
-    background-color: rgb(29, 28, 100);
+        background-color: #f39c12; /* Theme 3: Orange background color for active elements */
+        color: #ffffff; /* Theme 3: White text color for active elements */
     }
 </style>
