@@ -27,7 +27,7 @@ Ensure PHP version installed in XAMPP is **v8.0.28**
 
 The project must be installed in `C:\path\to\xampp\htdocs\SAgilePMT_UTM`
 
-In your phpMyAdmin create a database `kanban` and import `kanban(1).sql`
+In your phpMyAdmin create a database `kanban` and import `kanban.sql`
 
 
 # Start the Server
