@@ -18,6 +18,4 @@
   .active {
   background-color: rgb(29, 28, 100);
   }
-
-  
 </style>
