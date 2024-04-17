@@ -179,6 +179,9 @@ Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
 
+//Route for UCD
+Route::get('ucd/{sprint_id}', 'UCDController@index')->name('ucd.index');
+
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');
