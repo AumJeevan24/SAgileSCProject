@@ -34,7 +34,7 @@ class UCDController extends Controller
 
         $userstories = $userstory->pluck('user_story');
 
-        $url = 'http://35.187.225.41/ucd/';
+        $url = 'http://127.0.0.1:7000/ucd/';
 
         $jsonData = [
             'user_stories' => $userstories,
