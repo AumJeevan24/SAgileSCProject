@@ -27,6 +27,7 @@
         "@fullcalendar/core": "^6.1.10",
         "@fullcalendar/daygrid": "^6.1.10",
         "bootstrap": "^5.2.3",
+        "fullcalendar": "^6.1.11",
         "sweetalert2": "^11.7.27",
         "vue-select": "^3.16.0",
         "vuedraggable": "^2.23.2",

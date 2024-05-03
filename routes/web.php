@@ -327,12 +327,28 @@ Route::post('/forum/{forum_id}/comments', 'CommentController@store')->name('comm
 // Define a single route for both favorite and unfavorite actions
 Route::match(['post', 'delete'], '/forum/favorite/{forumId}', 'ForumFavoriteController@toggleFavorite')->name('forum.favorite');
 
-//Cost Estimation Tool
-Route::get('/costestimation', 'App\Http\Controllers\QuotationController@costestimation')->name('costestimation');
-Route::post('/cost-estimation', [QuotationController::class, 'cost_estimation_save'])->name('cost-estimation-save');
-Route::post('/cost-estimation/update/{id}', [QuotationController::class, 'cost_estimation_update'])->name('cost-estimation-update');
-Route::get('/cost/{id}/edit', 'App\Http\Controllers\QuotationController@edit')->name('cost-estimation-edit');
-Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')->name('search_quotation');
+// //Cost Estimation Tool
+// Route::get('/costestimation', 'App\Http\Controllers\QuotationController@costestimation')->name('costestimation');
+// Route::post('/cost-estimation', [QuotationController::class, 'cost_estimation_save'])->name('cost-estimation-save');
+// Route::post('/cost-estimation/update/{id}', [QuotationController::class, 'cost_estimation_update'])->name('cost-estimation-update');
+// Route::get('/cost/{id}/edit', 'App\Http\Controllers\QuotationController@edit')->name('cost-estimation-edit');
+// Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')->name('search_quotation');
+
+//Route for Calendar
+Route::get('/calendar/index', 'CalendarController@index')->name('calendar.index');
+Route::post('/calendar', 'CalendarController@store')->name('calendar.store');
+Route::patch('/calendar/{id}', 'CalendarController@update')->name('calendar.update');
+Route::delete('/calendar/{id}', 'CalendarController@destroy')->name('calendar.destroy');
+
+//Route for BugTracking
+Route::get('/bugtrack', 'BugtrackingController@index')->name('bugtrack.index');
+Route::get('/bugtrack/create', 'BugtrackingController@create')->name('bugtrack.create');
+Route::post('/bugtrack', 'BugtrackingController@store')->name('bugtrack.store');
+Route::put('/bugtrack/{bugId}/update-status', 'BugtrackingController@updateStatus')->name('bugtrack.update_status');
+Route::get('/bugtrack/{id}/details', 'BugtrackController@details')->name('bugtrack.details');
+
+
+
 
 
 //route for burn down chart
