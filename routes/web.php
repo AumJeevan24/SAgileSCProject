@@ -4,6 +4,23 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\dashboard\Analytics;
+use App\Http\Controllers\layouts\WithoutMenu;
+use App\Http\Controllers\layouts\WithoutNavbar;
+use App\Http\Controllers\layouts\Fluid;
+use App\Http\Controllers\layouts\Container;
+use App\Http\Controllers\layouts\Blank;
+use App\Http\Controllers\pages\AccountSettingsAccount;
+use App\Http\Controllers\pages\AccountSettingsNotifications;
+use App\Http\Controllers\pages\AccountSettingsConnections;
+use App\Http\Controllers\pages\MiscError;
+use App\Http\Controllers\pages\MiscUnderMaintenance;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\authentications\LoginBasic;
+use App\Http\Controllers\authentications\RegisterBasic;
+use App\Http\Controllers\authentications\ForgotPasswordBasic;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,12 +104,12 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('status', 'StatusController@index')->name('status.index');
-    Route::get('status/{proj_ID}', 'StatusController@indexProjectStatus')->name('status.project');    
+    Route::get('status/{proj_ID}', 'StatusController@indexProjectStatus')->name('status.project');
     Route::get('statuses/create/{proj_ID}', 'StatusController@create')->name('statuses.create');
     Route::get('statuses/{status}/edit', 'StatusController@edit')->name('statuses.edit');
     Route::post('status', 'StatusController@store')->name('statuses.store');
     Route::post('statuses', 'StatusController@update')->name('statuses.update');
-    Route::get('statuses/{status}/destroy', 'StatusController@destroy')->name('statuses.destroy');  
+    Route::get('statuses/{status}/destroy', 'StatusController@destroy')->name('statuses.destroy');
 });
 
 // //Route for status
@@ -133,7 +150,7 @@ Route::get('attachments/{attachment}/destroy', 'AttachmentController@destroy')->
 //Route::get('teammapping', 'TeamMappingController@index')->name('teammapping.index');
 
 //view team members
-Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index'); 
+Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index');
 Route::get('teammappings/{team_name}/create', 'TeamMappingController@create')->name('teammappings.create');
 Route::get('teammappings/show', 'TeamMappingController@show')->name('teammappings.show');
 Route::get('teammappings/{teammapping_id}/edit', 'TeamMappingController@edit')->name('teammappings.edit');
@@ -168,10 +185,10 @@ Route::get('backlog/{userstory}/destroy', 'UserStoryController@destroy')->name('
 
 //Route for Task Assign
 //Kanban Board
-Route::get('sprint/task', 'TaskController@kanbanBoard')->name('tasks.kanban'); 
+Route::get('sprint/task', 'TaskController@kanbanBoard')->name('tasks.kanban');
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
 Route::get('/tasks/{task_id}/description', 'TaskController@getTaskDescription')->name('tasks.description');
-//Main Task Page 
+//Main Task Page
 // Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
 Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
@@ -232,7 +249,7 @@ Route::get('attachments/{attachment}/destroy', 'AttachmentController@destroy')->
 //Route::get('teammapping', 'TeamMappingController@index')->name('teammapping.index');
 
 //view team members
-Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index'); 
+Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index');
 Route::get('teammappings/{team_name}/create', 'TeamMappingController@create')->name('teammappings.create');
 Route::get('teammappings/show', 'TeamMappingController@show')->name('teammappings.show');
 Route::get('teammappings/{teammapping_id}/edit', 'TeamMappingController@edit')->name('teammappings.edit');
@@ -266,7 +283,7 @@ Route::get('backlog/{userstory}/destroy', 'UserStoryController@destroy')->name('
 
 //Route for Task Assign
 //Kanban Board
-Route::get('sprint/task', 'TaskController@indexKanbanBoard')->name('tasks.kanban'); 
+Route::get('sprint/task', 'TaskController@indexKanbanBoard')->name('tasks.kanban');
 Route::get('kanban/{proj_id}', 'TaskController@viewKanbanBoard')->name('tasks.viewkanban');
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
 
@@ -283,7 +300,7 @@ Route::get('/updateTask/{taskId}', 'TaskController@updateTaskPage')->name('kanba
 
 
 
-//Main Task Page 
+//Main Task Page
 Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
 // Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
@@ -341,3 +358,26 @@ Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')
 //route for burn down chart
 Route::get('/{proj_id}/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
 // Route::get('/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
+
+// layout
+Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
+Route::get('/layouts/without-navbar', [WithoutNavbar::class, 'index'])->name('layouts-without-navbar');
+Route::get('/layouts/fluid', [Fluid::class, 'index'])->name('layouts-fluid');
+Route::get('/layouts/container', [Container::class, 'index'])->name('layouts-container');
+Route::get('/layouts/blank', [Blank::class, 'index'])->name('layouts-blank');
+
+// pages
+Route::get('/pages/account-settings-account', [AccountSettingsAccount::class, 'index'])->name('pages-account-settings-account');
+Route::get('/pages/account-settings-notifications', [AccountSettingsNotifications::class, 'index'])->name('pages-account-settings-notifications');
+Route::get('/pages/account-settings-connections', [AccountSettingsConnections::class, 'index'])->name('pages-account-settings-connections');
+Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
+Route::get('/pages/misc-under-maintenance', [MiscUnderMaintenance::class, 'index'])->name('pages-misc-under-maintenance');
+
+// authentication
+Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
+Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
+Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
+
+Route::get('/auth/login', [LoginController::class, 'index'])->name('auth-login');
+Route::post('/register', 'Auth\RegisterController@register')->name('register');
+Route::get('/auth/forgot-password', [ForgotPasswordController::class, 'index'])->name('auth-reset-password');

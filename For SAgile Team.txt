@@ -1,0 +1,35 @@
+For the frontend system, I have used php 8.1 and Laravel version is updated to 
+version ^8.0 for this system, and I so far tested that this version will not 
+affect any of the current progress of this project.
+
+-----------------------------------------------------------------------------------
+
+# REMARKS
+
+CONSIDER UPDATE OR INSTALL/UNINSTALL THE XAMPP VERSION INTO VERSION 8.1 TO GET TO USE 
+THE PHP VERSION 8.1 OR ELSE YOU WILL BE FACING INCOMPATIBLE PHP RESTRICTIONS.
+
+I AM SORRY THAT WE WILL HAVE TO DO IT IN THIS WAY, BUT THIS IS BECAUSE
+MOST OF THE TIME I AM FACING LOTS OF PROBLEMS AND INCOMPATIBLE PACKAGE VERSIONS
+WHILE WORKING ON THE FRONTEND IF THE PHP IS 8.0 OR BELOW.
+
+-----------------------------------------------------------------------------------
+
+Consider using the "composer self-update" or "composer self-update --2"
+if you are facing composer version restrictions, smtg like that.
+
+I have also added some other package versions and you can just delete
+the package-lock.json files and "npm install" them, if needed.
+
+Consider to use command "npm run dev"(one time) for laravel Mix to work
+with the frontend files. Otherwise, the localhost won't work as 
+it can't find the Mix files needed.
+
+
+NOTES :
+If any of you are facing errors or incompatible version of the packages or php files 
+or if it involves something else with the files, please let me know so that we can 
+discuss it on the group whatsapp.
+
+Thank you,
+Amirul Shafiq Bin Amirrullah
