@@ -60,8 +60,7 @@
         <td><a href="{{ route('backlog.index', $project->id) }}">View</a></td>
         <td><a href="{{ action('ProductFeatureController@index2', $project->proj_name) }}">View</a></td>
         <td><a href="{{ action('ForumController@index') }}">View</a></td>
-        <td><a href="">View</a></td>
-    </tr>
+        <td><a href="{{ action('BugtrackingController@index') }}">View</a></td>
 @endforeach
 
         @endif
