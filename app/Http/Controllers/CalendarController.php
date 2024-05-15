@@ -5,30 +5,58 @@ namespace App\Http\Controllers;
 use App\Calendar; 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Task;
 
 class CalendarController extends Controller
 {
     public function index()
     {
-        $events = Calendar::all()->map(function ($booking) {
-            $color = null;
-            if ($booking->title == 'Test') {
-                $color = '#924ACE';
-            } elseif ($booking->title == 'Test 1') {
-                $color = '#68B01A';
-            }
-
+        // Fetch tasks from the Task model
+        $tasks = Task::all()->map(function ($task) {
             return [
-                'id' => $booking->id,
-                'title' => $booking->title,
-                'start' => $booking->start_date,
-                'end' => $booking->end_date,
-                'color' => $color,
+                'id' => $task->id,
+                'title' => $task->title,
+                'start' => $task->start_date,
+                'end' => $task->end_date,
+                'color' => '#808080',
+                'editable' => false,
+                'iconClass' => 'fas fa-tasks', // Default icon class for tasks
+                'type' => 'Task', // Type of event
             ];
         });
-
-        return view('calendar.index', ['events' => $events]);
+    
+        // Fetch events from the Calendar model
+        $events = Calendar::all()->map(function ($event) {
+            $color = null;
+            $type = null;
+            if ($event->title == 'Test') {
+                $color = '#924ACE';
+                $iconClass = 'fas fa-briefcase';
+                $type = 'Calendar Event'; // Type of event
+            } elseif ($event->title == 'Test 1') {
+                $color = '#68B01A';
+                $iconClass = 'fas fa-briefcase';
+                $type = 'Calendar Event'; // Type of event
+            }
+    
+            return [
+                'id' => $event->id,
+                'title' => $event->title,
+                'start' => $event->start_date,
+                'end' => $event->end_date,
+                'color' => $color,
+                'editable' => true,
+                'iconClass' => $iconClass ?? null,
+                'type' => $type,
+            ];
+        });
+    
+        // Merge tasks and events into a single array
+        $data = $tasks->merge($events);
+    
+        return view('calendar.index', ['events' => $data]);
     }
+
 
     public function store(Request $request)
     {
