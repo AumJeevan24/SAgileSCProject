@@ -6,6 +6,8 @@
     
     <li class="aside a {{ Request::is('team*') ? 'active' : '' }}"><a href="{{ route('team.index') }}">Team</a></li>
     
+    <li class="aside a {{ Request::is('calendar*') ? 'active' : '' }}"><a href="{{ route('calendar.index') }}">Calendar</a></li>
+    
     <li class="aside a {{ Request::is('status*') ? 'active' : '' }}"><a href="{{ route('status.index') }}">Status</a></li>
     
     <li class="aside a {{ Request::is('perfeature*') ? 'active' : '' }}"><a href="{{ route('perfeature.index') }}">Performance Feature</a></li>

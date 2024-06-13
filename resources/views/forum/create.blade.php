@@ -1,26 +1,23 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
+@section('title', 'Forum Create')
 @section('content')
-<div class="container mx-auto mt-8 p-8 bg-white rounded-lg shadow-md">
-    <h1 class="text-3xl font-semibold mb-8 text-center">Create a New Forum</h1>
-    <form action="{{ route('forum.store') }}" method="POST" enctype="multipart/form-data">
+<div class="container mt-8 p-8 bg-white rounded-lg shadow-sm">
+    <h1 class="text-center mb-8">Create a New Forum</h1>
+    <form action="{{ route('forum.store', ['projectId' => $projectId]) }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="mb-6">
-            <label for="title" class="block text-gray-700 text-lg font-semibold mb-2">Title</label>
-            <input type="text" id="title" name="title" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:shadow-outline" placeholder="Enter the forum title" required>
+        <div class="form-group mb-4">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="Enter the forum title" required>
         </div>
-        <div class="mb-6">
-            <label for="content" class="block text-gray-700 text-lg font-semibold mb-2">Content</label>
-            <div class="relative">
-                <textarea id="content" name="content" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:shadow-outline h-64 resize-none" maxlength="500" placeholder="Enter the forum content (Max 500 characters)" required></textarea>
-                <div class="absolute bottom-2 right-2 text-gray-500 text-sm">
-                    <span id="charCount">0</span>/500 characters
-                </div>
-            </div>
+        <div class="form-group mb-4">
+            <label for="content" class="form-label">Content</label>
+            <textarea id="content" name="content" class="form-control" rows="6" maxlength="500" placeholder="Enter the forum content (Max 500 characters)" required></textarea>
+            <small id="charCount" class="form-text text-muted">0/500 characters</small>
         </div>
-        <div class="mb-6">
-            <label for="category" class="block text-gray-700 text-lg font-semibold mb-2">Category</label>
-            <select id="category" name="category" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:shadow-outline">
+        <div class="form-group mb-4">
+            <label for="category" class="form-label">Category</label>
+            <select id="category" name="category" class="form-control">
                 <option value="" disabled selected>Select a category</option>
                 <option value="Category 1">Category 1</option>
                 <option value="Category 2">Category 2</option>
@@ -28,15 +25,15 @@
                 <!-- Add more categories here -->
             </select>
         </div>
-        <div class="mb-6">
-            <label for="image_url" class="block text-gray-700 text-lg font-semibold mb-2">Image URL</label>
-            <input type="text" id="image_url" name="image_url" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:shadow-outline" placeholder="Enter the image URL (optional)">
+        <div class="form-group mb-4">
+            <label for="image_url" class="form-label">Image URL</label>
+            <input type="text" id="image_url" name="image_url" class="form-control" placeholder="Enter the image URL (optional)">
         </div>
-        <div class="mt-8 flex justify-center space-x-4">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-8 rounded-lg shadow-md text-lg transition duration-300 ease-in-out transform hover:scale-105">
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary mr-3">
                 <i class="fas fa-pen mr-2"></i> Create Forum
             </button>
-            <a href="{{ route('forum.index') }}" class="text-gray-600 hover:text-gray-800 py-3 px-8 rounded-lg border border-gray-300 hover:border-gray-500 text-lg transition duration-300 ease-in-out transform hover:scale-105">
+            <a href="{{ route('forum.index', ['projectId' => $projectId]) }}" class="btn btn-secondary">
                 <i class="fas fa-times mr-2"></i> Cancel
             </a>
         </div>
@@ -50,8 +47,24 @@
         const charCount = document.getElementById('charCount');
 
         contentTextarea.addEventListener('input', function () {
-            charCount.textContent = this.value.length;
+            charCount.textContent = `${this.value.length}/500 characters`;
         });
+    });
+</script>
+<!-- Include SweetAlert2 just before the closing </body> tag -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    window.addEventListener('load', () => {
+        // Check for a success message in the session
+        const successMessage = "{{ session('success') }}";
+
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: successMessage,
+            });
+        }
     });
 </script>
 

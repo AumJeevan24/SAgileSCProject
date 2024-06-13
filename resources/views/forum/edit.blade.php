@@ -1,12 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.app2')
+
+@section('title', 'Forum Edit')
 
 @section('content')
 <div class="container mx-auto mt-8 p-4 bg-white rounded-lg shadow-md">
-    <div class="flex justify-between items-center mb-4">
-        <h1 class="text-3xl font-semibold">
-            <i class="fas fa-edit mr-2 text-blue-600"></i> Edit Forum Post
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h1 style="font-size: 1.875rem; font-weight: 600; color: #1a202c;">
+            <i class="fas fa-edit mr-2" style="color: #3f58b0;"></i> Edit Forum Post
         </h1>
-        <a href="{{ route('forum.view', ['id' => $forumPost->id]) }}" class="text-blue-600 hover:underline">
+        <a href="{{ route('forum.view', ['projectId' => $projectId, 'forumPostId' => $forumPost->id]) }}" style="color: #3f58b0; text-decoration: none; font-weight: 600;">
             <i class="fas fa-arrow-left mr-1"></i> Back to Forum
         </a>
     </div>
@@ -14,14 +16,14 @@
     <form action="{{ route('forum.update', $forumPost->id) }}" method="POST">
         @csrf
         @method('PUT')
-        <div class="mb-4">
-            <label for="updatedContent" class="block text-gray-700 text-sm font-semibold mb-2">
-                <i class="fas fa-pencil-alt mr-2 text-blue-600"></i> Content
+        <div style="margin-bottom: 1rem;">
+            <label for="updatedContent" style="display: block; color: #4a5568; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">
+                <i class="fas fa-pencil-alt mr-2" style="color: #3f58b0;"></i> Content
             </label>
-            <textarea id="updatedContent" name="updatedContent" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:shadow-outline h-40 resize-none" maxlength="500" required>{{ $forumPost->content }}</textarea>
+            <textarea id="updatedContent" name="updatedContent" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e0; border-radius: 0.375rem; resize: none; font-size: 1rem; line-height: 1.5;" rows="8" maxlength="500" required>{{ $forumPost->content }}</textarea>
         </div>
-        <div class="mt-6 flex justify-end">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-full shadow-md text-lg transition duration-300 ease-in-out transform hover:scale-105">
+        <div style="text-align: right;">
+            <button type="submit" style="background-color: #3f58b0; color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 0.375rem; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.3s ease-in-out;">
                 <i class="fas fa-save mr-2"></i> Save Changes
             </button>
         </div>
@@ -30,15 +32,15 @@
     <form action="{{ route('forum.destroy', ['forumPost' => $forumPost]) }}" method="POST">
         @csrf
         @method('DELETE')
-        <div class="mt-4 flex justify-end">
-            <button type="submit" class="ml-4 text-red-600 hover:text-red-700 py-2 px-6 rounded-full border border-red-600 hover:border-red-700 text-lg transition duration-300 ease-in-out transform hover:scale-105">
+        <div style="text-align: right; margin-top: 1rem;">
+            <button type="submit" style="color: #e53e3e; background-color: transparent; border: 1px solid #e53e3e; padding: 0.75rem 1.5rem; border-radius: 0.375rem; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.3s ease-in-out;">
                 <i class="fas fa-trash-alt mr-2"></i> Delete
             </button>
         </div>
     </form>
     
     @error('updatedContent')
-    <span class="text-red-500">{{ $message }}</span>
+    <span style="color: #e53e3e; font-size: 0.875rem; margin-top: 0.5rem; display: block;">{{ $message }}</span>
     @enderror
 </div>
 
