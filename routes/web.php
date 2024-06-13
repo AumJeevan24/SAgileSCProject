@@ -332,13 +332,16 @@ Route::get('perfeatures/{perfeature}/destroy', 'PerformanceFeatureController@des
 Route::post('mapping/destroy', 'MappingController@destroy')->name('mapping.destroy');
 
 // Route for Forum
-Route::get('/forum', 'ForumController@index')->name('forum.index');
-Route::get('/forum/create', 'ForumController@create')->name('forum.create');
-Route::post('/forum', 'ForumController@store')->name('forum.store');
-Route::get('/forum/{id}/view', 'ForumController@view')->name('forum.view');
+Route::get('/forum/{projectId}', 'ForumController@index')->name('forum.index');
+Route::get('/forum/create/{projectId?}', 'ForumController@create')->name('forum.create');
+Route::post('/forum/{projectId}', 'ForumController@store')->name('forum.store');
+// Route for viewing a forum post within a project
+Route::get('/forum/{projectId}/{forumPostId}/view', 'ForumController@view')->name('forum.view');
+
 Route::get('/forum/{forumPost}/edit', 'ForumController@edit')->name('forum.edit');
 Route::put('/forum/{forumPost}', 'ForumController@update')->name('forum.update');
 Route::delete('/forum/{forumPost}', 'ForumController@destroy')->name('forum.destroy');
+
 
 // Route for Comments
 Route::post('/forum/{forum_id}/comments', 'CommentController@store')->name('comments.store');
