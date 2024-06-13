@@ -57,36 +57,31 @@ class CalendarController extends Controller
         return view('calendar.index', ['events' => $data]);
     }
 
+    public function create()
+    {
+        return view('calendar.create');
+    }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
+{
+    $request->validate([
+        'title' => 'required|string',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+    ]);
 
-        $booking = Calendar::create([
-            'title' => $request->title,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+    $booking = Calendar::create([
+        'title' => $request->title,
+        'start_date' => $request->start_date,
+        'end_date' => $request->end_date,
+    ]);
 
-        dd($booking);
+    // Flash success message to session
+    session()->flash('success', 'Event created successfully!');
 
-        $color = null;
-        if ($booking->title == 'Test') {
-            $color = '#924ACE';
-        }
+    return redirect()->route('calendar.index');
+}
 
-        return response()->json([
-            'id' => $booking->id,
-            'start' => $booking->start_date,
-            'end' => $booking->end_date,
-            'title' => $booking->title,
-            'color' => $color ?: '',
-        ]);
-    }
 
     public function update(Request $request, $id)
     {

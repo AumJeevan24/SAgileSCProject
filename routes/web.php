@@ -359,6 +359,7 @@ Route::match(['post', 'delete'], '/forum/favorite/{forumId}', 'ForumFavoriteCont
 
 //Route for Calendar
 Route::get('/calendar/index', 'CalendarController@index')->name('calendar.index');
+Route::get('/calendar/create', 'CalendarController@create')->name('calendar.create');
 Route::post('/calendar', 'CalendarController@store')->name('calendar.store');
 Route::patch('/calendar/{id}', 'CalendarController@update')->name('calendar.update');
 Route::delete('/calendar/{id}', 'CalendarController@destroy')->name('calendar.destroy');
