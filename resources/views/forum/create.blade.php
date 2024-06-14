@@ -26,8 +26,8 @@
             </select>
         </div>
         <div class="form-group mb-4">
-            <label for="image_url" class="form-label">Image URL</label>
-            <input type="text" id="image_url" name="image_url" class="form-control" placeholder="Enter the image URL (optional)">
+            <label for="image_urls" class="form-label">Image URL</label>
+            <input type="text" id="image_urls" name="image_urls" class="form-control" placeholder="Enter the image URL (optional)">
         </div>
         <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-primary mr-3">
