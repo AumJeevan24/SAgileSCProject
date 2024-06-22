@@ -1,9 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.app2')
+
+@section('title', 'Bugtracking')
 
 @section('content')
 <div class="flex flex-col min-h-screen bg-light-blue">
     <!-- Header -->
-    <header class="bg-navy-blue text-blue py-4 text-center">
+    <header class="bg-navy-blue text-blue py-4 text-center mb-4 rounded-lg">
         <h1 class="text-4xl font-extrabold flex items-center justify-center">
             <i class="fas fa-bug mr-2"></i> Bugtracking
         </h1>
@@ -11,100 +13,86 @@
 
     <!-- Main Content -->
     <div class="flex-grow flex">
-        <!-- Left Sidebar for Create Button, Categories, and Forum Rules -->
-        <aside class="w-1/4 bg-white p-4 rounded-lg shadow-md">
+        <!-- Left Sidebar for Create Button -->
+        <aside class="w-1/4 p-4">
             <div class="mb-4">
-                <!-- Logo or Heading -->
-                <h2 class="text-2xl font-semibold mb-4">Bugtracking Menu</h2>
-                
-                <!-- Menu Items -->
-                <ul class="list-unstyled">
-                    <li>
-                        <a href="{{ route('bugtrack.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-full shadow-md text-lg block text-center transition duration-300 ease-in-out transform hover:scale-105 mb-2">
-                            <i class="fas fa-bug"></i> Create Bugtrack
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-full shadow-md text-lg block text-center transition duration-300 ease-in-out transform hover:scale-105 mb-2">
-                            <i class="fas fa-tags"></i> Categories
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-full shadow-md text-lg block text-center transition duration-300 ease-in-out transform hover:scale-105 mb-2">
-                            <i class="fas fa-comments"></i> Forum
-                        </a>
-                    </li>
-                    <!-- Add more menu items here -->
-                </ul>
+                <a href="{{ route('bugtrack.create') }}" class="btn btn-primary w-full mb-2">
+                    <i class="fas fa-bug"></i> Create Bugtrack
+                </a>
             </div>
         </aside>
-    
-        
+
         <!-- Right Section for Bugtrackings -->
-        <main class="w-3/4 pl-4 flex-grow flex-col">
+        <main class="w-3/4 pl-4 flex-grow flex flex-col">
             <!-- Section for "Open" bugtrackings -->
-            <div class="w-full p-4" id="openSection">
-                <div class="bg-white p-4 rounded-lg shadow-md mb-4 droppable" data-status="open">
-                    <h2 class="text-2xl font-semibold mb-4">Open</h2>
-                    @forelse($bugtracks as $bugtrack)
-                        @if($bugtrack->status === 'open')
-                            <div class="bugtrack-card bg-blue-50 p-4 rounded-lg shadow-md mb-6 hover:shadow-lg hover:scale-105 draggable" data-id="{{ $bugtrack->id }}" draggable="true">
-                                <!-- Bugtrack information -->
-                                <h3 class="text-xl font-semibold">{{ $bugtrack->title }}</h3>
-                                <p class="text-gray-700 text-lg mt-2">{{ \Illuminate\Support\Str::limit($bugtrack->description, 150) }}</p>
-                                <!-- Additional information (e.g., assigned to, reported by, etc.) -->
-                                <div class="flex items-center text-gray-600 text-sm mt-2">
-                                    <!-- Include additional information here -->
+            <div class="w-full p-4">
+                <div class="card mb-4 rounded-lg shadow-md">
+                    <div class="card-body">
+                        <h2 class="text-2xl font-semibold mb-4">Open</h2>
+                        @forelse($bugtracks as $bugtrack)
+                            @if($bugtrack->status === 'open')
+                                <div class="bugtrack-card card mb-4 rounded-lg shadow-md">
+                                    <div class="card-body">
+                                        <h3 class="text-xl font-semibold">{{ $bugtrack->title }}</h3>
+                                        <p class="text-gray-700 text-lg mt-2">{{ \Illuminate\Support\Str::limit($bugtrack->description, 150) }}</p>
+                                        <div class="flex items-center text-gray-600 text-sm mt-2">
+                                            <!-- Additional information -->
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
-                    @empty
-                        <p>No bugtrackings found with status "Open".</p>
-                    @endforelse
+                            @endif
+                        @empty
+                            <p>No bugtrackings found with status "Open".</p>
+                        @endforelse
+                    </div>
                 </div>
             </div>
 
             <!-- Section for "In Progress" bugtrackings -->
-            <div class="w-full p-4" id="progressSection">
-                <div class="bg-white p-4 rounded-lg shadow-md mb-4 droppable" data-status="In Progress">
-                    <h2 class="text-2xl font-semibold mb-4">In Progress</h2>
-                    @forelse($bugtracks as $bugtrack)
-                        @if($bugtrack->status === 'In Progress')
-                            <div class="bugtrack-card bg-blue-50 p-4 rounded-lg shadow-md mb-6 hover:shadow-lg hover:scale-105 draggable" data-id="{{ $bugtrack->id }}" draggable="true">
-                                <!-- Bugtrack information -->
-                                <h3 class="text-xl font-semibold">{{ $bugtrack->title }}</h3>
-                                <p class="text-gray-700 text-lg mt-2">{{ \Illuminate\Support\Str::limit($bugtrack->description, 150) }}</p>
-                                <!-- Additional information (e.g., assigned to, reported by, etc.) -->
-                                <div class="flex items-center text-gray-600 text-sm mt-2">
-                                    <!-- Include additional information here -->
+            <div class="w-full p-4">
+                <div class="card mb-4 rounded-lg shadow-md">
+                    <div class="card-body">
+                        <h2 class="text-2xl font-semibold mb-4">In Progress</h2>
+                        @forelse($bugtracks as $bugtrack)
+                            @if($bugtrack->status === 'In Progress')
+                                <div class="bugtrack-card card mb-4 rounded-lg shadow-md">
+                                    <div class="card-body">
+                                        <h3 class="text-xl font-semibold">{{ $bugtrack->title }}</h3>
+                                        <p class="text-gray-700 text-lg mt-2">{{ \Illuminate\Support\Str::limit($bugtrack->description, 150) }}</p>
+                                        <div class="flex items-center text-gray-600 text-sm mt-2">
+                                            <!-- Additional information -->
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
-                    @empty
-                        <p>No bugtrackings found with status "In Progress".</p>
-                    @endforelse
+                            @endif
+                        @empty
+                            <p>No bugtrackings found with status "In Progress".</p>
+                        @endforelse
+                    </div>
                 </div>
             </div>
 
             <!-- Section for "Closed" bugtrackings -->
-            <div class="w-full p-4" id="closedSection">
-                <div class="bg-white p-4 rounded-lg shadow-md mb-4 droppable" data-status="Closed">
-                    <h2 class="text-2xl font-semibold mb-4">Closed</h2>
-                    @forelse($bugtracks as $bugtrack)
-                        @if($bugtrack->status === 'Closed')
-                            <div class="bugtrack-card bg-blue-50 p-4 rounded-lg shadow-md mb-6 hover:shadow-lg hover:scale-105 draggable" data-id="{{ $bugtrack->id }}" draggable="true">
-                                <!-- Bugtrack information -->
-                                <h3 class="text-xl font-semibold">{{ $bugtrack->title }}</h3>
-                                <p class="text-gray-700 text-lg mt-2">{{ \Illuminate\Support\Str::limit($bugtrack->description, 150) }}</p>
-                                <!-- Additional information (e.g., assigned to, reported by, etc.) -->
-                                <div class="flex items-center text-gray-600 text-sm mt-2">
-                                    <!-- Include additional information here -->
+            <div class="w-full p-4">
+                <div class="card mb-4 rounded-lg shadow-md">
+                    <div class="card-body">
+                        <h2 class="text-2xl font-semibold mb-4">Closed</h2>
+                        @forelse($bugtracks as $bugtrack)
+                            @if($bugtrack->status === 'Closed')
+                                <div class="bugtrack-card card mb-4 rounded-lg shadow-md">
+                                    <div class="card-body">
+                                        <h3 class="text-xl font-semibold">{{ $bugtrack->title }}</h3>
+                                        <p class="text-gray-700 text-lg mt-2">{{ \Illuminate\Support\Str::limit($bugtrack->description, 150) }}</p>
+                                        <div class="flex items-center text-gray-600 text-sm mt-2">
+                                            <!-- Additional information -->
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
-                    @empty
-                        <p>No bugtrackings found with status "Closed".</p>
-                    @endforelse
+                            @endif
+                        @empty
+                            <p>No bugtrackings found with status "Closed".</p>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </main>
@@ -204,3 +192,55 @@
     });
 </script>
 @endsection
+
+<!-- Custom CSS -->
+<style>
+    /* Button Styles */
+    .btn {
+        display: inline-block;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.5rem;
+        transition: all 0.15s ease-in-out;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    /* Card Styles */
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.5rem;
+        transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    .card-body {
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1.5rem;
+    }
+</style>

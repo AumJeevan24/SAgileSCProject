@@ -59,7 +59,7 @@ public function store(Request $request, $projectId)
         'title' => 'required|string|max:255',
         'content' => 'required|string',
         'category' => 'required|string', // Assuming you have a category field
-        'image_url' => 'nullable|string', // Validate image URL as a valid URL
+        'image_urls' => 'nullable|string', // Validate image URL as a valid URL
         // Add any other validation rules you need
     ]);
 
@@ -71,7 +71,7 @@ public function store(Request $request, $projectId)
         'title' => $validatedData['title'],
         'content' => $validatedData['content'],
         'category' => $validatedData['category'],
-        'image_url' => $validatedData['image_url'],
+        'image_urls' => $validatedData['image_urls'],
         'project_id' => $projectId,
         'user_id' => $userId,
     ]);

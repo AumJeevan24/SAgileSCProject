@@ -43,9 +43,9 @@
     
             <div style="color: #333; font-size: 1.125rem; line-height: 1.6;">{{ $forumPost->content }}</div>
     
-            @if($forumPost->image_url)
+            @if($forumPost->image_urls)
                 <div style="margin-top: 16px;">
-                    <img src="{{ $forumPost->image_url }}" alt="Forum Image" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <img src="{{ $forumPost->image_urls }}" alt="Forum Image" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                 </div>
             @endif
         </div>

@@ -6,12 +6,10 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-
             <div class="d-flex justify-content-end mb-3">
                 <a href="{{ route('calendar.create') }}" class="btn btn-primary">Add Event</a>
             </div>
             <div id="calendar"></div>
-
         </div>
     </div>
 </div>
@@ -36,7 +34,7 @@
         max-width: 100%;
         margin: 0 auto;
         background-color: #fff;
-        border: 1px solid #ddd; /* Add border */
+        border: 1px solid #ddd;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         padding: 20px;
@@ -48,13 +46,13 @@
         align-items: center;
         margin-bottom: 20px;
         background-color: #F8FAF8;
-        border-radius: 8px; /* Rounded corners */
+        border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         padding: 15px;
     }
 
     .fc-toolbar h2 {
-        font-size: 1.8rem; /* Larger font size */
+        font-size: 1.8rem;
         margin-bottom: 0;
         color: #574956;
     }
@@ -65,9 +63,10 @@
         color: #fff;
         margin: 0 5px;
         border-radius: 5px;
-        display: inline-flex; /* Ensure buttons display inline */
-        align-items: center; /* Center content vertically */
-        padding: 8px 12px; /* Adjust padding as needed */
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        cursor: pointer; /* Add cursor pointer for better UX */
     }
 
     .fc-button:hover {
@@ -75,9 +74,8 @@
         border-color: #2c3e6b;
     }
 
-    /* Adjustments for today and month/week/day navigation */
     .fc-center h2 {
-        font-size: 1.5rem; /* Adjust font size for month/week/day header */
+        font-size: 1.5rem;
         margin: 0;
     }
 
@@ -96,7 +94,7 @@
 
     .fc-left .fc-button,
     .fc-right .fc-button {
-        padding: 8px 12px; /* Adjust padding as needed */
+        padding: 8px 12px;
     }
 
     /* Font Awesome Icons */
@@ -104,93 +102,102 @@
     .fc-next-button .fc-icon:before {
         font-family: 'Font Awesome 5 Free';
         font-weight: 900;
-        font-size: 1rem; /* Adjust icon size as needed */
+        font-size: 1rem;
     }
 
     .fc-prev-button .fc-icon:before {
-        content: '\f053'; /* FontAwesome icon for previous (chevron left) */
+        content: '\f053';
     }
 
     .fc-next-button .fc-icon:before {
-        content: '\f054'; /* FontAwesome icon for next (chevron right) */
+        content: '\f054';
+    }
+
+    /* Event styling adjustments */
+    .fc-event {
+        margin-bottom: 5px; /* Adjust margin between events */
+        padding: 2px 5px; /* Adjust padding for event content */
+        background-color: #f0f0f0; /* Example background color */
+        border: 1px solid #ccc; /* Example border */
+        border-radius: 3px; /* Example border radius */
+        font-size: 0.8rem; /* Smaller font size for events */
+        line-height: 1.2; /* Adjust line height for better compactness */
     }
 </style>
 
 <script>
-$(document).ready(function() {
-    var booking = {!! json_encode($events) !!};
+    $(document).ready(function() {
+        var booking = {!! json_encode($events) !!};
 
-    booking.forEach(function(event) {
-        event.color = event.color || '#3498db'; // Set default color if not specified
-        event.editable = event.editable !== undefined ? event.editable : true; // Set editable to true by default
-    });
-
-    $('#calendar').fullCalendar({
-        header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-        },
-        events: booking,
-        editable: true,
-        eventDrop: function(event) {
-            if (!event.editable) {
-                $('#calendar').fullCalendar('refetchEvents');
-            } else {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            events: booking,
+            editable: true,
+            eventDrop: function(event) {
                 var id = event.id;
-                var start_date = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-                var end_date = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+                var start_date = event.start.format('YYYY-MM-DD HH:mm:ss');
+                var end_date = event.end ? event.end.format('YYYY-MM-DD HH:mm:ss') : null;
 
                 $.ajax({
                     url: "{{ route('calendar.update', '') }}/" + id,
                     type: "PATCH",
                     dataType: 'json',
-                    data: { start_date: start_date, end_date: end_date },
+                    data: {
+                        start_date: start_date,
+                        end_date: end_date,
+                        _token: "{{ csrf_token() }}"
+                    },
                     success: function(response) {
                         swal("Success", "Event updated successfully!", "success");
                     },
-                    error: function(error) {
-                        console.log(error);
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                        swal("Error", "There was an error updating the event.", "error");
                     },
                 });
+            },
+            eventClick: function(event) {
+                swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, you will not be able to recover this event!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: "{{ route('calendar.destroy', '') }}/" + event.id,
+                            type: "DELETE",
+                            dataType: 'json',
+                            data: { _token: "{{ csrf_token() }}" },
+                            success: function(response) {
+                                $('#calendar').fullCalendar('removeEvents', event.id);
+                                swal("Success", "Event deleted successfully!", "success");
+                            },
+                            error: function(xhr, status, error) {
+                                console.log(xhr.responseText);
+                                swal("Error", "There was an error deleting the event.", "error");
+                            },
+                        });
+                    } else {
+                        swal("Your event is safe!");
+                    }
+                });
+            },
+            selectAllow: function(event) {
+                return event.start.isSame(event.end, 'day');
+            },
+            eventRender: function(event, element) {
+                var iconClass = 'fa fa-calendar';
+                element.find('.fc-content').prepend('<i class="' + iconClass + '"></i>');
             }
-        },
-        eventClick: function(event) {
-            swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this event!",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-            .then((willDelete) => {
-                if (willDelete) {
-                    $.ajax({
-                        url: "{{ route('calendar.destroy', '') }}/" + event.id,
-                        type: "DELETE",
-                        dataType: 'json',
-                        success: function(response) {
-                            $('#calendar').fullCalendar('removeEvents', event.id);
-                            swal("Success", "Event deleted successfully!", "success");
-                        },
-                        error: function(error) {
-                            console.log(error);
-                        },
-                    });
-                } else {
-                    swal("Your event is from Tasks!");
-                }
-            });
-        },
-        selectAllow: function(event) {
-            return moment(event.start).utcOffset(false).isSame(moment(event.end).subtract(1, 'second').utcOffset(false), 'day');
-        },
-        eventRender: function(event, element) {
-            var iconClass = 'fa fa-calendar';
-            element.find('.fc-content').prepend('<i class="' + iconClass + '"></i>');
-        }
+        });
     });
-});
 </script>
 
 @endsection

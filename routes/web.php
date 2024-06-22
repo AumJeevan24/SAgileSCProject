@@ -21,6 +21,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\authentications\LoginBasic;
 use App\Http\Controllers\authentications\RegisterBasic;
 use App\Http\Controllers\authentications\ForgotPasswordBasic;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +40,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 Auth::routes();
+
+
+Route::get('/send-test-email', function () {
+    Mail::to('test@example.com')->send(new TestMail());
+    return 'Test email has been sent!';
+});
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
