@@ -55,6 +55,17 @@
     
     
     <br><br>
+
+    Assigned to :
+    <select name="user_names[]" multiple>
+        @foreach($teamlist as $teammember)
+            <option value="{{ $teammember['username'] }}" {{ (old('user_names') && in_array($teammember['username'], old('user_names')) ? 'selected' : '') }}>
+                {{ $teammember['username'] }} (Team: {{ $teammember['team_name'] }})
+            </option>
+        @endforeach
+    </select>
+
+    <br><br>
     
     <!--If the perfeature_id and secfeature_id does not contain anything, it will store as the string 'null'
                 This condition here displays 'an empty array if the features are empty'

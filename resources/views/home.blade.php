@@ -5,6 +5,7 @@
 @include('inc.navbar')
 
 @section('article')
+asdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsd
     <button><a href="{{route('projects.create')}}">New Project</a></button>
 @endsection    
 

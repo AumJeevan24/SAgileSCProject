@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Forum extends Model
 {
-    protected $fillable = [
-        'title', 'content', 'image_urls', 'user_id', 'category', 
-    ];
+    protected $table = 'forums';
 
+    protected $fillable = [
+        'title', 'content', 'category', 'image_urls', 'user_id','project_id',
+    ];
+    
+    
     // Define relationships if needed, e.g., a forum belongs to a user.
     public function user()
     {

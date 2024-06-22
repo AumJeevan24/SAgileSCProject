@@ -2,6 +2,27 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SprintController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\dashboard\Analytics;
+use App\Http\Controllers\layouts\WithoutMenu;
+use App\Http\Controllers\layouts\WithoutNavbar;
+use App\Http\Controllers\layouts\Fluid;
+use App\Http\Controllers\layouts\Container;
+use App\Http\Controllers\layouts\Blank;
+use App\Http\Controllers\pages\AccountSettingsAccount;
+use App\Http\Controllers\pages\AccountSettingsNotifications;
+use App\Http\Controllers\pages\AccountSettingsConnections;
+use App\Http\Controllers\pages\MiscError;
+use App\Http\Controllers\pages\MiscUnderMaintenance;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\authentications\LoginBasic;
+use App\Http\Controllers\authentications\RegisterBasic;
+use App\Http\Controllers\authentications\ForgotPasswordBasic;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +35,17 @@ use App\Http\Controllers\SprintController;
 |
 */
 
+Route::get('/send-whatsapp', [TeamController::class, 'sendWhatsAppMessage']);
 Route::get('/', function () {
     return view('welcome');
 });
 Auth::routes();
+
+
+Route::get('/send-test-email', function () {
+    Mail::to('test@example.com')->send(new TestMail());
+    return 'Test email has been sent!';
+});
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
@@ -62,6 +90,8 @@ Route::post('teams', 'TeamController@store')->name('teams.store');
 Route::post('teams/{team}', 'TeamController@update')->name('teams.update');
 Route::get('teams/{team}/destroy', 'TeamController@destroy')->name('teams.destroy');
 Route::get('teams','TeamController@search');
+// Route::post('/send-invitation-email', 'TeamController@sendInvitationEmail')->name('send.invitation.email');
+Route::get('teams/sendmail','TeamController@sendMail')->name('Team.invitationEmailTest');
 
 //Route for Defect Feature
 Route::get('deffeature', 'DefectFeatureController@index')->name('deffeature.index');
@@ -82,12 +112,12 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('status', 'StatusController@index')->name('status.index');
-    Route::get('status/{proj_ID}', 'StatusController@indexProjectStatus')->name('status.project');    
+    Route::get('status/{proj_ID}', 'StatusController@indexProjectStatus')->name('status.project');
     Route::get('statuses/create/{proj_ID}', 'StatusController@create')->name('statuses.create');
     Route::get('statuses/{status}/edit', 'StatusController@edit')->name('statuses.edit');
     Route::post('status', 'StatusController@store')->name('statuses.store');
     Route::post('statuses', 'StatusController@update')->name('statuses.update');
-    Route::get('statuses/{status}/destroy', 'StatusController@destroy')->name('statuses.destroy');  
+    Route::get('statuses/{status}/destroy', 'StatusController@destroy')->name('statuses.destroy');
 });
 
 // //Route for status
@@ -99,7 +129,7 @@ Route::group(['middleware' => 'auth'], function () {
 // Route::get('statuses/{status}/destroy', 'StatusController@destroy')->name('statuses.destroy');
 
 //Route for role
-Route::get('role', 'RoleController@index')->name('role.index');
+Route::get('role', 'RoleController@index')->name('roles.index');
 Route::get('roles/create', 'RoleController@create')->name('roles.create');
 Route::get('roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
 Route::post('roles', 'RoleController@store')->name('roles.store');
@@ -128,7 +158,7 @@ Route::get('attachments/{attachment}/destroy', 'AttachmentController@destroy')->
 //Route::get('teammapping', 'TeamMappingController@index')->name('teammapping.index');
 
 //view team members
-Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index'); 
+Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index');
 Route::get('teammappings/{team_name}/create', 'TeamMappingController@create')->name('teammappings.create');
 Route::get('teammappings/show', 'TeamMappingController@show')->name('teammappings.show');
 Route::get('teammappings/{teammapping_id}/edit', 'TeamMappingController@edit')->name('teammappings.edit');
@@ -137,6 +167,7 @@ Route::get('teammappings/{teammapping}/destroy', 'TeamMappingController@destroy'
 Route::get('teammappings','TeamMappingController@search')->name('teammappings.search');
 Route::get('teammappings', 'TeamMappingController@getUsers');
 Route::post('getUsers', 'TeamMappingController@getUsers')->name('getUsers.post');
+
 
 //Route for user stories
 Route::get('userstory', 'UserStoryController@getID')->name('userstory.getID');
@@ -162,14 +193,20 @@ Route::get('backlog/{userstory}/destroy', 'UserStoryController@destroy')->name('
 
 //Route for Task Assign
 //Kanban Board
-Route::get('sprint/task', 'TaskController@kanbanBoard')->name('tasks.kanban'); 
+Route::get('sprint/task', 'TaskController@kanbanBoard')->name('tasks.kanban');
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
-//Main Task Page 
-Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+Route::get('/tasks/{task_id}/description', 'TaskController@getTaskDescription')->name('tasks.description');
+//Main Task Page
+// Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
+
+//Route for UCD
+Route::get('ucd/{sprint_id}', 'UCDController@index')->name('ucd.index');
+
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');
@@ -193,8 +230,10 @@ Route::get('role', 'RoleController@index')->name('role.index');
 Route::get('roles/create', 'RoleController@create')->name('roles.create');
 Route::get('roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
 Route::post('roles', 'RoleController@store')->name('roles.store');
-Route::post('roles/{role}', 'RoleController@update')->name('roles.update');
+Route::patch('roles/{role}', 'RoleController@update')->name('roles.update');
 Route::get('roles/{role}/destroy', 'RoleController@destroy')->name('roles.destroy');
+Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
+
 
 //Route for Coding Standard
 Route::get('codestand', 'CodingStandardController@index')->name('codestand.index');
@@ -218,7 +257,7 @@ Route::get('attachments/{attachment}/destroy', 'AttachmentController@destroy')->
 //Route::get('teammapping', 'TeamMappingController@index')->name('teammapping.index');
 
 //view team members
-Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index'); 
+Route::get('teammappings/{team_name}', 'TeamMappingController@index')->name('teammapping.index');
 Route::get('teammappings/{team_name}/create', 'TeamMappingController@create')->name('teammappings.create');
 Route::get('teammappings/show', 'TeamMappingController@show')->name('teammappings.show');
 Route::get('teammappings/{teammapping_id}/edit', 'TeamMappingController@edit')->name('teammappings.edit');
@@ -252,15 +291,32 @@ Route::get('backlog/{userstory}/destroy', 'UserStoryController@destroy')->name('
 
 //Route for Task Assign
 //Kanban Board
-Route::get('sprint/task', 'TaskController@indexKanbanBoard')->name('tasks.kanban'); 
+Route::get('sprint/task', 'TaskController@indexKanbanBoard')->name('tasks.kanban');
 Route::get('kanban/{proj_id}', 'TaskController@viewKanbanBoard')->name('tasks.viewkanban');
 Route::put('/tasks/{id}', 'TaskController@updateKanbanBoard');
-//Main Task Page 
+
+//Kanban Page
+Route::get('/{proj_id}/{sprint_id}/kanbanBoard', 'TaskController@kanbanIndex')->name('sprint.kanbanPage');
+Route::post('/addStatus', 'StatusController@createStatus')->name('kanban.createStatus');
+Route::put('/updateStatus', 'StatusController@updateStatus')->name('kanban.updateStatus');
+Route::put('/updateTaskStatus', 'StatusController@updateTaskStatus')->name('kanban.updateTaskStatus');
+Route::delete('/deleteStatus', 'StatusController@deleteStatus')->name('kanban.deleteStatus');
+Route::post('/createTask', 'TaskController@createTask')->name('kanban.createTask');
+Route::delete('/deleteTask', 'TaskController@deleteTask')->name('kanban.deleteTask');
+Route::get('/updateTask/{taskId}', 'TaskController@updateTaskPage')->name('kanban.updateTaskPage');
+
+
+
+
+//Main Task Page
 Route::get('task/{u_id}', 'TaskController@index')->name('tasks.index');
+// Route::get('tasks/{userstory_id}', 'TaskController@index')->name('tasks.index');
 Route::get('task/{userstory}/create', 'TaskController@create')->name('tasks.create');
 Route::get('task/{id}/edit', 'TaskController@edit')->name('tasks.edit');
 Route::post('task/{task}', 'TaskController@update')->name('tasks.update');
 Route::get('task/{task}/destroy', 'TaskController@destroy')->name('tasks.destroy');
+// Route::get('task/{userstory_id}', 'TaskController@indexCalendar')->name('tasks.calendarTask');
+Route::get('task/{userstory_id}/calendarTask', 'TaskController@indexCalendar')->name('tasks.calendarTask');
 
 //Route for security feature
 Route::get('secfeatures', 'SecurityFeatureController@index')->name('secfeature.index');
@@ -284,13 +340,16 @@ Route::get('perfeatures/{perfeature}/destroy', 'PerformanceFeatureController@des
 Route::post('mapping/destroy', 'MappingController@destroy')->name('mapping.destroy');
 
 // Route for Forum
-Route::get('/forum', 'ForumController@index')->name('forum.index');
-Route::get('/forum/create', 'ForumController@create')->name('forum.create');
-Route::post('/forum', 'ForumController@store')->name('forum.store');
-Route::get('/forum/{id}/view', 'ForumController@view')->name('forum.view');
+Route::get('/forum/{projectId}', 'ForumController@index')->name('forum.index');
+Route::get('/forum/create/{projectId?}', 'ForumController@create')->name('forum.create');
+Route::post('/forum/{projectId}', 'ForumController@store')->name('forum.store');
+// Route for viewing a forum post within a project
+Route::get('/forum/{projectId}/{forumPostId}/view', 'ForumController@view')->name('forum.view');
+
 Route::get('/forum/{forumPost}/edit', 'ForumController@edit')->name('forum.edit');
 Route::put('/forum/{forumPost}', 'ForumController@update')->name('forum.update');
 Route::delete('/forum/{forumPost}', 'ForumController@destroy')->name('forum.destroy');
+
 
 // Route for Comments
 Route::post('/forum/{forum_id}/comments', 'CommentController@store')->name('comments.store');
@@ -299,12 +358,54 @@ Route::post('/forum/{forum_id}/comments', 'CommentController@store')->name('comm
 // Define a single route for both favorite and unfavorite actions
 Route::match(['post', 'delete'], '/forum/favorite/{forumId}', 'ForumFavoriteController@toggleFavorite')->name('forum.favorite');
 
+// //Cost Estimation Tool
+// Route::get('/costestimation', 'App\Http\Controllers\QuotationController@costestimation')->name('costestimation');
+// Route::post('/cost-estimation', [QuotationController::class, 'cost_estimation_save'])->name('cost-estimation-save');
+// Route::post('/cost-estimation/update/{id}', [QuotationController::class, 'cost_estimation_update'])->name('cost-estimation-update');
+// Route::get('/cost/{id}/edit', 'App\Http\Controllers\QuotationController@edit')->name('cost-estimation-edit');
+// Route::get('/search', 'App\Http\Controllers\QuotationController@search_company')->name('search_quotation');
+
+//Route for Calendar
+Route::get('/calendar/index', 'CalendarController@index')->name('calendar.index');
+Route::get('/calendar/create', 'CalendarController@create')->name('calendar.create');
+Route::post('/calendar', 'CalendarController@store')->name('calendar.store');
+Route::patch('/calendar/{id}', 'CalendarController@update')->name('calendar.update');
+Route::delete('/calendar/{id}', 'CalendarController@destroy')->name('calendar.destroy');
+
+//Route for BugTracking
+Route::get('/bugtrack', 'BugtrackingController@index')->name('bugtrack.index');
+Route::get('/bugtrack/create', 'BugtrackingController@create')->name('bugtrack.create');
+Route::post('/bugtrack', 'BugtrackingController@store')->name('bugtrack.store');
+Route::put('/bugtrack/{bugId}/update-status', 'BugtrackingController@updateStatus')->name('bugtrack.update_status');
+Route::get('/bugtrack/{id}/details', 'BugtrackController@details')->name('bugtrack.details');
 
 
 
 
 
+//route for burn down chart
+Route::get('/{proj_id}/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
+// Route::get('/{sprint_id}/burn-down-chart', 'BurnDownChartController@index')->name('burnDown.index');
 
+// layout
+Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
+Route::get('/layouts/without-navbar', [WithoutNavbar::class, 'index'])->name('layouts-without-navbar');
+Route::get('/layouts/fluid', [Fluid::class, 'index'])->name('layouts-fluid');
+Route::get('/layouts/container', [Container::class, 'index'])->name('layouts-container');
+Route::get('/layouts/blank', [Blank::class, 'index'])->name('layouts-blank');
 
+// pages
+Route::get('/pages/account-settings-account', [AccountSettingsAccount::class, 'index'])->name('pages-account-settings-account');
+Route::get('/pages/account-settings-notifications', [AccountSettingsNotifications::class, 'index'])->name('pages-account-settings-notifications');
+Route::get('/pages/account-settings-connections', [AccountSettingsConnections::class, 'index'])->name('pages-account-settings-connections');
+Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
+Route::get('/pages/misc-under-maintenance', [MiscUnderMaintenance::class, 'index'])->name('pages-misc-under-maintenance');
 
+// authentication
+Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
+Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
+Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
 
+Route::get('/auth/login', [LoginController::class, 'index'])->name('auth-login');
+Route::post('/register', 'Auth\RegisterController@register')->name('register');
+Route::get('/auth/forgot-password', [ForgotPasswordController::class, 'index'])->name('auth-reset-password');
