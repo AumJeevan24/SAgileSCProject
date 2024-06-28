@@ -4,11 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
-use app\Http\Team;
-use app\Observers\Notifier;
-use app\Http\User;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
-
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,10 +26,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if($this->app->environment('production')) {
+        if ($this->app->environment('production')) {
             URL::forceScheme('https');
-        };
+        }
+
         Schema::defaultStringLength(191);
+
+        // Ensure /tmp/bootstrap/cache directory exists and is writable
+        $cachePath = '/tmp/bootstrap/cache';
+        if (!File::exists($cachePath)) {
+            File::makeDirectory($cachePath, 0755, true);
+        }
+
+        $this->app->useStoragePath(env('APP_STORAGE', base_path() . '/storage'));
+        $this->app->bind('path.cache', function() use ($cachePath) {
+            return $cachePath;
+        });
+
         // User::observe(Notifier::class);
     }
 }
