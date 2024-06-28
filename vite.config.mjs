@@ -1,5 +1,5 @@
-const { defineConfig } = await import("vite")
-const laravel = await import('laravel-vite-plugin');
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     plugins: [
