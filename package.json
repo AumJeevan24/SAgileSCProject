@@ -101,6 +101,7 @@
         "vue-select": "^3.16.0",
         "vuedraggable": "^2.23.2",
         "vuejs-datepicker": "^1.6.2",
+        "laravel-vite-plugin": "^1.0",
         "vite": "^5.0"
     }
 }
