@@ -5,6 +5,8 @@
     "scripts": {
         "dev": "npm run development",
         "build": "npm run build",
+        "dev:vite": "vite",
+        "build:vite": "vite build",
         "development": "mix",
         "watch": "mix watch",
         "watch-poll": "mix watch -- --watch-options-poll=1000",
@@ -98,6 +100,7 @@
         "sweetalert2": "^11.7.27",
         "vue-select": "^3.16.0",
         "vuedraggable": "^2.23.2",
-        "vuejs-datepicker": "^1.6.2"
+        "vuejs-datepicker": "^1.6.2",
+        "vite": "^5.0"
     }
 }
