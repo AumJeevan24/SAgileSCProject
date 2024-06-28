@@ -181,7 +181,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\framework/cache/data',
+        'path' => '/tmp/storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -350,7 +350,7 @@
     array (
       'enabled' => true,
       'driver' => 'file',
-      'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\debugbar',
+      'path' => '/tmp/storage\\debugbar',
       'connection' => NULL,
       'provider' => '',
       'hostname' => '127.0.0.1',
@@ -453,14 +453,16 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\app',
+        'root' => '/tmp/storage\\app',
+        'throw' => false,
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\app/public',
+        'root' => '/tmp/storage\\app/public',
         'url' => 'http://localhost/storage',
         'visibility' => 'public',
+        'throw' => false,
       ),
       's3' => 
       array (
@@ -471,11 +473,12 @@
         'bucket' => '',
         'url' => NULL,
         'endpoint' => NULL,
+        'throw' => false,
       ),
     ),
     'links' => 
     array (
-      'C:\\htdocs old\\PROJECTSC\\SAgileSCProject\\public\\storage' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\app/public',
+      'C:\\htdocs old\\PROJECTSC\\SAgileSCProject\\public\\storage' => '/tmp/storage\\app/public',
     ),
   ),
   'hashing' => 
@@ -495,6 +498,11 @@
   'logging' => 
   array (
     'default' => 'stack',
+    'deprecations' => 
+    array (
+      'channel' => 'null',
+      'trace' => false,
+    ),
     'channels' => 
     array (
       'stack' => 
@@ -509,15 +517,17 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\logs/laravel.log',
+        'path' => '/tmp/storage\\logs/laravel.log',
         'level' => 'debug',
+        'replace_placeholders' => true,
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\logs/laravel.log',
+        'path' => '/tmp/storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
+        'replace_placeholders' => true,
       ),
       'slack' => 
       array (
@@ -526,6 +536,7 @@
         'username' => 'Laravel Log',
         'emoji' => ':boom:',
         'level' => 'critical',
+        'replace_placeholders' => true,
       ),
       'papertrail' => 
       array (
@@ -536,27 +547,40 @@
         array (
           'host' => NULL,
           'port' => NULL,
+          'connectionString' => 'tls://:',
+        ),
+        'processors' => 
+        array (
+          0 => 'Monolog\\Processor\\PsrLogMessageProcessor',
         ),
       ),
       'stderr' => 
       array (
         'driver' => 'monolog',
+        'level' => 'debug',
         'handler' => 'Monolog\\Handler\\StreamHandler',
         'formatter' => NULL,
         'with' => 
         array (
           'stream' => 'php://stderr',
         ),
+        'processors' => 
+        array (
+          0 => 'Monolog\\Processor\\PsrLogMessageProcessor',
+        ),
       ),
       'syslog' => 
       array (
         'driver' => 'syslog',
         'level' => 'debug',
+        'facility' => 8,
+        'replace_placeholders' => true,
       ),
       'errorlog' => 
       array (
         'driver' => 'errorlog',
         'level' => 'debug',
+        'replace_placeholders' => true,
       ),
       'null' => 
       array (
@@ -565,13 +589,9 @@
       ),
       'emergency' => 
       array (
-        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\logs/laravel.log',
+        'path' => '/tmp/storage\\logs/laravel.log',
       ),
-      'deprecations' => 
-      array (
-        'driver' => 'monolog',
-        'handler' => 'Monolog\\Handler\\NullHandler',
-      ),
+      'deprecations' => NULL,
     ),
   ),
   'mail' => 
@@ -710,9 +730,9 @@
   array (
     'driver' => 'file',
     'lifetime' => '120',
-    'expire_on_close' => false,
+    'expire_on_close' => true,
     'encrypt' => false,
-    'files' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\framework/sessions',
+    'files' => '/tmp/storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
