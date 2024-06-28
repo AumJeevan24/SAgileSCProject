@@ -22,7 +22,7 @@
         "twilio/sdk": "^7.13"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.7",
+        "barryvdh/laravel-debugbar": "*",
         "facade/ignition": "^2.17.7",
         "laravel-frontend-presets/tailwindcss": "*",
         "laravel/pint": "^1.0",
