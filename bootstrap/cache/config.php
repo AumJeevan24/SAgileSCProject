@@ -181,7 +181,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => '/tmp/storage\\framework/cache/data',
+        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -350,7 +350,7 @@
     array (
       'enabled' => true,
       'driver' => 'file',
-      'path' => '/tmp/storage\\debugbar',
+      'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\debugbar',
       'connection' => NULL,
       'provider' => '',
       'hostname' => '127.0.0.1',
@@ -453,12 +453,12 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => '/tmp/storage\\app',
+        'root' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\app',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => '/tmp/storage\\app/public',
+        'root' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\app/public',
         'url' => 'http://localhost/storage',
         'visibility' => 'public',
       ),
@@ -475,7 +475,7 @@
     ),
     'links' => 
     array (
-      'C:\\htdocs old\\PROJECTSC\\SAgileSCProject\\public\\storage' => '/tmp/storage\\app/public',
+      'C:\\htdocs old\\PROJECTSC\\SAgileSCProject\\public\\storage' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\app/public',
     ),
   ),
   'hashing' => 
@@ -509,13 +509,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => '/tmp/storage\\logs/laravel.log',
+        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => '/tmp/storage\\logs/laravel.log',
+        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
       ),
@@ -565,7 +565,7 @@
       ),
       'emergency' => 
       array (
-        'path' => '/tmp/storage\\logs/laravel.log',
+        'path' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\logs/laravel.log',
       ),
       'deprecations' => 
       array (
@@ -712,7 +712,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => '/tmp/storage\\framework/sessions',
+    'files' => 'C:\\htdocs old\\PROJECTSC\\SAgileSCProject/storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
