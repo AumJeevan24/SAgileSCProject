@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
+use Barryvdh\Debugbar\ServiceProvider as DebugbarServiceProvider;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,7 +18,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        if ($this->app->environment('production')) {
+            $this->app->register(DebugbarServiceProvider::class);
+        }
     }
 
     /**
