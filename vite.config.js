@@ -1,7 +1,7 @@
-const { defineConfig } = require('vite');
-const laravel = require('laravel-vite-plugin');
+const { defineConfig } = await import("vite")
+const laravel = await import('laravel-vite-plugin');
 
-module.exports = defineConfig({
+export default defineConfig({
     plugins: [
         laravel({
             input: [
